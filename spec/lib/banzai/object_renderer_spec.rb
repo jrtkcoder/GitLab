@@ -78,6 +78,11 @@ describe Banzai::ObjectRenderer do
       expect(context).to have_key(:foo)
       expect(context[:foo]).to eq(:bar)
     end
+
+    it 'adds the :skip_redaction flag' do
+      context = renderer.context_for(object, :note)
+      expect(context[:skip_redaction]).to eq(true)
+    end
   end
 
   describe '#render_attributes' do
