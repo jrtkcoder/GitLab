@@ -1,4 +1,6 @@
 class IssueTrackerService < Service
+  validate :one_issue_tracker, if: :activated?
+
   default_value_for :category, 'issue_tracker'
 
   # Pattern used to extract links from comments
@@ -91,5 +93,13 @@ class IssueTrackerService < Service
 
   def issues_tracker
     Gitlab.config.issues_tracker[to_param]
+  end
+
+  def one_issue_tracker
+    return if template?
+
+    if project.services.external_issue_trackers.where.not(id: id).count > 0
+      errors.add(:base, 'Another issue tracker is already in use. Only one issue tracker service can be active at a time')
+    end
   end
 end
