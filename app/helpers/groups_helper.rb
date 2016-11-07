@@ -52,4 +52,10 @@ module GroupsHelper
   def group_issues(group)
     IssuesFinder.new(current_user, group_id: group.id).execute
   end
+
+  def group_merge_requests(group)
+    group.projects.map do |project|
+      MergeRequestsFinder.new(current_user, project_id: project.id).execute
+    end.compact.flatten
+  end
 end
