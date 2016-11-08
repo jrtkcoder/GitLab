@@ -85,6 +85,7 @@
       $(document).on("visibilitychange", this.visibilityChange);
       // when issue status changes, we need to refresh data
       $(document).on("issuable:change", this.refresh);
+      document.addEventListener('click', this.showDiscussion.bind(this));
       // when a key is clicked on the notes
       return $(document).on("keydown", ".js-note-text", this.keydownNoteText);
     };
@@ -853,6 +854,21 @@
         .attr('data-discussion-id', discussionId)
         .attr('data-resolve-all', 'true')
         .attr('data-project-path', $this.attr('data-project-path'));
+    };
+
+    Notes.prototype.showDiscussion = function(e) {
+      var el = e.target;
+
+      if (!el.classList.contains('js-diff-comment-avatar')) return;
+
+      var row = el.closest('tr'),
+          notesHolder = row.nextElementSibling;
+
+      if (notesHolder.style.display === 'none') {
+        notesHolder.style.display = '';
+      } else {
+        notesHolder.style.display = 'none';
+      }
     };
 
     return Notes;

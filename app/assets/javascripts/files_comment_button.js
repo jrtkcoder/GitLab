@@ -41,6 +41,8 @@
       var $currentTarget, buttonParentElement, lineContentElement, textFileElement;
       $currentTarget = $(e.currentTarget);
 
+      if ($currentTarget.closest('.js-no-comment-btn').length) return;
+
       buttonParentElement = this.getButtonParent($currentTarget);
       if (!this.validateButtonParent(buttonParentElement)) return;
       lineContentElement = this.getLineContent($currentTarget);
@@ -63,7 +65,7 @@
       if (this.isMovingToSameType(e)) {
         return;
       }
-      $(COMMENT_BUTTON_CLASS, this.getButtonParent($(e.currentTarget))).remove();
+      // $(COMMENT_BUTTON_CLASS, this.getButtonParent($(e.currentTarget))).remove();
     };
 
     FilesCommentButton.prototype.buildButton = function(buttonAttributes) {

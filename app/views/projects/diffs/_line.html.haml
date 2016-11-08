@@ -1,8 +1,11 @@
 - email = local_assigns.fetch(:email, false)
 - plain = local_assigns.fetch(:plain, false)
+- discussions = local_assigns.fetch(:discussions, nil)
 - type = line.type
 - line_code = diff_file.line_code(line)
-%tr.line_holder{ plain ? { class: type} : { class: type, id: line_code } }
+- if discussions && !line.meta?
+  - discussion = discussions[line_code]
+%tr.line_holder{ plain ? { class: [type, ("js-no-comment-btn" if discussion)]} : { class: [type, ("js-no-comment-btn" if discussion)], id: line_code } }
   - case type
   - when 'match'
     = diff_match_line line.old_pos, line.new_pos, text: line.text
@@ -17,6 +20,21 @@
         = link_text
       - else
         %a{href: "##{line_code}", data: { linenumber: link_text }}
+      - if discussion
+        - avatars_to_display = 3
+        - comments_left_over = discussion.notes.size - avatars_to_display
+        .diff-comment-avatar-holders
+          - discussion.notes.take(avatars_to_display).each do |note|
+            %img.avatar.diff-comment-avatar.has-tooltip.js-diff-comment-avatar{ src: note.author.avatar_url,
+              width: 19,
+              height: 19,
+              title: "#{note.author.name}:",
+              role: "button",
+              data: { container: "body", placement: "top" } }
+          %span.diff-comments-more-count.has-tooltip{ role: "button",
+            class: ("hidden" if discussion.notes.size < avatars_to_display),
+            title: "#{comments_left_over} more #{'comment'.pluralize(comments_left_over)}",
+            data: { count: comments_left_over, container: "body", placement: "top" } }
     %td.new_line.diff-line-num{ class: type, data: { linenumber: line.new_pos } }
       - link_text = type == "old" ? " " : line.new_pos
       - if plain
@@ -29,9 +47,6 @@
       - else
         = diff_line_content(line.text)
 
-- discussions = local_assigns.fetch(:discussions, nil)
-- if discussions && !line.meta?
-  - discussion = discussions[line_code]
-  - if discussion
-    - discussion_expanded = local_assigns.fetch(:discussion_expanded, discussion.expanded?)
-    = render "discussions/diff_discussion", discussion: discussion, expanded: discussion_expanded
+- if discussion
+  - discussion_expanded = local_assigns.fetch(:discussion_expanded, discussion.expanded?)
+  = render "discussions/diff_discussion", discussion: discussion, expanded: discussion_expanded

@@ -480,3 +480,54 @@
     }
   }
 }
+
+.diff-comment-avatar-holders {
+  position: absolute;
+  height: 19px;
+  width: 19px;
+  margin-left: -15px;
+
+  &:hover {
+    .diff-comment-avatar,
+    .diff-comments-more-count {
+      @for $i from 1 through 4 {
+        &:nth-child(#{$i}) {
+          transform: translateX((($i * 14px) - 14px));
+        }
+      }
+    }
+  }
+}
+
+.diff-comment-avatar,
+.diff-comments-more-count {
+  position: absolute;
+  left: 0;
+  width: 19px;
+  height: 19px;
+  margin-right: 0;
+  border-color: #fff;
+  cursor: pointer;
+  transition: transform .1s ease-out;
+
+  @for $i from 1 through 4 {
+    &:nth-child(#{$i}) {
+      z-index: (4 - $i);
+    }
+  }
+}
+
+.diff-comments-more-count {
+  background-color: $gl-link-color;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 50%;
+
+  &::before {
+    content: "+" attr(data-count);
+    position: absolute;
+    left: 2px;
+    top: 1px;
+    font-size: 10px;
+  }
+}
