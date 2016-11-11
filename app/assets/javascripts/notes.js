@@ -291,7 +291,7 @@
      */
 
     Notes.prototype.renderDiscussionNote = function(note) {
-      var discussionContainer, form, note_html, row;
+      var discussionContainer, form, note_html, row, changesDiscussionContainer;
       if (!this.isNewNote(note)) {
         return;
       }
@@ -305,6 +305,7 @@
       note_html.syntaxHighlight();
       // is this the first note of discussion?
       discussionContainer = $(".notes[data-discussion-id='" + note.discussion_id + "']");
+      changesDiscussionContainer = $(".diffs .notes[data-discussion-id='" + note.discussion_id + "']");
       if ((note.original_discussion_id != null) && discussionContainer.length === 0) {
         discussionContainer = $(".notes[data-discussion-id='" + note.original_discussion_id + "']");
       }
@@ -330,10 +331,28 @@
         gl.diffNotesCompileComponents();
       }
 
+      this.discussionCommentCount(changesDiscussionContainer);
+
       gl.utils.localTimeAgo($('.js-timeago', note_html), false);
       return this.updateNotesCount(1);
     };
 
+    Notes.prototype.discussionCommentCount = function(changesDiscussionContainer) {
+      var commentCount = changesDiscussionContainer.closest('.notes_holder')
+        .prev('.line_holder')
+        .find('.diff-comments-more-count');
+
+      commentCount.attr('data-count', changesDiscussionContainer.find('.note').length - 3)
+        .attr('title', (changesDiscussionContainer.find('.note').length - 3) + ' more comments');
+
+      if (changesDiscussionContainer.find('.note').length > 3) {
+        commentCount.removeClass('hidden');
+      } else {
+        commentCount.addClass('hidden');
+      }
+
+      commentCount.tooltip('fixTitle');
+    }
 
     /*
     Called in response the main target form has been successfully submitted.
@@ -549,8 +568,10 @@
      */
 
     Notes.prototype.removeNote = function(e) {
-      var noteId;
+      var noteId, changesDiscussionContainer;
       noteId = $(e.currentTarget).closest(".note").attr("id");
+      changesDiscussionContainer = $(e.currentTarget).closest('.notes[data-discussion-id]');
+
       $(".note[id='" + noteId + "']").each((function(_this) {
         // A same note appears in the "Discussion" and in the "Changes" tab, we have
         // to remove all. Using $(".note[id='noteId']") ensure we get all the notes,
@@ -576,6 +597,10 @@
           return note.remove();
         };
       })(this));
+
+      $('.js-diff-note-author-image-' + noteId.replace('note_', '')).remove();
+      this.discussionCommentCount(changesDiscussionContainer);
+
       // Decrement the "Discussions" counter only once
       return this.updateNotesCount(-1);
     };

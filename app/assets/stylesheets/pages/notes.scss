@@ -377,6 +377,7 @@ ul.notes {
     &:hover {
       background: $gl-info;
       color: #fff;
+      transform: scale(1.2);
       @include show-add-diff-note;
     }
   }

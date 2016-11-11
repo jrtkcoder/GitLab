@@ -28,11 +28,12 @@
             %img.avatar.diff-comment-avatar.has-tooltip.js-diff-comment-avatar{ src: note.author.avatar_url,
               width: 19,
               height: 19,
+              class: "js-diff-note-author-image-#{note.id}",
               title: "#{note.author.name}:",
               role: "button",
               data: { container: "body", placement: "top" } }
           %span.diff-comments-more-count.has-tooltip{ role: "button",
-            class: ("hidden" if discussion.notes.size < avatars_to_display),
+            class: ("hidden" if discussion.notes.size <= avatars_to_display),
             title: "#{comments_left_over} more #{'comment'.pluralize(comments_left_over)}",
             data: { count: comments_left_over, container: "body", placement: "top" } }
     %td.new_line.diff-line-num{ class: type, data: { linenumber: line.new_pos } }
