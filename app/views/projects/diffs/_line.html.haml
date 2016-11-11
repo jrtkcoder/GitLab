@@ -5,7 +5,7 @@
 - line_code = diff_file.line_code(line)
 - if discussions && !line.meta?
   - discussion = discussions[line_code]
-%tr.line_holder{ plain ? { class: [type, ("js-no-comment-btn" if discussion)]} : { class: [type, ("js-no-comment-btn" if discussion)], id: line_code } }
+%tr.line_holder{ plain ? { class: [type, ("js-no-comment-btn" if discussion && !plain)]} : { class: [type, ("js-no-comment-btn" if discussion && !plain)], id: line_code } }
   - case type
   - when 'match'
     = diff_match_line line.old_pos, line.new_pos, text: line.text
@@ -20,7 +20,7 @@
         = link_text
       - else
         %a{href: "##{line_code}", data: { linenumber: link_text }}
-      - if discussion
+      - if discussion && !plain
         - avatars_to_display = 3
         - comments_left_over = discussion.notes.size - avatars_to_display
         .diff-comment-avatar-holders
