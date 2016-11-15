@@ -331,6 +331,7 @@
         gl.diffNotesCompileComponents();
       }
 
+      this.renderDiscussionAvatar(changesDiscussionContainer.get(0), note);
       this.discussionCommentCount(changesDiscussionContainer);
 
       gl.utils.localTimeAgo($('.js-timeago', note_html), false);
@@ -352,7 +353,27 @@
       }
 
       commentCount.tooltip('fixTitle');
-    }
+    };
+
+    Notes.prototype.renderDiscussionAvatar = function(changesDiscussionContainer, note) {
+      var diffLine = changesDiscussionContainer.closest('.notes_holder').previousElementSibling;
+      var avatarHolder = diffLine.querySelectorAll('.diff-comment-avatar-holders')[0];
+      var commentCount = diffLine.querySelectorAll('.diff-comments-more-count')[0];
+
+      if (changesDiscussionContainer.querySelectorAll('.note').length <= 3) {
+        var avatar = document.createElement('img');
+        avatar.width = 19;
+        avatar.height = 19;
+        avatar.src = note.author.avatar;
+        avatar.className = 'avatar diff-comment-avatar has-tooltip js-diff-comment-avatar js-diff-note-author-image-' + note.id;
+        avatar.title = note.author.name + ': ' + note.note_truncated;
+        avatar.role = 'button';
+        avatar.dataset.container = 'body';
+        avatar.dataset.placement = 'top';
+
+        avatarHolder.insertBefore(avatar, commentCount);
+      }
+    };
 
     /*
     Called in response the main target form has been successfully submitted.

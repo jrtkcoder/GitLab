@@ -167,10 +167,16 @@ class Projects::NotesController < Projects::ApplicationController
 
       if note.diff_note?
         discussion = note.to_discussion
+        author = note.author
 
         attrs.merge!(
           diff_discussion_html: diff_discussion_html(discussion),
-          discussion_html: discussion_html(discussion)
+          discussion_html: discussion_html(discussion),
+          note_truncated: note.note.truncate(17),
+          author: {
+            name: author.name,
+            avatar: author.avatar_url
+          }
         )
 
         # The discussion_id is used to add the comment to the correct discussion

@@ -29,7 +29,7 @@
               width: 19,
               height: 19,
               class: "js-diff-note-author-image-#{note.id}",
-              title: "#{note.author.name}:",
+              title: "#{note.author.name}: #{truncate(note.note, length: 17)}",
               role: "button",
               data: { container: "body", placement: "top" } }
           %span.diff-comments-more-count.has-tooltip{ role: "button",
