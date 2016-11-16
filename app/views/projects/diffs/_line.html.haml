@@ -21,21 +21,7 @@
       - else
         %a{href: "##{line_code}", data: { linenumber: link_text }}
       - if discussion && !plain
-        - avatars_to_display = 3
-        - comments_left_over = discussion.notes.size - avatars_to_display
-        .diff-comment-avatar-holders
-          - discussion.notes.take(avatars_to_display).each do |note|
-            %img.avatar.diff-comment-avatar.has-tooltip.js-diff-comment-avatar{ src: note.author.avatar_url,
-              width: 19,
-              height: 19,
-              class: "js-diff-note-author-image-#{note.id}",
-              title: "#{note.author.name}: #{truncate(note.note, length: 17)}",
-              role: "button",
-              data: { container: "body", placement: "top" } }
-          %span.diff-comments-more-count.has-tooltip{ role: "button",
-            class: ("hidden" if discussion.notes.size <= avatars_to_display),
-            title: "#{comments_left_over} more #{'comment'.pluralize(comments_left_over)}",
-            data: { count: comments_left_over, container: "body", placement: "top" } }
+        = render "projects/diffs/note_avatars", discussion: discussion, plain: plain
     %td.new_line.diff-line-num{ class: type, data: { linenumber: line.new_pos } }
       - link_text = type == "old" ? " " : line.new_pos
       - if plain

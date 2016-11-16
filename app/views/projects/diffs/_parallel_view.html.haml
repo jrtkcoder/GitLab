@@ -5,6 +5,7 @@
     - diff_file.parallel_diff_lines.each do |line|
       - left = line[:left]
       - right = line[:right]
+      - discussion_left, discussion_right = parallel_diff_discussions(left, right, diff_file)
       - last_line = right.new_pos if right
       %tr.line_holder.parallel
         - if left
@@ -13,8 +14,9 @@
           - else
             - left_line_code = diff_file.line_code(left)
             - left_position = diff_file.position(left)
-            %td.old_line.diff-line-num{id: left_line_code, class: left.type, data: { linenumber: left.old_pos }}
+            %td.old_line.diff-line-num{id: left_line_code, class: [left.type, ("js-no-comment-btn" if discussion_left)], data: { linenumber: left.old_pos }}
               %a{href: "##{left_line_code}" }= raw(left.old_pos)
+              = render "projects/diffs/note_avatars", discussion: discussion_left
             %td.line_content.parallel.noteable_line{class: left.type, data: diff_view_line_data(left_line_code, left_position, 'old')}= diff_line_content(left.text)
         - else
           %td.old_line.diff-line-num.empty-cell
@@ -26,15 +28,15 @@
           - else
             - right_line_code = diff_file.line_code(right)
             - right_position = diff_file.position(right)
-            %td.new_line.diff-line-num{id: right_line_code, class: right.type, data: { linenumber: right.new_pos }}
+            %td.new_line.diff-line-num{id: right_line_code, class: [right.type, ("js-no-comment-btn" if discussion_right)], data: { linenumber: right.new_pos }}
               %a{href: "##{right_line_code}" }= raw(right.new_pos)
+              = render "projects/diffs/note_avatars", discussion: discussion_right
             %td.line_content.parallel.noteable_line{class: right.type, data: diff_view_line_data(right_line_code, right_position, 'new')}= diff_line_content(right.text)
         - else
           %td.old_line.diff-line-num.empty-cell
           %td.line_content.parallel
 
       - unless @diff_notes_disabled
-        - discussion_left, discussion_right = parallel_diff_discussions(left, right, diff_file)
         - if discussion_left || discussion_right
           = render "discussions/parallel_diff_discussion", discussion_left: discussion_left, discussion_right: discussion_right
     - if !diff_file.new_file && last_line > 0

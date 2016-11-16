@@ -44,7 +44,7 @@
       if ($currentTarget.closest('.js-no-comment-btn').length) return;
 
       buttonParentElement = this.getButtonParent($currentTarget);
-      if (!this.validateButtonParent(buttonParentElement)) return;
+      if (!this.validateButtonParent(buttonParentElement) || buttonParentElement.hasClass('js-no-comment-btn')) return;
       lineContentElement = this.getLineContent($currentTarget);
       if (!this.validateLineContent(lineContentElement)) return;
 
