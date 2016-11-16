@@ -332,31 +332,53 @@
       }
 
       this.renderDiscussionAvatar(changesDiscussionContainer.get(0), note);
-      this.discussionCommentCount(changesDiscussionContainer);
+      this.discussionCommentCount(changesDiscussionContainer.get(0));
 
       gl.utils.localTimeAgo($('.js-timeago', note_html), false);
       return this.updateNotesCount(1);
     };
 
     Notes.prototype.discussionCommentCount = function(changesDiscussionContainer) {
-      var commentCount = changesDiscussionContainer.closest('.notes_holder')
-        .prev('.line_holder')
-        .find('.diff-comments-more-count');
+      var lineHolder = changesDiscussionContainer.closest('.notes_holder').previousElementSibling;
 
-      commentCount.attr('data-count', changesDiscussionContainer.find('.note').length - 3)
-        .attr('title', (changesDiscussionContainer.find('.note').length - 3) + ' more comments');
+      if (this.isParallelView()) {
+        var parallelHolder = changesDiscussionContainer.closest('.parallel');
 
-      if (changesDiscussionContainer.find('.note').length > 3) {
-        commentCount.removeClass('hidden');
-      } else {
-        commentCount.addClass('hidden');
+        if (parallelHolder.classList.contains('new')) {
+          lineHolder = lineHolder.querySelectorAll('.diff-line-num.new_line')[0];
+        } else {
+          lineHolder = lineHolder.querySelectorAll('.diff-line-num.old_line')[0];
+        }
       }
 
-      commentCount.tooltip('fixTitle');
+      var commentCount = lineHolder.querySelectorAll('.diff-comments-more-count')[0],
+          notesCount = changesDiscussionContainer.querySelectorAll('.note').length;
+
+      commentCount.setAttribute('data-count', notesCount - 3);
+      commentCount.setAttribute('title', (notesCount - 3) + ' more comment' + (notesCount === 4 ? '' : 's'));
+
+      if (notesCount > 3) {
+        commentCount.classList.remove('hidden');
+      } else {
+        commentCount.classList.add('hidden');
+      }
+
+      $(commentCount).tooltip('fixTitle');
     };
 
     Notes.prototype.renderDiscussionAvatar = function(changesDiscussionContainer, note) {
       var diffLine = changesDiscussionContainer.closest('.notes_holder').previousElementSibling;
+
+      if (this.isParallelView()) {
+        var parallelHolder = changesDiscussionContainer.closest('.parallel');
+
+        if (parallelHolder.classList.contains('new')) {
+          diffLine = diffLine.querySelectorAll('.diff-line-num.new_line')[0];
+        } else {
+          diffLine = diffLine.querySelectorAll('.diff-line-num.old_line')[0];
+        }
+      }
+
       var avatarHolder = diffLine.querySelectorAll('.diff-comment-avatar-holders')[0];
       var commentCount = diffLine.querySelectorAll('.diff-comments-more-count')[0];
 
@@ -620,7 +642,7 @@
       })(this));
 
       $('.js-diff-note-author-image-' + noteId.replace('note_', '')).remove();
-      this.discussionCommentCount(changesDiscussionContainer);
+      this.discussionCommentCount(changesDiscussionContainer.get(0));
 
       // Decrement the "Discussions" counter only once
       return this.updateNotesCount(-1);
