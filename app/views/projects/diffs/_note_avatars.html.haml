@@ -17,4 +17,5 @@
       %span.diff-comments-more-count.has-tooltip{ role: "button",
         class: ("hidden" if discussion.notes.size <= avatars_to_display),
         title: "#{comments_left_over} more #{'comment'.pluralize(comments_left_over)}",
-        data: { count: comments_left_over, container: "body", placement: "top" } }
+        "aria-label" => comments_left_over,
+        data: { container: "body", placement: "top" } }

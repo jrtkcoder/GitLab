@@ -294,7 +294,7 @@
      */
 
     Notes.prototype.renderDiscussionNote = function(note) {
-      var discussionContainer, form, note_html, row, changesDiscussionContainer;
+      var discussionContainer, form, note_html, row;
       if (!this.isNewNote(note)) {
         return;
       }
@@ -308,7 +308,6 @@
       note_html.syntaxHighlight();
       // is this the first note of discussion?
       discussionContainer = $(".notes[data-discussion-id='" + note.discussion_id + "']");
-      changesDiscussionContainer = $(".diffs .notes[data-discussion-id='" + note.discussion_id + "']");
       if ((note.original_discussion_id != null) && discussionContainer.length === 0) {
         discussionContainer = $(".notes[data-discussion-id='" + note.original_discussion_id + "']");
       }
@@ -334,6 +333,8 @@
         gl.diffNotesCompileComponents();
       }
 
+      var changesDiscussionContainer = $(".diffs .notes[data-discussion-id='" + note.discussion_id + "']");
+
       this.renderDiscussionAvatar(changesDiscussionContainer.get(0), note);
       this.discussionCommentCount(changesDiscussionContainer.get(0));
 
@@ -357,7 +358,7 @@
       var commentCount = lineHolder.querySelectorAll('.diff-comments-more-count')[0],
           notesCount = changesDiscussionContainer.querySelectorAll('.note').length;
 
-      commentCount.setAttribute('data-count', notesCount - 3);
+      commentCount.setAttribute('aria-label', notesCount - 3);
       commentCount.setAttribute('title', (notesCount - 3) + ' more comment' + (notesCount === 4 ? '' : 's'));
 
       if (notesCount > 3) {
@@ -380,10 +381,29 @@
         } else {
           diffLine = diffLine.querySelectorAll('.diff-line-num.old_line')[0];
         }
+      } else {
+        diffLine = diffLine.querySelectorAll('.diff-line-num.old_line')[0];
       }
 
       var avatarHolder = diffLine.querySelectorAll('.diff-comment-avatar-holders')[0];
+
+      if (!avatarHolder) {
+        avatarHolder = document.createElement('div');
+        avatarHolder.className = 'diff-comment-avatar-holders';
+
+        diffLine.appendChild(avatarHolder);
+      }
+
       var commentCount = diffLine.querySelectorAll('.diff-comments-more-count')[0];
+
+      if (!commentCount) {
+        commentCount = document.createElement('span');
+        commentCount.className = 'diff-comments-more-count has-tooltip hidden';
+        commentCount.dataset.container = 'body';
+        commentCount.dataset.placement = 'top';
+
+        avatarHolder.appendChild(commentCount);
+      }
 
       if (changesDiscussionContainer.querySelectorAll('.note').length <= 3) {
         var avatar = document.createElement('img');

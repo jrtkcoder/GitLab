@@ -524,7 +524,7 @@
   border-radius: 50%;
 
   &::before {
-    content: "+" attr(data-count);
+    content: "+" attr(aria-label);
     position: absolute;
     left: 2px;
     top: 1px;
