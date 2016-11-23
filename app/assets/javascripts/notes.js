@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable func-names, space-before-function-paren, no-var, space-before-blocks, prefer-rest-params, wrap-iife, no-use-before-define, camelcase, no-unused-expressions, quotes, max-len, one-var, one-var-declaration-per-line, default-case, prefer-template, no-undef, consistent-return, no-alert, no-return-assign, no-param-reassign, prefer-arrow-callback, no-else-return, comma-dangle, no-new, brace-style, no-lonely-if, vars-on-top, no-unused-vars, semi, indent, no-sequences, no-shadow, newline-per-chained-call, no-useless-escape, radix, padded-blocks, max-len */
 
 /*= require autosave */
 /*= require autosize */
@@ -12,7 +12,7 @@
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   this.Notes = (function() {
-    var isMetaKey;
+    const MAX_VISIBLE_COMMIT_LIST_COUNT = 3;
 
     Notes.interval = null;
 
@@ -33,6 +33,7 @@
       this.resetMainTargetForm = bind(this.resetMainTargetForm, this);
       this.refresh = bind(this.refresh, this);
       this.keydownNoteText = bind(this.keydownNoteText, this);
+      this.toggleCommitList = bind(this.toggleCommitList, this);
       this.notes_url = notes_url;
       this.note_ids = note_ids;
       this.last_fetched_at = last_fetched_at;
@@ -46,6 +47,7 @@
       this.setPollingInterval();
       this.setupMainTargetNoteForm();
       this.initTaskList();
+      this.collapseLongCommitList();
     }
 
     Notes.prototype.addBinding = function() {
@@ -81,6 +83,8 @@
       $(document).on("click", ".js-add-diff-note-button", this.addDiffNote);
       // hide diff note form
       $(document).on("click", ".js-close-discussion-note-form", this.cancelDiscussionForm);
+      // toggle commit list
+      $(document).on("click", '.system-note-commit-list-toggler', this.toggleCommitList);
       // fetch notes when tab becomes visible
       $(document).on("visibilitychange", this.visibilityChange);
       // when issue status changes, we need to refresh data
@@ -109,15 +113,17 @@
       $(document).off("click", ".js-note-discard");
       $(document).off("keydown", ".js-note-text");
       $(document).off('click', '.js-comment-resolve-button');
+      $(document).off("click", '.system-note-commit-list-toggler');
       $('.note .js-task-list-container').taskList('disable');
       return $(document).off('tasklist:changed', '.note .js-task-list-container');
     };
 
     Notes.prototype.keydownNoteText = function(e) {
       var $textarea, discussionNoteForm, editNote, myLastNote, myLastNoteEditBtn, newText, originalText;
-      if (isMetaKey(e)) {
+      if (gl.utils.isMetaKey(e)) {
         return;
       }
+
       $textarea = $(e.target);
       // Edit previous note when UP arrow is hit
       switch (e.which) {
@@ -155,10 +161,6 @@
             return this.removeNoteEditForm(editNote);
           }
       }
-    };
-
-    isMetaKey = function(e) {
-      return e.metaKey || e.ctrlKey || e.altKey || e.shiftKey;
     };
 
     Notes.prototype.initRefresh = function() {
@@ -264,6 +266,7 @@
         $notesList.append(note.html).syntaxHighlight();
         // Update datetime format on the recent note
         gl.utils.localTimeAgo($notesList.find("#note_" + note.id + " .js-timeago"), false);
+        this.collapseLongCommitList();
         this.initTaskList();
         this.refresh();
         return this.updateNotesCount(1);
@@ -496,9 +499,9 @@
       var $form = $(xhr.target);
 
       if ($form.attr('data-resolve-all') != null) {
-        var projectPath = $form.data('project-path')
-            discussionId = $form.data('discussion-id'),
-            mergeRequestId = $form.data('noteable-iid');
+        var projectPath = $form.data('project-path');
+        var discussionId = $form.data('discussion-id');
+        var mergeRequestId = $form.data('noteable-iid');
 
         if (ResolveService != null) {
           ResolveService.toggleResolveForDiscussion(projectPath, mergeRequestId, discussionId);
@@ -913,9 +916,9 @@
       return this.notesCountBadge.text(parseInt(this.notesCountBadge.text()) + updateCount);
     };
 
-    Notes.prototype.resolveDiscussion = function () {
-      var $this = $(this),
-          discussionId = $this.attr('data-discussion-id');
+    Notes.prototype.resolveDiscussion = function() {
+      var $this = $(this);
+      var discussionId = $this.attr('data-discussion-id');
 
       $this
         .closest('form')
@@ -937,6 +940,36 @@
       } else {
         notesHolder.style.display = 'none';
       }
+    };
+
+    Notes.prototype.toggleCommitList = function(e) {
+      const $element = $(e.target);
+      const $closestSystemCommitList = $element.siblings('.system-note-commit-list');
+
+      $closestSystemCommitList.toggleClass('hide-shade');
+    };
+
+    /**
+    Scans system notes with `ul` elements in system note body
+    then collapse long commit list pushed by user to make it less
+    intrusive.
+     */
+    Notes.prototype.collapseLongCommitList = function() {
+      const systemNotes = $('#notes-list').find('li.system-note').has('ul');
+
+      $.each(systemNotes, function(index, systemNote) {
+        const $systemNote = $(systemNote);
+        const headerMessage = $systemNote.find('.note-text').find('p:first').text().replace(':', '');
+
+        $systemNote.find('.note-header .system-note-message').html(headerMessage);
+
+        if ($systemNote.find('li').length > MAX_VISIBLE_COMMIT_LIST_COUNT) {
+          $systemNote.find('.note-text').addClass('system-note-commit-list');
+          $systemNote.find('.system-note-commit-list-toggler').show();
+        } else {
+          $systemNote.find('.note-text').addClass('system-note-commit-list hide-shade');
+        }
+      });
     };
 
     return Notes;
