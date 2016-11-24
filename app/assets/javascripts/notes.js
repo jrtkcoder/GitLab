@@ -342,8 +342,24 @@
       return this.updateNotesCount(1);
     };
 
-    Notes.prototype.discussionCommentCount = function(changesDiscussionContainer) {
+    Notes.prototype.getNotesHolder = function(changesDiscussionContainer) {
       var lineHolder = changesDiscussionContainer.closest('.notes_holder').previousElementSibling;
+
+      while(lineHolder.classList.contains('js-temp-notes-holder')) {
+        lineHolder = lineHolder.previousElementSibling;
+      }
+
+      return lineHolder;
+    };
+
+    Notes.prototype.discussionCommentCount = function(changesDiscussionContainer) {
+      var lineHolder;
+
+      if (changesDiscussionContainer.classList.contains('line_holder')) {
+        lineHolder = changesDiscussionContainer;
+      } else {
+        lineHolder = this.getNotesHolder(changesDiscussionContainer);
+      }
 
       if (this.isParallelView()) {
         var parallelHolder = changesDiscussionContainer.closest('.parallel');
@@ -371,18 +387,19 @@
     };
 
     Notes.prototype.renderDiscussionAvatar = function(changesDiscussionContainer, note) {
-      var diffLine = changesDiscussionContainer.closest('.notes_holder').previousElementSibling;
+      var diffLine;
+      var lineHolder = this.getNotesHolder(changesDiscussionContainer);
 
       if (this.isParallelView()) {
         var parallelHolder = changesDiscussionContainer.closest('.parallel');
 
         if (parallelHolder.classList.contains('new')) {
-          diffLine = diffLine.querySelectorAll('.diff-line-num.new_line')[0];
+          diffLine = lineHolder.querySelectorAll('.diff-line-num.new_line')[0];
         } else {
-          diffLine = diffLine.querySelectorAll('.diff-line-num.old_line')[0];
+          diffLine = lineHolder.querySelectorAll('.diff-line-num.old_line')[0];
         }
       } else {
-        diffLine = diffLine.querySelectorAll('.diff-line-num.old_line')[0];
+        diffLine = lineHolder.querySelectorAll('.diff-line-num.old_line')[0];
       }
 
       var avatarHolder = diffLine.querySelectorAll('.diff-comment-avatar-holders')[0];
@@ -392,6 +409,7 @@
         avatarHolder.className = 'diff-comment-avatar-holders';
 
         diffLine.appendChild(avatarHolder);
+        lineHolder.classList.add('js-no-comment-btn');
       }
 
       var commentCount = diffLine.querySelectorAll('.diff-comments-more-count')[0];
@@ -634,9 +652,11 @@
      */
 
     Notes.prototype.removeNote = function(e) {
-      var noteId, changesDiscussionContainer;
+      var noteId, lineHolder;
       noteId = $(e.currentTarget).closest(".note").attr("id");
-      changesDiscussionContainer = $(e.currentTarget).closest('.notes[data-discussion-id]');
+      lineHolder = $(e.currentTarget).closest('.notes[data-discussion-id]')
+        .closest('.notes_holder')
+        .prev('.line_holder');
 
       $(".note[id='" + noteId + "']").each((function(_this) {
         // A same note appears in the "Discussion" and in the "Changes" tab, we have
@@ -659,13 +679,15 @@
             notes.closest(".timeline-entry").remove();
             // "Changes" tab / commit view
             notes.closest("tr").remove();
+
+            lineHolder.removeClass('js-no-comment-btn');
           }
           return note.remove();
         };
       })(this));
 
       $('.js-diff-note-author-image-' + noteId.replace('note_', '')).remove();
-      this.discussionCommentCount(changesDiscussionContainer.get(0));
+      this.discussionCommentCount(lineHolder.get(0));
 
       // Decrement the "Discussions" counter only once
       return this.updateNotesCount(-1);
