@@ -9,22 +9,34 @@
 
 .explore-groups.landing {
   margin-top: 10px;
+  padding: $gl-padding;
+  position: relative;
 
   .inner-content {
-    padding: 0;
+    display: flex;
+    justify-content: center;
 
-    p {
-      margin: 7px 0 0;
-      max-width: 480px;
-      padding: 0 $gl-padding;
+    .copy {
+      display: inline-block;
 
-      @media (max-width: $screen-sm-min) {
-        margin: 0 auto;
+      p {
+        margin: 5px 0 0;
+        max-width: 480px;
       }
+    }
+
+    @media (max-width: $screen-sm-min) {
+      display: block;
+      padding: 0;
     }
   }
 
+  .dismiss-icon {
+    top: $gl-padding;
+    right: $gl-padding;
+  }
   svg {
+    margin-right: $gl-padding;
     width: 62px;
     height: 50px;
   }
