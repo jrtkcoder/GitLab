@@ -344,10 +344,10 @@
       return this.updateNotesCount(1);
     };
 
-    Notes.prototype.getNotesHolder = function(changesDiscussionContainer) {
+    Notes.prototype.getLineHolder = function(changesDiscussionContainer) {
       var lineHolder = changesDiscussionContainer.closest('.notes_holder').previousElementSibling;
 
-      while(lineHolder.classList.contains('js-temp-notes-holder')) {
+      while (lineHolder.classList.contains('js-temp-notes-holder')) {
         lineHolder = lineHolder.previousElementSibling;
       }
 
@@ -360,7 +360,7 @@
       if (changesDiscussionContainer.classList.contains('line_holder')) {
         lineHolder = changesDiscussionContainer;
       } else {
-        lineHolder = this.getNotesHolder(changesDiscussionContainer);
+        lineHolder = this.getLineHolder(changesDiscussionContainer);
       }
 
       if (this.isParallelView()) {
@@ -392,7 +392,7 @@
 
     Notes.prototype.renderDiscussionAvatar = function(changesDiscussionContainer, note) {
       var diffLine;
-      var lineHolder = this.getNotesHolder(changesDiscussionContainer);
+      var lineHolder = this.getLineHolder(changesDiscussionContainer);
       var commentButton = lineHolder.querySelectorAll('.js-add-diff-note-button')[0];
 
       if (this.isParallelView()) {
