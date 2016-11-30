@@ -376,21 +376,24 @@
       var commentCount = lineHolder.querySelectorAll('.diff-comments-more-count')[0],
           notesCount = changesDiscussionContainer.querySelectorAll('.note').length;
 
-      commentCount.textContent = '+' + (notesCount - 3);
-      commentCount.setAttribute('title', (notesCount - 3) + ' more comment' + (notesCount === 4 ? '' : 's'));
+      if (commentCount) {
+        commentCount.textContent = '+' + (notesCount - 3);
+        commentCount.setAttribute('title', (notesCount - 3) + ' more comment' + (notesCount === 4 ? '' : 's'));
 
-      if (notesCount > 3) {
-        commentCount.classList.remove('hidden');
-      } else {
-        commentCount.classList.add('hidden');
+        if (notesCount > 3) {
+          commentCount.classList.remove('hidden');
+        } else {
+          commentCount.classList.add('hidden');
+        }
+
+        $(commentCount).tooltip('fixTitle');
       }
-
-      $(commentCount).tooltip('fixTitle');
     };
 
     Notes.prototype.renderDiscussionAvatar = function(changesDiscussionContainer, note) {
       var diffLine;
       var lineHolder = this.getNotesHolder(changesDiscussionContainer);
+      var commentButton = lineHolder.querySelectorAll('.js-add-diff-note-button')[0];
 
       if (this.isParallelView()) {
         var parallelHolder = changesDiscussionContainer.closest('.parallel');
@@ -411,7 +414,12 @@
         avatarHolder.className = 'diff-comment-avatar-holders';
 
         diffLine.appendChild(avatarHolder);
-        lineHolder.classList.add('js-no-comment-btn');
+      }
+
+      lineHolder.classList.add('js-no-comment-btn');
+
+      if (commentButton) {
+        commentButton.parentNode.removeChild(commentButton);
       }
 
       var commentCount = diffLine.querySelectorAll('.diff-comments-more-count')[0];
