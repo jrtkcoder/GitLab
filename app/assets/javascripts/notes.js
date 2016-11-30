@@ -89,7 +89,7 @@
       $(document).on("visibilitychange", this.visibilityChange);
       // when issue status changes, we need to refresh data
       $(document).on("issuable:change", this.refresh);
-      document.addEventListener('click', this.showDiscussion.bind(this));
+      $(document).on('click', '.js-diff-comment-avatar', this.addDiffNote);
       // when a key is clicked on the notes
       return $(document).on("keydown", ".js-note-text", this.keydownNoteText);
     };
@@ -114,6 +114,7 @@
       $(document).off("keydown", ".js-note-text");
       $(document).off('click', '.js-comment-resolve-button');
       $(document).off("click", '.system-note-commit-list-toggler');
+      $(document).off('click', '.js-diff-comment-avatar');
       $('.note .js-task-list-container').taskList('disable');
       return $(document).off('tasklist:changed', '.note .js-task-list-container');
     };
@@ -429,11 +430,12 @@
         avatar.width = 19;
         avatar.height = 19;
         avatar.src = note.author.avatar;
-        avatar.className = 'avatar diff-comment-avatar has-tooltip js-diff-comment-avatar js-diff-note-author-image-' + note.id;
+        avatar.className = 'avatar diff-comment-avatar has-tooltip js-diff-comment-avatar';
         avatar.title = note.author.name + ': ' + note.note_truncated;
         avatar.role = 'button';
         avatar.dataset.container = 'body';
         avatar.dataset.placement = 'top';
+        avatar.dataset.noteId = note.id;
 
         avatarHolder.insertBefore(avatar, commentCount);
       }
@@ -653,8 +655,10 @@
      */
 
     Notes.prototype.removeNote = function(e) {
-      var noteId, lineHolder;
-      noteId = $(e.currentTarget).closest(".note").attr("id");
+      var noteId, dataNoteId, $note, lineHolder;
+      $note = $(e.currentTarget).closest(".note");
+      noteId = $note.attr("id");
+      dataNoteId = $note.attr('data-note-id');
       lineHolder = $(e.currentTarget).closest('.notes[data-discussion-id]')
         .closest('.notes_holder')
         .prev('.line_holder');
@@ -687,7 +691,7 @@
         };
       })(this));
 
-      $('.js-diff-note-author-image-' + noteId.replace('note_', '')).remove();
+      $('[data-note-id="' + dataNoteId + '"]').remove();
       this.discussionCommentCount(lineHolder.get(0));
 
       // Decrement the "Discussions" counter only once
@@ -799,12 +803,16 @@
       }
       notesContentSelector += " .content";
       if (hasNotes) {
-        nextRow.show();
+        if ($link.hasClass('js-diff-comment-avatar') && nextRow.is(':visible')) {
+          nextRow.hide();
+        } else {
+          nextRow.show();
+        }
         notesContent = nextRow.find(notesContentSelector);
         if (notesContent.length) {
           notesContent.show();
           replyButton = notesContent.find(".js-discussion-reply-button:visible");
-          if (replyButton.length) {
+          if (replyButton.length && !$link.hasClass('js-diff-comment-avatar')) {
             e.target = replyButton[0];
             $.proxy(this.replyToDiscussionNote, replyButton[0], e).call();
           } else {
@@ -822,6 +830,11 @@
         notesContent = nextRow.find(notesContentSelector);
         addForm = true;
       }
+
+      if ($link.hasClass('js-diff-comment-avatar')) {
+        addForm = false;
+      }
+
       if (addForm) {
         newForm = this.formClone.clone();
         newForm.appendTo(notesContent);
@@ -968,21 +981,6 @@
         .attr('data-discussion-id', discussionId)
         .attr('data-resolve-all', 'true')
         .attr('data-project-path', $this.attr('data-project-path'));
-    };
-
-    Notes.prototype.showDiscussion = function(e) {
-      var el = e.target;
-
-      if (!el.classList.contains('js-diff-comment-avatar')) return;
-
-      var row = el.closest('tr'),
-          notesHolder = row.nextElementSibling;
-
-      if (notesHolder.style.display === 'none') {
-        notesHolder.style.display = '';
-      } else {
-        notesHolder.style.display = 'none';
-      }
     };
 
     Notes.prototype.toggleCommitList = function(e) {
