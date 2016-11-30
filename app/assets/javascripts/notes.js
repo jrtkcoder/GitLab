@@ -376,7 +376,7 @@
       var commentCount = lineHolder.querySelectorAll('.diff-comments-more-count')[0],
           notesCount = changesDiscussionContainer.querySelectorAll('.note').length;
 
-      commentCount.setAttribute('aria-label', notesCount - 3);
+      commentCount.textContent = '+' + (notesCount - 3);
       commentCount.setAttribute('title', (notesCount - 3) + ' more comment' + (notesCount === 4 ? '' : 's'));
 
       if (notesCount > 3) {
@@ -691,8 +691,8 @@
         };
       })(this));
 
-      $('[data-note-id="' + dataNoteId + '"]').remove();
-      this.discussionCommentCount(lineHolder.get(0));
+      $('.js-diff-comment-avatar[data-note-id="' + dataNoteId + '"]').remove();
+      this.discussionCommentCount(lineHolder.next().get(0));
 
       // Decrement the "Discussions" counter only once
       return this.updateNotesCount(-1);
