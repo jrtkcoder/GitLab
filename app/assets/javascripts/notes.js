@@ -330,11 +330,11 @@
 
       if (typeof gl.diffNotesCompileComponents !== 'undefined') {
         gl.diffNotesCompileComponents();
+
+        var changesDiscussionContainer = $(".diffs .notes[data-discussion-id='" + note.discussion_id + "']");
+
+        this.renderDiscussionAvatar(changesDiscussionContainer.get(0), note);
       }
-
-      var changesDiscussionContainer = $(".diffs .notes[data-discussion-id='" + note.discussion_id + "']");
-
-      this.renderDiscussionAvatar(changesDiscussionContainer.get(0), note);
 
       gl.utils.localTimeAgo($('.js-timeago'), false);
 
@@ -355,18 +355,17 @@
       var diffLine;
       var lineHolder = this.getLineHolder(changesDiscussionContainer);
       var commentButton = lineHolder.querySelectorAll('.js-add-diff-note-button')[0];
+      var diffLineClass = '.diff-line-num.old_line';
 
       if (this.isParallelView()) {
         var parallelHolder = changesDiscussionContainer.closest('.parallel');
 
         if (parallelHolder.classList.contains('new')) {
-          diffLine = lineHolder.querySelectorAll('.diff-line-num.new_line')[0];
-        } else {
-          diffLine = lineHolder.querySelectorAll('.diff-line-num.old_line')[0];
+          diffLineClass = '.diff-line-num.new_line';
         }
-      } else {
-        diffLine = lineHolder.querySelectorAll('.diff-line-num.old_line')[0];
       }
+
+      diffLine = lineHolder.querySelectorAll(diffLineClass)[0];
 
       var avatarHolder = diffLine.querySelectorAll('.diff-comment-avatar-holders')[0];
 
