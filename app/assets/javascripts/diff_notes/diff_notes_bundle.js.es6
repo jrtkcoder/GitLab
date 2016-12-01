@@ -14,15 +14,13 @@ $(() => {
   window.gl.diffNoteApps = {};
 
   gl.diffNotesCompileComponents = () => {
-    const diffNoteAvatars = document.querySelectorAll('diff-note-avatars');
-
-    diffNoteAvatars.forEach((el) => {
+    $('diff-note-avatars').each(function() {
       const tmp = Vue.extend({
-        template: el.outerHTML
+        template: $(this).get(0).outerHTML
       });
       const tmpApp = new tmp().$mount();
 
-      el.parentNode.replaceChild(tmpApp.$el, el);
+      $(this).replaceWith(tmpApp.$el);
     });
 
     const $components = $(COMPONENT_SELECTOR).filter(function () {
