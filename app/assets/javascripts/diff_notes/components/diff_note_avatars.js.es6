@@ -1,10 +1,11 @@
+/* global Vue CommentsStore Cookies Notes */
 (() => {
   const DiffNoteAvatars = Vue.extend({
     props: ['discussionId'],
     data() {
       return {
         storeState: CommentsStore.state,
-      }
+      };
     },
     template: `
       <div class="diff-comment-avatar-holders">
@@ -35,15 +36,15 @@
             $(this.$refs.extraComments).tooltip('fixTitle');
 
             // We need to add/remove a class to an element that is outside the Vue instance
-            if (Cookies.get('diff_view') === 'parallel') {
-              if (notesCount) {
+            if (notesCount) {
+              if (Cookies.get('diff_view') === 'parallel') {
                 this.$el.closest('.diff-line-num').classList.add('js-no-comment-btn');
               } else {
-                this.$el.closest('.diff-line-num').classList.remove('js-no-comment-btn');
-              }
-            } else {
-              if (notesCount) {
                 this.$el.closest('.line_holder').classList.add('js-no-comment-btn');
+              }
+            } else if (!notesCount) {
+              if (Cookies.get('diff_view') === 'parallel') {
+                this.$el.closest('.diff-line-num').classList.remove('js-no-comment-btn');
               } else {
                 this.$el.closest('.line_holder').classList.remove('js-no-comment-btn');
               }
@@ -55,17 +56,17 @@
     },
     computed: {
       notesSubset() {
-        let notes = [];
+        const notes = [];
         let index = 0;
 
         if (this.discussion) {
-          for (const noteId in this.discussion.notes) {
+          Object.keys(this.discussion.notes).forEach((noteId) => {
             if (index < 3) {
               notes.push(this.discussion.notes[noteId]);
             }
 
-            index++;
-          }
+            index += 1;
+          });
         }
 
         return notes;
@@ -93,8 +94,8 @@
     methods: {
       clickedAvatar(e) {
         Notes.prototype.addDiffNote(e);
-      }
-    }
+      },
+    },
   });
 
   Vue.component('diff-note-avatars', DiffNoteAvatars);

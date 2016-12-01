@@ -17,4 +17,4 @@ Element.prototype.matches = Element.prototype.matches ||
     let i = matches.length;
     while (--i >= 0 && matches.item(i) !== this) {}
     return i > -1;
-};
+  };
