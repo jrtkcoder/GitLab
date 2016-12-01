@@ -34,6 +34,17 @@ $(() => {
         $this.replaceWith(tmpApp.$el);
       });
     }
+
+    const diffNoteAvatars = document.querySelectorAll('diff-note-avatars');
+
+    diffNoteAvatars.forEach((el) => {
+      const tmp = Vue.extend({
+        template: el.outerHTML
+      });
+      const tmpApp = new tmp().$mount();
+
+      el.parentNode.replaceChild(tmpApp.$el, el);
+    });
   };
 
   gl.diffNotesCompileComponents();

@@ -7,7 +7,10 @@
       resolved: Boolean,
       projectPath: String,
       canResolve: Boolean,
-      resolvedBy: String
+      resolvedBy: String,
+      authorName: String,
+      authorAvatar: String,
+      noteTruncated: String,
     },
     data: function () {
       return {
@@ -98,7 +101,14 @@
       CommentsStore.delete(this.discussionId, this.noteId);
     },
     created: function () {
-      CommentsStore.create(this.discussionId, this.noteId, this.canResolve, this.resolved, this.resolvedBy);
+      CommentsStore.create(this.discussionId,
+        this.noteId,
+        this.canResolve,
+        this.resolved,
+        this.resolvedBy,
+        this.authorName,
+        this.authorAvatar,
+        this.noteTruncated);
     }
   });
 

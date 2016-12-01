@@ -89,7 +89,6 @@
       $(document).on("visibilitychange", this.visibilityChange);
       // when issue status changes, we need to refresh data
       $(document).on("issuable:change", this.refresh);
-      $(document).on('click', '.js-diff-comment-avatar', this.addDiffNote);
       // when a key is clicked on the notes
       return $(document).on("keydown", ".js-note-text", this.keydownNoteText);
     };
@@ -114,7 +113,6 @@
       $(document).off("keydown", ".js-note-text");
       $(document).off('click', '.js-comment-resolve-button');
       $(document).off("click", '.system-note-commit-list-toggler');
-      $(document).off('click', '.js-diff-comment-avatar');
       $('.note .js-task-list-container').taskList('disable');
       return $(document).off('tasklist:changed', '.note .js-task-list-container');
     };
@@ -337,7 +335,6 @@
       var changesDiscussionContainer = $(".diffs .notes[data-discussion-id='" + note.discussion_id + "']");
 
       this.renderDiscussionAvatar(changesDiscussionContainer.get(0), note);
-      this.discussionCommentCount(changesDiscussionContainer.get(0));
 
       gl.utils.localTimeAgo($('.js-timeago'), false);
 
@@ -352,42 +349,6 @@
       }
 
       return lineHolder;
-    };
-
-    Notes.prototype.discussionCommentCount = function(changesDiscussionContainer) {
-      var lineHolder;
-
-      if (changesDiscussionContainer.classList.contains('line_holder')) {
-        lineHolder = changesDiscussionContainer;
-      } else {
-        lineHolder = this.getLineHolder(changesDiscussionContainer);
-      }
-
-      if (this.isParallelView()) {
-        var parallelHolder = changesDiscussionContainer.closest('.parallel');
-
-        if (parallelHolder.classList.contains('new')) {
-          lineHolder = lineHolder.querySelectorAll('.diff-line-num.new_line')[0];
-        } else {
-          lineHolder = lineHolder.querySelectorAll('.diff-line-num.old_line')[0];
-        }
-      }
-
-      var commentCount = lineHolder.querySelectorAll('.diff-comments-more-count')[0],
-          notesCount = changesDiscussionContainer.querySelectorAll('.note').length;
-
-      if (commentCount) {
-        commentCount.textContent = '+' + (notesCount - 3);
-        commentCount.setAttribute('title', (notesCount - 3) + ' more comment' + (notesCount === 4 ? '' : 's'));
-
-        if (notesCount > 3) {
-          commentCount.classList.remove('hidden');
-        } else {
-          commentCount.classList.add('hidden');
-        }
-
-        $(commentCount).tooltip('fixTitle');
-      }
     };
 
     Notes.prototype.renderDiscussionAvatar = function(changesDiscussionContainer, note) {
@@ -410,42 +371,16 @@
       var avatarHolder = diffLine.querySelectorAll('.diff-comment-avatar-holders')[0];
 
       if (!avatarHolder) {
-        avatarHolder = document.createElement('div');
-        avatarHolder.className = 'diff-comment-avatar-holders';
+        avatarHolder = document.createElement('diff-note-avatars');
+        avatarHolder.setAttribute('discussion-id', note.discussion_id);
 
         diffLine.appendChild(avatarHolder);
-      }
 
-      lineHolder.classList.add('js-no-comment-btn');
+        gl.diffNotesCompileComponents();
+      }
 
       if (commentButton) {
         commentButton.parentNode.removeChild(commentButton);
-      }
-
-      var commentCount = diffLine.querySelectorAll('.diff-comments-more-count')[0];
-
-      if (!commentCount) {
-        commentCount = document.createElement('span');
-        commentCount.className = 'diff-comments-more-count has-tooltip hidden';
-        commentCount.dataset.container = 'body';
-        commentCount.dataset.placement = 'top';
-
-        avatarHolder.appendChild(commentCount);
-      }
-
-      if (changesDiscussionContainer.querySelectorAll('.note').length <= 3) {
-        var avatar = document.createElement('img');
-        avatar.width = 19;
-        avatar.height = 19;
-        avatar.src = note.author.avatar;
-        avatar.className = 'avatar diff-comment-avatar has-tooltip js-diff-comment-avatar';
-        avatar.title = note.author.name + ': ' + note.note_truncated;
-        avatar.role = 'button';
-        avatar.dataset.container = 'body';
-        avatar.dataset.placement = 'top';
-        avatar.dataset.noteId = note.id;
-
-        avatarHolder.insertBefore(avatar, commentCount);
       }
     };
 
@@ -692,15 +627,10 @@
             notes.closest(".timeline-entry").remove();
             // "Changes" tab / commit view
             notes.closest("tr").remove();
-
-            lineHolder.removeClass('js-no-comment-btn');
           }
           return note.remove();
         };
       })(this));
-
-      $('.js-diff-comment-avatar[data-note-id="' + dataNoteId + '"]').remove();
-      this.discussionCommentCount(lineHolder.next().get(0));
 
       // Decrement the "Discussions" counter only once
       return this.updateNotesCount(-1);
@@ -796,7 +726,7 @@
     Notes.prototype.addDiffNote = function(e) {
       var $link, addForm, hasNotes, lineType, newForm, nextRow, noteForm, notesContent, replyButton, row, rowCssToAdd, targetContent;
       e.preventDefault();
-      $link = $(e.currentTarget);
+      $link = $(e.currentTarget || e.target);
       row = $link.closest("tr");
       nextRow = row.next();
       hasNotes = nextRow.is(".notes_holder");

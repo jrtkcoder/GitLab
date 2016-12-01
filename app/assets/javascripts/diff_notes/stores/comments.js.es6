@@ -18,10 +18,10 @@
 
       return discussion;
     },
-    create: function (discussionId, noteId, canResolve, resolved, resolved_by) {
+    create: function (discussionId, noteId, canResolve, resolved, resolved_by, authorName, authorAvatar, noteTruncated) {
       const discussion = this.createDiscussion(discussionId);
 
-      discussion.createNote(noteId, canResolve, resolved, resolved_by);
+      discussion.createNote(noteId, canResolve, resolved, resolved_by, authorName, authorAvatar, noteTruncated);
     },
     update: function (discussionId, noteId, resolved, resolved_by) {
       const discussion = this.state[discussionId];

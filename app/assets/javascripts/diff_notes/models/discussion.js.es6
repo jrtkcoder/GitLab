@@ -7,8 +7,8 @@ class DiscussionModel {
     this.canResolve = false;
   }
 
-  createNote (noteId, canResolve, resolved, resolved_by) {
-    Vue.set(this.notes, noteId, new NoteModel(this.id, noteId, canResolve, resolved, resolved_by));
+  createNote (noteId, canResolve, resolved, resolved_by, authorName, authorAvatar, noteTruncated) {
+    Vue.set(this.notes, noteId, new NoteModel(this.id, noteId, canResolve, resolved, resolved_by, authorName, authorAvatar, noteTruncated));
   }
 
   deleteNote (noteId) {
