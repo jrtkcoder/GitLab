@@ -328,12 +328,14 @@
         discussionContainer.append(note_html);
       }
 
-      if (typeof gl.diffNotesCompileComponents !== 'undefined') {
+      if (typeof gl.diffNotesCompileComponents !== 'undefined' && note.discussion_id) {
         gl.diffNotesCompileComponents();
 
         var changesDiscussionContainer = $(".diffs .notes[data-discussion-id='" + note.discussion_id + "']");
 
-        this.renderDiscussionAvatar(changesDiscussionContainer.get(0), note);
+        if (changesDiscussionContainer.length) {
+          this.renderDiscussionAvatar(changesDiscussionContainer.get(0), note);
+        }
       }
 
       gl.utils.localTimeAgo($('.js-timeago'), false);
