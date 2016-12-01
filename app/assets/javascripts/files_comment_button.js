@@ -65,7 +65,7 @@
       if (this.isMovingToSameType(e)) {
         return;
       }
-      // $(COMMENT_BUTTON_CLASS, this.getButtonParent($(e.currentTarget))).remove();
+      $(COMMENT_BUTTON_CLASS, this.getButtonParent($(e.currentTarget))).remove();
     };
 
     FilesCommentButton.prototype.buildButton = function(buttonAttributes) {

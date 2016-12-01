@@ -3,7 +3,7 @@
     props: ['discussionId'],
     data() {
       return {
-        discussion: {},
+        storeState: CommentsStore.state,
       }
     },
     template: `
@@ -18,22 +18,19 @@
           :title="note.authorName + ': ' + note.noteTruncated"
           :src="note.authorAvatar"
           @click="clickedAvatar($event)" />
-        <span v-if="discussion.notesCount() > 3"
+        <span v-if="notesCount > 3"
           class="diff-comments-more-count has-tooltip"
           data-container="body"
           data-placement="top"
           ref="extraComments"
-          :title="extraNotesTitle">+{{ discussion.notesCount() - 3 }}</span>
+          :title="extraNotesTitle">+{{ notesCount - 3 }}</span>
       </div>
     `,
-    created() {
-      this.discussion = CommentsStore.state[this.discussionId];
-    },
     watch: {
-      discussion: {
+      storeState: {
         handler() {
           this.$nextTick(() => {
-            const notesCount = this.discussion.notesCount();
+            const notesCount = this.notesCount;
 
             $(this.$refs.extraComments).tooltip('fixTitle');
 
@@ -61,21 +58,37 @@
         let notes = [];
         let index = 0;
 
-        for (const noteId in this.discussion.notes) {
-          if (index < 3) {
-            notes.push(this.discussion.notes[noteId]);
-          }
+        if (this.discussion) {
+          for (const noteId in this.discussion.notes) {
+            if (index < 3) {
+              notes.push(this.discussion.notes[noteId]);
+            }
 
-          index++;
+            index++;
+          }
         }
 
         return notes;
       },
       extraNotesTitle() {
-        const extra = this.discussion.notesCount() - 3;
+        if (this.discussion) {
+          const extra = this.discussion.notesCount() - 3;
 
-        return `${extra} more comment${extra > 1 ? 's' : ''}`;
-      }
+          return `${extra} more comment${extra > 1 ? 's' : ''}`;
+        }
+
+        return '';
+      },
+      discussion() {
+        return this.storeState[this.discussionId];
+      },
+      notesCount() {
+        if (this.discussion) {
+          return this.discussion.notesCount();
+        }
+
+        return 0;
+      },
     },
     methods: {
       clickedAvatar(e) {
