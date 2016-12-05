@@ -344,13 +344,10 @@
     };
 
     Notes.prototype.getLineHolder = function(changesDiscussionContainer) {
-      var lineHolder = changesDiscussionContainer.closest('.notes_holder').previousElementSibling;
-
-      while (lineHolder.classList.contains('js-temp-notes-holder')) {
-        lineHolder = lineHolder.previousElementSibling;
-      }
-
-      return lineHolder;
+      return $(changesDiscussionContainer).closest('.notes_holder')
+        .prevAll('.line_holder')
+        .first()
+        .get(0);
     };
 
     Notes.prototype.renderDiscussionAvatar = function(changesDiscussionContainer, note) {
