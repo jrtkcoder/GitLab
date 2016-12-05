@@ -57,15 +57,12 @@
     computed: {
       notesSubset() {
         const notes = [];
-        let index = 0;
 
         if (this.discussion) {
-          Object.keys(this.discussion.notes).forEach((noteId) => {
+          Object.keys(this.discussion.notes).forEach((noteId, index) => {
             if (index < 3) {
               notes.push(this.discussion.notes[noteId]);
             }
-
-            index += 1;
           });
         }
 

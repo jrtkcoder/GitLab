@@ -600,8 +600,8 @@
 
     Notes.prototype.removeNote = function(e) {
       var noteId, dataNoteId, $note, lineHolder;
-      $note = $(e.currentTarget).closest(".note");
-      noteId = $note.attr("id");
+      $note = $(e.currentTarget).closest('.note');
+      noteId = $note.attr('id');
       dataNoteId = $note.attr('data-note-id');
       lineHolder = $(e.currentTarget).closest('.notes[data-discussion-id]')
         .closest('.notes_holder')
@@ -742,11 +742,9 @@
       }
       notesContentSelector += " .content";
       if (hasNotes) {
-        if ($link.hasClass('js-diff-comment-avatar') && nextRow.is(':visible')) {
-          nextRow.hide();
-        } else {
-          nextRow.show();
-        }
+        var condition = $link.hasClass('js-diff-comment-avatar') && nextRow.is(':visible');
+        nextRow.toggle(!condition);
+
         notesContent = nextRow.find(notesContentSelector);
         if (notesContent.length) {
           notesContent.show();

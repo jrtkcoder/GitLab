@@ -1,13 +1,13 @@
 /* eslint-disable */
 class NoteModel {
-  constructor (discussionId, noteId, canResolve, resolved, resolved_by, authorName, authorAvatar, noteTruncated) {
+  constructor (discussionId, noteObj) {
     this.discussionId = discussionId;
-    this.id = noteId;
-    this.canResolve = canResolve;
-    this.resolved = resolved;
-    this.resolved_by = resolved_by;
-    this.authorName = authorName;
-    this.authorAvatar = authorAvatar;
-    this.noteTruncated = noteTruncated;
+    this.id = noteObj.noteId;
+    this.canResolve = noteObj.canResolve;
+    this.resolved = noteObj.resolved;
+    this.resolved_by = noteObj.resolved_by;
+    this.authorName = noteObj.authorName;
+    this.authorAvatar = noteObj.authorAvatar;
+    this.noteTruncated = noteObj.noteTruncated;
   }
 }
