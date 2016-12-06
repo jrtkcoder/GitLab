@@ -1,10 +1,12 @@
-/* global Vue CommentsStore Cookies Notes */
+/* global Vue CommentsStore Cookies notes */
 (() => {
   const DiffNoteAvatars = Vue.extend({
     props: ['discussionId'],
     data() {
       return {
+        lineType: '',
         storeState: CommentsStore.state,
+        shownAvatars: 3,
       };
     },
     template: `
@@ -16,17 +18,27 @@
           role="button"
           data-container="body"
           data-placement="top"
+          data-html="true"
+          :data-line-type="lineType"
           :title="note.authorName + ': ' + note.noteTruncated"
           :src="note.authorAvatar"
           @click="clickedAvatar($event)" />
-        <span v-if="notesCount > 3"
-          class="diff-comments-more-count has-tooltip"
+        <span v-if="notesCount > shownAvatars"
+          class="diff-comments-more-count has-tooltip js-diff-comment-avatar"
           data-container="body"
           data-placement="top"
           ref="extraComments"
-          :title="extraNotesTitle">+{{ notesCount - 3 }}</span>
+          :title="extraNotesTitle"
+          @click="clickedAvatar($event)">+{{ notesCount - shownAvatars }}</span>
       </div>
     `,
+    mounted() {
+      this.$nextTick(() => {
+        this.addNoCommentClass();
+
+        this.lineType = $(this.$el).closest('.diff-line-num').hasClass('old_line') ? 'old' : 'new';
+      });
+    },
     watch: {
       storeState: {
         handler() {
@@ -36,19 +48,7 @@
             $(this.$refs.extraComments).tooltip('fixTitle');
 
             // We need to add/remove a class to an element that is outside the Vue instance
-            if (notesCount) {
-              if (Cookies.get('diff_view') === 'parallel') {
-                this.$el.closest('.diff-line-num').classList.add('js-no-comment-btn');
-              } else {
-                this.$el.closest('.line_holder').classList.add('js-no-comment-btn');
-              }
-            } else if (!notesCount) {
-              if (Cookies.get('diff_view') === 'parallel') {
-                this.$el.closest('.diff-line-num').classList.remove('js-no-comment-btn');
-              } else {
-                this.$el.closest('.line_holder').classList.remove('js-no-comment-btn');
-              }
-            }
+            this.addNoCommentClass();
           });
         },
         deep: true,
@@ -56,21 +56,17 @@
     },
     computed: {
       notesSubset() {
-        const notes = [];
+        let notes = [];
 
         if (this.discussion) {
-          Object.keys(this.discussion.notes).forEach((noteId, index) => {
-            if (index < 3) {
-              notes.push(this.discussion.notes[noteId]);
-            }
-          });
+          notes = Object.keys(this.discussion.notes).slice(0, this.shownAvatars).map( noteId => this.discussion.notes[noteId] )
         }
 
         return notes;
       },
       extraNotesTitle() {
         if (this.discussion) {
-          const extra = this.discussion.notesCount() - 3;
+          const extra = this.discussion.notesCount() - this.shownAvatars;
 
           return `${extra} more comment${extra > 1 ? 's' : ''}`;
         }
@@ -90,7 +86,15 @@
     },
     methods: {
       clickedAvatar(e) {
-        Notes.prototype.addDiffNote(e);
+        notes.addDiffNote(e);
+      },
+      addNoCommentClass() {
+        const notesCount = this.notesCount;
+
+        $(this.$el).closest('.js-no-comment-btn-detector')
+          .toggleClass('js-no-comment-btn', notesCount > 0)
+          .next()
+          .toggleClass('js-no-comment-btn', notesCount > 0);
       },
     },
   });

@@ -351,28 +351,28 @@
     };
 
     Notes.prototype.renderDiscussionAvatar = function(changesDiscussionContainer, note) {
-      var diffLine;
+      var avatarContainer;
       var lineHolder = this.getLineHolder(changesDiscussionContainer);
       var commentButton = lineHolder.querySelectorAll('.js-add-diff-note-button')[0];
-      var diffLineClass = '.diff-line-num.old_line';
+      var diffLineClass = '.js-avatar-container.old_line';
 
       if (this.isParallelView()) {
         var parallelHolder = changesDiscussionContainer.closest('.parallel');
 
         if (parallelHolder.classList.contains('new')) {
-          diffLineClass = '.diff-line-num.new_line';
+          diffLineClass = '.js-avatar-container.new_line';
         }
       }
 
-      diffLine = lineHolder.querySelectorAll(diffLineClass)[0];
+      avatarContainer = lineHolder.querySelectorAll(diffLineClass)[0];
 
-      var avatarHolder = diffLine.querySelectorAll('.diff-comment-avatar-holders')[0];
+      var avatarHolder = avatarContainer.querySelectorAll('.diff-comment-avatar-holders')[0];
 
       if (!avatarHolder) {
         avatarHolder = document.createElement('diff-note-avatars');
         avatarHolder.setAttribute('discussion-id', note.discussion_id);
 
-        diffLine.appendChild(avatarHolder);
+        avatarContainer.appendChild(avatarHolder);
 
         gl.diffNotesCompileComponents();
       }
@@ -598,13 +598,13 @@
     Notes.prototype.removeNote = function(e) {
       var noteId, dataNoteId, $note, lineHolder;
       $note = $(e.currentTarget).closest('.note');
-      noteId = $note.attr('id');
-      dataNoteId = $note.attr('data-note-id');
+      noteElId = $note.attr('id');
+      noteId = $note.attr('data-note-id');
       lineHolder = $(e.currentTarget).closest('.notes[data-discussion-id]')
         .closest('.notes_holder')
         .prev('.line_holder');
 
-      $(".note[id='" + noteId + "']").each((function(_this) {
+      $(".note[id='" + noteElId + "']").each((function(_this) {
         // A same note appears in the "Discussion" and in the "Changes" tab, we have
         // to remove all. Using $(".note[id='noteId']") ensure we get all the notes,
         // where $("#noteId") would return only one.
@@ -614,8 +614,8 @@
           notes = note.closest(".notes");
 
           if (typeof gl.diffNotesCompileComponents !== 'undefined') {
-            if (gl.diffNoteApps[noteId]) {
-              gl.diffNoteApps[noteId].$destroy();
+            if (gl.diffNoteApps[noteElId]) {
+              gl.diffNoteApps[noteElId].$destroy();
             }
           }
 
@@ -722,7 +722,7 @@
      */
 
     Notes.prototype.addDiffNote = function(e) {
-      var $link, addForm, hasNotes, lineType, newForm, nextRow, noteForm, notesContent, replyButton, row, rowCssToAdd, targetContent;
+      var $link, addForm, hasNotes, lineType, newForm, nextRow, noteForm, notesContent, replyButton, row, rowCssToAdd, targetContent, isDiffCommentAvatar;
       e.preventDefault();
       $link = $(e.currentTarget || e.target);
       row = $link.closest("tr");
@@ -731,6 +731,7 @@
       addForm = false;
       notesContentSelector = ".notes_content";
       rowCssToAdd = "<tr class=\"notes_holder js-temp-notes-holder\"><td class=\"notes_line\" colspan=\"2\"></td><td class=\"notes_content\"><div class=\"content\"></div></td></tr>";
+      isDiffCommentAvatar = $link.hasClass('js-diff-comment-avatar');
       // In parallel view, look inside the correct left/right pane
       if (this.isParallelView()) {
         lineType = $link.data("lineType");
@@ -738,15 +739,15 @@
         rowCssToAdd = "<tr class=\"notes_holder js-temp-notes-holder\"><td class=\"notes_line old\"></td><td class=\"notes_content parallel old\"><div class=\"content\"></div></td><td class=\"notes_line new\"></td><td class=\"notes_content parallel new\"><div class=\"content\"></div></td></tr>";
       }
       notesContentSelector += " .content";
-      if (hasNotes) {
-        var condition = $link.hasClass('js-diff-comment-avatar') && nextRow.is(':visible');
-        nextRow.toggle(!condition);
+      notesContent = nextRow.find(notesContentSelector);
 
-        notesContent = nextRow.find(notesContentSelector);
+      if (hasNotes && !isDiffCommentAvatar) {
+        nextRow.show();
+
         if (notesContent.length) {
           notesContent.show();
           replyButton = notesContent.find(".js-discussion-reply-button:visible");
-          if (replyButton.length && !$link.hasClass('js-diff-comment-avatar')) {
+          if (replyButton.length) {
             e.target = replyButton[0];
             $.proxy(this.replyToDiscussionNote, replyButton[0], e).call();
           } else {
@@ -757,16 +758,19 @@
             }
           }
         }
-      } else {
+      } else if (!isDiffCommentAvatar) {
         // add a notes row and insert the form
         row.after(rowCssToAdd);
         nextRow = row.next();
         notesContent = nextRow.find(notesContentSelector);
         addForm = true;
-      }
+      } else {
+        nextRow.show();
+        notesContent.toggle(!notesContent.is(':visible'));
 
-      if ($link.hasClass('js-diff-comment-avatar')) {
-        addForm = false;
+        if (!nextRow.find('.content').is(':visible')) {
+          nextRow.hide();
+        }
       }
 
       if (addForm) {
