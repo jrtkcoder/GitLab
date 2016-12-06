@@ -43,8 +43,6 @@
       storeState: {
         handler() {
           this.$nextTick(() => {
-            const notesCount = this.notesCount;
-
             $(this.$refs.extraComments).tooltip('fixTitle');
 
             // We need to add/remove a class to an element that is outside the Vue instance
@@ -59,7 +57,9 @@
         let notes = [];
 
         if (this.discussion) {
-          notes = Object.keys(this.discussion.notes).slice(0, this.shownAvatars).map( noteId => this.discussion.notes[noteId] )
+          notes = Object.keys(this.discussion.notes)
+            .slice(0, this.shownAvatars)
+            .map(noteId => this.discussion.notes[noteId]);
         }
 
         return notes;
