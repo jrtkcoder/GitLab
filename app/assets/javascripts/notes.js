@@ -293,7 +293,7 @@
      */
 
     Notes.prototype.renderDiscussionNote = function(note) {
-      var discussionContainer, form, note_html, row;
+      var discussionContainer, form, note_html, row, lineType, diffAvatarContainer;
       if (!this.isNewNote(note)) {
         return;
       }
@@ -303,6 +303,8 @@
         form = $("#new-discussion-note-form-" + note.original_discussion_id);
       }
       row = form.closest("tr");
+      lineType = form.find('#line_type').val();
+      diffAvatarContainer = row.prevAll('.line_holder').first().find('.js-avatar-container.' + lineType + '_line');
       note_html = $(note.html);
       note_html.syntaxHighlight();
       // is this the first note of discussion?
@@ -331,11 +333,7 @@
       if (typeof gl.diffNotesCompileComponents !== 'undefined' && note.discussion_id) {
         gl.diffNotesCompileComponents();
 
-        var changesDiscussionContainer = $(".diffs .notes[data-discussion-id='" + note.discussion_id + "']");
-
-        if (changesDiscussionContainer.length) {
-          this.renderDiscussionAvatar(changesDiscussionContainer.get(0), note);
-        }
+        this.renderDiscussionAvatar(diffAvatarContainer, note);
       }
 
       gl.utils.localTimeAgo($('.js-timeago'), false);
@@ -350,35 +348,21 @@
         .get(0);
     };
 
-    Notes.prototype.renderDiscussionAvatar = function(changesDiscussionContainer, note) {
-      var avatarContainer;
-      var lineHolder = this.getLineHolder(changesDiscussionContainer);
-      var commentButton = lineHolder.querySelectorAll('.js-add-diff-note-button')[0];
-      var diffLineClass = '.js-avatar-container.old_line';
+    Notes.prototype.renderDiscussionAvatar = function(diffAvatarContainer, note) {
+      var commentButton = diffAvatarContainer.find('.js-add-diff-note-button');
+      var avatarHolder = diffAvatarContainer.find('.diff-comment-avatar-holders');
 
-      if (this.isParallelView()) {
-        var parallelHolder = changesDiscussionContainer.closest('.parallel');
-
-        if (parallelHolder.classList.contains('new')) {
-          diffLineClass = '.js-avatar-container.new_line';
-        }
-      }
-
-      avatarContainer = lineHolder.querySelectorAll(diffLineClass)[0];
-
-      var avatarHolder = avatarContainer.querySelectorAll('.diff-comment-avatar-holders')[0];
-
-      if (!avatarHolder) {
+      if (!avatarHolder.length) {
         avatarHolder = document.createElement('diff-note-avatars');
         avatarHolder.setAttribute('discussion-id', note.discussion_id);
 
-        avatarContainer.appendChild(avatarHolder);
+        diffAvatarContainer.append(avatarHolder);
 
         gl.diffNotesCompileComponents();
       }
 
-      if (commentButton) {
-        commentButton.parentNode.removeChild(commentButton);
+      if (commentButton.length) {
+        commentButton.remove();
       }
     };
 
