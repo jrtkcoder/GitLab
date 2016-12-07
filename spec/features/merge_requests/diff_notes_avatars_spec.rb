@@ -39,7 +39,7 @@ feature 'Diff note avatars', feature: true, js: true do
 
       it 'shows comment on note avatar' do
         page.within find("[id='#{position.line_code(project.repository)}']") do
-          expect(first('img.js-diff-comment-avatar')["title"]).to eq("#{note.author.name}: #{note.note.truncate(17)}")
+          expect(first('img.js-diff-comment-avatar')["data-original-title"]).to eq("#{note.author.name}: #{note.note.truncate(17)}")
         end
       end
 
@@ -92,7 +92,7 @@ feature 'Diff note avatars', feature: true, js: true do
           page.within '.js-discussion-note-form' do
             find('.js-note-text').native.send_keys('Test')
 
-            click_button 'Comment'
+            find('.js-comment-button').trigger 'click'
 
             wait_for_ajax
           end
