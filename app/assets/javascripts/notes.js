@@ -303,7 +303,7 @@
         form = $("#new-discussion-note-form-" + note.original_discussion_id);
       }
       row = form.closest("tr");
-      lineType = form.find('#line_type').val();
+      lineType = this.isParallelView() ? form.find('#line_type').val() : 'old';
       diffAvatarContainer = row.prevAll('.line_holder').first().find('.js-avatar-container.' + lineType + '_line');
       note_html = $(note.html);
       note_html.syntaxHighlight();
