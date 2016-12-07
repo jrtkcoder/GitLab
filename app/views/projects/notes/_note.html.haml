@@ -32,10 +32,10 @@
                   ":note-id" => note.id,
                   ":resolved" => note.resolved?,
                   ":can-resolve" => can_resolve,
-                  "author-name" => note.author.name,
+                  ":author-name" => "'#{h(note.author.name)}'",
                   "author-avatar" => note.author.avatar_url,
                   ":note-truncated" => "'#{truncate(note.note, length: 17)}'",
-                  "resolved-by" => note.resolved_by.try(:name),
+                  ":resolved-by" => "'#{h(note.resolved_by.try(:name))}'",
                   "v-show" => "#{can_resolve || note.resolved?}",
                   "inline-template" => true,
                   "ref" => "note_#{note.id}" }
@@ -48,6 +48,7 @@
                       ":aria-label" => "buttonText",
                       "@click" => "resolve",
                       ":title" => "buttonText",
+                      "data-html" => "true",
                       "v-show" => "!loading",
                       ":ref" => "'button'" }
 
