@@ -28,6 +28,7 @@
           data-container="body"
           data-placement="top"
           ref="extraComments"
+          :data-line-type="lineType"
           :title="extraNotesTitle"
           @click="clickedAvatar($event)">+{{ notesCount - shownAvatars }}</span>
       </div>
