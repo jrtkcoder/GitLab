@@ -89,11 +89,12 @@
         notes.addDiffNote(e);
       },
       addNoCommentClass() {
+        const $this = $(this.$el);
         const notesCount = this.notesCount;
 
-        $(this.$el).closest('.js-no-comment-btn-detector')
+        $this.closest('.js-avatar-container')
           .toggleClass('js-no-comment-btn', notesCount > 0)
-          .next('td')
+          .nextUntil('.js-avatar-container')
           .toggleClass('js-no-comment-btn', notesCount > 0);
       },
     },
