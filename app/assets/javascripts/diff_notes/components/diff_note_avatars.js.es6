@@ -43,7 +43,7 @@
       storeState: {
         handler() {
           this.$nextTick(() => {
-            $(this.$refs.extraComments).tooltip('fixTitle');
+            $(this.$el).find('.has-tooltip').tooltip('fixTitle');
 
             // We need to add/remove a class to an element that is outside the Vue instance
             this.addNoCommentClass();

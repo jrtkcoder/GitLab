@@ -774,7 +774,7 @@
         nextRow.show();
         notesContent.toggle(!notesContent.is(':visible'));
 
-        if (!nextRow.find('.content').is(':visible')) {
+        if (!nextRow.find('.content:not(:empty)').is(':visible')) {
           nextRow.hide();
         }
       }
