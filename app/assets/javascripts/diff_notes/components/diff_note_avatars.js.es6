@@ -43,7 +43,7 @@
       storeState: {
         handler() {
           this.$nextTick(() => {
-            $(this.$el).find('.has-tooltip').tooltip('fixTitle');
+            $('.has-tooltip', this.$el).tooltip('fixTitle');
 
             // We need to add/remove a class to an element that is outside the Vue instance
             this.addNoCommentClass();
@@ -89,10 +89,9 @@
         notes.addDiffNote(e);
       },
       addNoCommentClass() {
-        const $this = $(this.$el);
         const notesCount = this.notesCount;
 
-        $this.closest('.js-avatar-container')
+        $(this.$el).closest('.js-avatar-container')
           .toggleClass('js-no-comment-btn', notesCount > 0)
           .nextUntil('.js-avatar-container')
           .toggleClass('js-no-comment-btn', notesCount > 0);

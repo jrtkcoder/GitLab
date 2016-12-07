@@ -322,14 +322,16 @@
         } else {
           // Merge new discussion HTML in
           var $discussion = $(note.diff_discussion_html);
-          var $notesContent = $discussion.find('.content:not(:empty)').closest('.notes_content');
-          var $content = $notesContent.find('.content');
-          var contentContainerClass = '.' + $notesContent.attr('class').split(' ').join('.');
+          var $notes = $discussion.find('.notes[data-discussion-id="' + note.discussion_id + '"]');
+          var contentContainerClass = '.' + $notes.closest('.notes_content')
+            .attr('class')
+            .split(' ')
+            .join('.');
 
           // remove the note (will be added again below)
-          $notesContent.find('.note').remove();
+          $notes.find('.note').remove();
 
-          row.find(contentContainerClass).find('.content').append($content);
+          row.find(contentContainerClass + ' .content').append($notes.closest('.content').children());
         }
         // Before that, the container didn't exist
         discussionContainer = $(".notes[data-discussion-id='" + note.discussion_id + "']");
