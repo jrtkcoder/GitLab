@@ -493,6 +493,10 @@
       @for $i from 1 through 4 {
         &:nth-child(#{$i}) {
           transform: translateX((($i * 14px) - 14px));
+
+          &:hover {
+            transform: translateX((($i * 14px) - 14px)) scale(1.2);
+          }
         }
       }
     }
