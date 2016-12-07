@@ -313,10 +313,24 @@
         discussionContainer = $(".notes[data-discussion-id='" + note.original_discussion_id + "']");
       }
       if (discussionContainer.length === 0) {
-        // insert the note and the reply button after the temp row
-        row.after(note.diff_discussion_html);
-        // remove the note (will be added again below)
-        row.next().find(".note").remove();
+        if (!this.isParallelView() || row.hasClass('js-temp-notes-holder')) {
+          // insert the note and the reply button after the temp row
+          row.after(note.diff_discussion_html);
+
+          // remove the note (will be added again below)
+          row.next().find(".note").remove();
+        } else {
+          // Merge new discussion HTML in
+          var $discussion = $(note.diff_discussion_html);
+          var $notesContent = $discussion.find('.content:not(:empty)').closest('.notes_content');
+          var $content = $notesContent.find('.content');
+          var contentContainerClass = '.' + $notesContent.attr('class').split(' ').join('.');
+
+          // remove the note (will be added again below)
+          $notesContent.find('.note').remove();
+
+          row.find(contentContainerClass).find('.content').append($content);
+        }
         // Before that, the container didn't exist
         discussionContainer = $(".notes[data-discussion-id='" + note.discussion_id + "']");
         // Add note to 'Changes' page discussions
@@ -603,14 +617,22 @@
             }
           }
 
+          note.remove();
+
           // check if this is the last note for this line
-          if (notes.find(".note").length === 1) {
+          if (notes.find(".note").length === 0) {
+            var notesTr = notes.closest("tr");
+
             // "Discussions" tab
             notes.closest(".timeline-entry").remove();
-            // "Changes" tab / commit view
-            notes.closest("tr").remove();
+
+            if (!_this.isParallelView() || notesTr.find('.note').length === 0) {
+              // "Changes" tab / commit view
+              notesTr.remove();
+            } else {
+              notes.closest('.content').empty();
+            }
           }
-          return note.remove();
         };
       })(this));
 

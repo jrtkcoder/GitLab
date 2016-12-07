@@ -93,7 +93,7 @@
 
         $(this.$el).closest('.js-no-comment-btn-detector')
           .toggleClass('js-no-comment-btn', notesCount > 0)
-          .next()
+          .next('td')
           .toggleClass('js-no-comment-btn', notesCount > 0);
       },
     },
