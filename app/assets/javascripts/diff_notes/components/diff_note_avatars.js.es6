@@ -92,6 +92,9 @@
     methods: {
       clickedAvatar(e) {
         notes.addDiffNote(e);
+
+        // Toggle the active state of the toggle all button
+        this.toggleDiscussionsToggleState();
       },
       addNoCommentClass() {
         const notesCount = this.notesCount;
@@ -100,6 +103,13 @@
           .toggleClass('js-no-comment-btn', notesCount > 0)
           .nextUntil('.js-avatar-container')
           .toggleClass('js-no-comment-btn', notesCount > 0);
+      },
+      toggleDiscussionsToggleState() {
+        const $notesHolders = $(this.$el).closest('.code').find('.notes_holder');
+        const $visibleNotesHolders = $notesHolders.filter(':visible');
+        const $toggleDiffCommentsBtn = $(this.$el).closest('.diff-file').find('.js-toggle-diff-comments');
+
+        $toggleDiffCommentsBtn.toggleClass('active', $notesHolders.length === $visibleNotesHolders.length);
       },
     },
   });
