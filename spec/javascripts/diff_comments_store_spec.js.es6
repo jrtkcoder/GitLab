@@ -16,7 +16,7 @@
       resolvedBy: 'test',
       authorName: 'test',
       authorAvatar: 'test',
-      noteTruncated: 'test...'
+      noteTruncated: 'test...',
     });
   };
 

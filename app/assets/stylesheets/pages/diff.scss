@@ -491,11 +491,17 @@
     .diff-comment-avatar,
     .diff-comments-more-count {
       @for $i from 1 through 4 {
+        $x-pos: 14px;
+
         &:nth-child(#{$i}) {
-          transform: translateX((($i * 14px) - 14px));
+          @if $i == 4 {
+            $x-pos: 14.5px;
+          }
+
+          transform: translateX((($i * $x-pos) - $x-pos));
 
           &:hover {
-            transform: translateX((($i * 14px) - 14px)) scale(1.2);
+            transform: translateX((($i * $x-pos) - $x-pos)) scale(1.2);
           }
         }
       }
@@ -526,6 +532,8 @@
   color: $white-light;
   border: 1px solid $white-light;
   border-radius: 50%;
-  font-size: 10px;
+  font-family: $regular_font;
+  font-size: 9px;
   line-height: 17px;
+  text-align: center;
 }

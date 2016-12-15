@@ -29,7 +29,7 @@
           ref="extraComments"
           :data-line-type="lineType"
           :title="extraNotesTitle"
-          @click="clickedAvatar($event)">+{{ notesCount - shownAvatars }}</span>
+          @click="clickedAvatar($event)">{{ moreText }}</span>
       </div>
     `,
     mounted() {
@@ -82,6 +82,11 @@
         }
 
         return 0;
+      },
+      moreText() {
+        const plusSign = this.notesCount < 100 ? '+' : '';
+
+        return `${plusSign}${this.notesCount - this.shownAvatars}`;
       },
     },
     methods: {

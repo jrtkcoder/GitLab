@@ -17,7 +17,7 @@ $(() => {
   window.gl.diffNoteApps = {};
 
   gl.diffNotesCompileComponents = () => {
-    $('diff-note-avatars').each(function() {
+    $('diff-note-avatars').each(function () {
       const tmp = Vue.extend({
         template: $(this).get(0).outerHTML
       });
