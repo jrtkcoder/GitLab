@@ -549,8 +549,10 @@
 
   svg {
     position: absolute;
-    left: 3.5px;
-    top: 3.5px;
+    left: 50%;
+    top: 50%;
+    margin-left: -5.5px;
+    margin-top: -5.5px;
   }
 
   path {
