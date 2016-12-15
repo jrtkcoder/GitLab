@@ -6,19 +6,15 @@ describe Namespace, models: true do
   it { is_expected.to have_many :projects }
 
   it { is_expected.to validate_presence_of(:name) }
-  it { is_expected.to validate_uniqueness_of(:name) }
+  it { is_expected.to validate_uniqueness_of(:name).scoped_to(:parent_id) }
   it { is_expected.to validate_length_of(:name).is_at_most(255) }
 
   it { is_expected.to validate_length_of(:description).is_at_most(255) }
 
   it { is_expected.to validate_presence_of(:path) }
-  it { is_expected.to validate_uniqueness_of(:path) }
   it { is_expected.to validate_length_of(:path).is_at_most(255) }
 
   it { is_expected.to validate_presence_of(:owner) }
-
-  describe "Mass assignment" do
-  end
 
   describe "Respond to" do
     it { is_expected.to respond_to(:human_name) }
@@ -123,5 +119,13 @@ describe Namespace, models: true do
       expect(Namespace.clean_path("-john+gitlab-ETC%.git@gmail.com")).to eq("johngitlab-ETC2")
       expect(Namespace.clean_path("--%+--valid_*&%name=.git.%.atom.atom.@email.com")).to eq("valid_name")
     end
+  end
+
+  describe '#full_path' do
+    let(:group) { create(:group) }
+    let(:nested_group) { create(:group, parent: group) }
+
+    it { expect(group.full_path).to eq(group.path) }
+    it { expect(nested_group.full_path).to eq("#{group.path}/#{nested_group.path}") }
   end
 end

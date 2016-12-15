@@ -132,7 +132,7 @@ gem 'after_commit_queue', '~> 1.3.0'
 gem 'acts-as-taggable-on', '~> 4.0'
 
 # Background jobs
-gem 'sidekiq', '~> 4.2'
+gem 'sidekiq', '~> 4.2.7'
 gem 'sidekiq-cron', '~> 0.4.4'
 gem 'redis-namespace', '~> 1.5.2'
 gem 'sidekiq-limit_fetch', '~> 3.4'
@@ -177,6 +177,9 @@ gem 'asana', '~> 0.4.0'
 
 # FogBugz integration
 gem 'ruby-fogbugz', '~> 0.2.1'
+
+# Kubernetes integration
+gem 'kubeclient', '~> 2.2.0'
 
 # d3
 gem 'd3_rails', '~> 3.5.0'
@@ -271,7 +274,7 @@ group :development, :test do
   gem 'fuubar', '~> 2.0.0'
 
   gem 'database_cleaner',   '~> 1.5.0'
-  gem 'factory_girl_rails', '~> 4.6.0'
+  gem 'factory_girl_rails', '~> 4.7.0'
   gem 'rspec-rails',        '~> 3.5.0'
   gem 'rspec-retry',        '~> 0.4.5'
   gem 'spinach-rails',      '~> 0.2.1'
