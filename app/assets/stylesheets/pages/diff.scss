@@ -527,8 +527,9 @@
   }
 }
 
-.diff-comments-more-count {
-  background-color: $gl-link-color;
+.diff-comments-more-count,
+.diff-notes-collapse {
+  background-color: $gray-darkest;
   color: $white-light;
   border: 1px solid $white-light;
   border-radius: 50%;
@@ -536,4 +537,31 @@
   font-size: 9px;
   line-height: 17px;
   text-align: center;
+}
+
+.diff-notes-collapse {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 19px;
+  height: 19px;
+  transition: transform .1s ease-out;
+
+  svg {
+    position: absolute;
+    left: 3.5px;
+    top: 3.5px;
+  }
+
+  path {
+    fill: $white-light;
+  }
+
+  &:hover {
+    transform: scale(1.2);
+  }
+
+  &:focus {
+    outline: 0;
+  }
 }

@@ -4,6 +4,7 @@
     props: ['discussionId'],
     data() {
       return {
+        isVisible: false,
         lineType: '',
         storeState: CommentsStore.state,
         shownAvatars: 3,
@@ -11,30 +12,42 @@
     },
     template: `
       <div class="diff-comment-avatar-holders">
-        <img v-for="note in notesSubset"
-          class="avatar diff-comment-avatar has-tooltip js-diff-comment-avatar"
-          width="19"
-          height="19"
-          role="button"
-          data-container="body"
-          data-placement="top"
+        <div v-if="!isVisible">
+          <img v-for="note in notesSubset"
+            class="avatar diff-comment-avatar has-tooltip js-diff-comment-avatar"
+            width="19"
+            height="19"
+            role="button"
+            data-container="body"
+            data-placement="top"
+            :data-line-type="lineType"
+            :title="note.authorName + ': ' + note.noteTruncated"
+            :src="note.authorAvatar"
+            @click="clickedAvatar($event)" />
+          <span v-if="notesCount > shownAvatars"
+            class="diff-comments-more-count has-tooltip js-diff-comment-avatar"
+            data-container="body"
+            data-placement="top"
+            ref="extraComments"
+            role="button"
+            :data-line-type="lineType"
+            :title="extraNotesTitle"
+            @click="clickedAvatar($event)">{{ moreText }}</span>
+        </div>
+        <button class="diff-notes-collapse js-diff-comment-avatar"
+          type="button"
+          aria-label="Show comments"
           :data-line-type="lineType"
-          :title="note.authorName + ': ' + note.noteTruncated"
-          :src="note.authorAvatar"
-          @click="clickedAvatar($event)" />
-        <span v-if="notesCount > shownAvatars"
-          class="diff-comments-more-count has-tooltip js-diff-comment-avatar"
-          data-container="body"
-          data-placement="top"
-          ref="extraComments"
-          :data-line-type="lineType"
-          :title="extraNotesTitle"
-          @click="clickedAvatar($event)">{{ moreText }}</span>
+          @click="clickedAvatar($event)"
+          v-if="isVisible">
+          <slot name="icon"></slot>
+        </button>
       </div>
     `,
     mounted() {
       this.$nextTick(() => {
         this.addNoCommentClass();
+        this.setDiscussionVisible();
 
         this.lineType = $(this.$el).closest('.diff-line-num').hasClass('old_line') ? 'old' : 'new';
       });
@@ -95,6 +108,9 @@
 
         // Toggle the active state of the toggle all button
         this.toggleDiscussionsToggleState();
+        this.setDiscussionVisible();
+
+        $('.has-tooltip').tooltip('hide');
       },
       addNoCommentClass() {
         const notesCount = this.notesCount;
@@ -110,6 +126,9 @@
         const $toggleDiffCommentsBtn = $(this.$el).closest('.diff-file').find('.js-toggle-diff-comments');
 
         $toggleDiffCommentsBtn.toggleClass('active', $notesHolders.length === $visibleNotesHolders.length);
+      },
+      setDiscussionVisible() {
+        this.isVisible = $(`.diffs .notes[data-discussion-id="${this.discussion.id}"]`).is(':visible');
       },
     },
   });
