@@ -506,6 +506,12 @@
         }
       }
     }
+
+    .diff-comments-more-count {
+      padding-left: 2px;
+      padding-right: 2px;
+      width: auto;
+    }
   }
 }
 
@@ -518,7 +524,7 @@
   margin-right: 0;
   border-color: $white-light;
   cursor: pointer;
-  transition: transform .1s ease-out;
+  transition: all .1s ease-out;
 
   @for $i from 1 through 4 {
     &:nth-child(#{$i}) {
@@ -527,12 +533,20 @@
   }
 }
 
+.diff-comments-more-count {
+  width: 19px;
+  min-width: 19px;
+  padding-left: 0;
+  padding-right: 0;
+  overflow: hidden;
+}
+
 .diff-comments-more-count,
 .diff-notes-collapse {
   background-color: $gray-darkest;
   color: $white-light;
   border: 1px solid $white-light;
-  border-radius: 50%;
+  border-radius: 1em;
   font-family: $regular_font;
   font-size: 9px;
   line-height: 17px;
