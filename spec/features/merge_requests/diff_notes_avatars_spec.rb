@@ -33,19 +33,23 @@ feature 'Diff note avatars', feature: true, js: true do
 
       it 'shows note avatar' do
         page.within find("[id='#{position.line_code(project.repository)}']") do
+          find('.diff-notes-collapse').click
+
           expect(page).to have_selector('img.js-diff-comment-avatar', count: 1)
         end
       end
 
       it 'shows comment on note avatar' do
         page.within find("[id='#{position.line_code(project.repository)}']") do
+          find('.diff-notes-collapse').click
+
           expect(first('img.js-diff-comment-avatar')["data-original-title"]).to eq("#{note.author.name}: #{note.note.truncate(17)}")
         end
       end
 
       it 'toggles comments when clicking avatar' do
         page.within find("[id='#{position.line_code(project.repository)}']") do
-          first('img.js-diff-comment-avatar').click
+          find('.diff-notes-collapse').click
         end
 
         expect(page).to have_selector('.notes_holder', visible: false)
@@ -81,6 +85,8 @@ feature 'Diff note avatars', feature: true, js: true do
         end
 
         page.within find("[id='#{position.line_code(project.repository)}']") do
+          find('.diff-notes-collapse').click
+
           expect(page).to have_selector('img.js-diff-comment-avatar', count: 2)
         end
       end
@@ -99,6 +105,8 @@ feature 'Diff note avatars', feature: true, js: true do
         end
 
         page.within find("[id='#{position.line_code(project.repository)}']") do
+          find('.diff-notes-collapse').click
+
           expect(page).to have_selector('img.js-diff-comment-avatar', count: 3)
           expect(find('.diff-comments-more-count')).to have_content '+1'
         end
@@ -117,6 +125,8 @@ feature 'Diff note avatars', feature: true, js: true do
 
         it 'shows extra comment count' do
           page.within find("[id='#{position.line_code(project.repository)}']") do
+            find('.diff-notes-collapse').click
+
             expect(find('.diff-comments-more-count')).to have_content '+1'
           end
         end

@@ -110,7 +110,10 @@
         this.toggleDiscussionsToggleState();
         this.setDiscussionVisible();
 
-        $('.has-tooltip').tooltip('hide');
+        this.$nextTick(() => {
+          $('.has-tooltip', this.$el).tooltip('fixTitle');
+          $('.has-tooltip', this.$el).tooltip('hide');
+        });
       },
       addNoCommentClass() {
         const notesCount = this.notesCount;
