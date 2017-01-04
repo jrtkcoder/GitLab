@@ -36,6 +36,9 @@
       new gl.BlobCiYamlSelectors({
         editor: this.editor
       });
+      new gl.BlobDockerfileSelectors({
+        editor: this.editor
+      });
     }
 
     EditBlob.prototype.initModePanesAndLinks = function() {
@@ -60,7 +63,7 @@
           content: this.editor.getValue()
         }, function(response) {
           currentPane.empty().append(response);
-          return currentPane.syntaxHighlight();
+          return currentPane.renderGFM();
         });
       } else {
         this.$toggleButton.show();

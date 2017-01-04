@@ -2,8 +2,6 @@ module API
   module Helpers
     include Gitlab::Utils
 
-    PRIVATE_TOKEN_HEADER = "HTTP_PRIVATE_TOKEN"
-    PRIVATE_TOKEN_PARAM = :private_token
     SUDO_HEADER = "HTTP_SUDO"
     SUDO_PARAM = :sudo
 
@@ -98,7 +96,7 @@ module API
     end
 
     def authenticate_non_get!
-      authenticate! unless %w[GET HEAD].include?(route.route_method)
+      authenticate! unless %w[GET HEAD].include?(route.request_method)
     end
 
     def authenticate_by_gitlab_shell_token!
@@ -250,7 +248,7 @@ module API
       rack_response({ 'message' => '500 Internal Server Error' }.to_json, 500)
     end
 
-    # Projects helpers
+    # project helpers
 
     def filter_projects(projects)
       if params[:search].present?
@@ -308,7 +306,7 @@ module API
     private
 
     def private_token
-      params[PRIVATE_TOKEN_PARAM] || env[PRIVATE_TOKEN_HEADER]
+      params[APIGuard::PRIVATE_TOKEN_PARAM] || env[APIGuard::PRIVATE_TOKEN_HEADER]
     end
 
     def warden
@@ -323,18 +321,11 @@ module API
       warden.try(:authenticate) if %w[GET HEAD].include?(env['REQUEST_METHOD'])
     end
 
-    def find_user_by_private_token
-      token = private_token
-      return nil unless token.present?
-
-      User.find_by_authentication_token(token) || User.find_by_personal_access_token(token)
-    end
-
     def initial_current_user
       return @initial_current_user if defined?(@initial_current_user)
 
-      @initial_current_user ||= find_user_by_private_token
-      @initial_current_user ||= doorkeeper_guard
+      @initial_current_user ||= find_user_by_private_token(scopes: @scopes)
+      @initial_current_user ||= doorkeeper_guard(scopes: @scopes)
       @initial_current_user ||= find_user_from_warden
 
       unless @initial_current_user && Gitlab::UserAccess.new(@initial_current_user).allowed?

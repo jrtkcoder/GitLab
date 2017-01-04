@@ -12,3 +12,5 @@ class NoteModel {
     this.noteTruncated = noteObj.noteTruncated;
   }
 }
+
+window.NoteModel = NoteModel;

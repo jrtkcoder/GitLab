@@ -22,7 +22,6 @@ gem 'doorkeeper',             '~> 4.2.0'
 gem 'omniauth',               '~> 1.3.1'
 gem 'omniauth-auth0',         '~> 1.4.1'
 gem 'omniauth-azure-oauth2',  '~> 0.0.6'
-gem 'omniauth-bitbucket',     '~> 0.0.2'
 gem 'omniauth-cas3',          '~> 1.1.2'
 gem 'omniauth-facebook',      '~> 4.0.0'
 gem 'omniauth-github',        '~> 1.1.1'
@@ -33,6 +32,7 @@ gem 'omniauth-saml',          '~> 1.7.0'
 gem 'omniauth-shibboleth',    '~> 1.2.0'
 gem 'omniauth-twitter',       '~> 1.2.0'
 gem 'omniauth_crowd',         '~> 2.2.0'
+gem 'omniauth-authentiq',     '~> 0.2.0'
 gem 'rack-oauth2',            '~> 1.2.1'
 gem 'jwt'
 
@@ -67,7 +67,7 @@ gem 'gollum-rugged_adapter', '~> 0.4.2', require: false
 gem 'github-linguist', '~> 4.7.0', require: 'linguist'
 
 # API
-gem 'grape',        '~> 0.15.0'
+gem 'grape',        '~> 0.18.0'
 gem 'grape-entity', '~> 0.6.0'
 gem 'rack-cors',    '~> 0.4.0', require: 'rack/cors'
 
@@ -170,7 +170,7 @@ gem 'gitlab-flowdock-git-hook', '~> 1.0.1'
 gem 'gemnasium-gitlab-service', '~> 0.2'
 
 # Slack integration
-gem 'slack-notifier', '~> 1.2.0'
+gem 'slack-notifier', '~> 1.5.1'
 
 # Asana integration
 gem 'asana', '~> 0.4.0'
@@ -328,11 +328,11 @@ end
 
 gem 'newrelic_rpm', '~> 3.16'
 
-gem 'octokit', '~> 4.3.0'
+gem 'octokit', '~> 4.6.2'
 
 gem 'mail_room', '~> 0.9.0'
 
-gem 'email_reply_parser', '~> 0.5.8'
+gem 'email_reply_trimmer', '~> 0.1'
 gem 'html2text'
 
 gem 'ruby-prof', '~> 0.16.2'
@@ -347,5 +347,5 @@ gem 'paranoia', '~> 2.2'
 gem 'health_check', '~> 2.2.0'
 
 # System information
-gem 'vmstat', '~> 2.2'
+gem 'vmstat', '~> 2.3.0'
 gem 'sys-filesystem', '~> 1.1.6'

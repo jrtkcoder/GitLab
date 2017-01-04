@@ -19,7 +19,7 @@
       - if plain
         = link_text
       - else
-        %a{href: "##{line_code}", data: { linenumber: link_text }}
+        %a{ href: "##{line_code}", data: { linenumber: link_text } }
       - if discussion && !plain
         %diff-note-avatars{ "discussion-id" => discussion.id }
           = custom_icon("collapse", size: 11)
@@ -28,7 +28,7 @@
       - if plain
         = link_text
       - else
-        %a{href: "##{line_code}", data: { linenumber: link_text }}
+        %a{ href: "##{line_code}", data: { linenumber: link_text } }
     %td.line_content.noteable_line{ class: type, data: (diff_view_line_data(line_code, diff_file.position(line), type) unless plain) }<
       - if email
         %pre= line.text
