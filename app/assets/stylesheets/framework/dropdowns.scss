@@ -545,6 +545,7 @@
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
@@ -554,8 +555,9 @@
   0% {
     margin-top: -10px;
   }
+
   100% {
-    margin-top: 0px;
+    margin-top: 0;
   }
 }
 
@@ -563,6 +565,7 @@
   0% {
     opacity: 1;
   }
+
   100% {
     opacity: 0;
   }
@@ -570,8 +573,9 @@
 
 @keyframes slide_reverse {
   0% {
-    margin-top: 0px;
+    margin-top: 0;
   }
+
   100% {
     margin-top: -10px;
   }
