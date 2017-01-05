@@ -403,9 +403,9 @@ module API
         },
         {
           required: false,
-          name: :notify_only_broken_builds,
+          name: :notify_only_broken_pipelines,
           type: Boolean,
-          desc: 'Notify only broken builds'
+          desc: 'Notify only broken pipelines'
         }
       ],
       'pivotaltracker' => [
