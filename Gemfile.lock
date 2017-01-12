@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/gollum/rugged_adapter.git
+  revision: 89f154bdfe7badb528c073f01707c798c8a962b7
+  specs:
+    gollum-rugged_adapter (0.4.3)
+      mime-types (>= 1.15)
+      rugged (~> 0.25.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -284,9 +292,6 @@ GEM
       rouge (~> 2.0)
       sanitize (~> 2.1.0)
       stringex (~> 2.5.1)
-    gollum-rugged_adapter (0.4.2)
-      mime-types (>= 1.15)
-      rugged (~> 0.24.0, >= 0.21.3)
     gon (6.1.0)
       actionpack (>= 3.0)
       json
@@ -667,7 +672,7 @@ GEM
     rubypants (0.2.0)
     rubyzip (1.2.0)
     rufus-scheduler (3.1.10)
-    rugged (0.24.0)
+    rugged (0.25.1.1)
     safe_yaml (1.0.4)
     sanitize (2.1.0)
       nokogiri (>= 1.4.4)
@@ -894,7 +899,7 @@ DEPENDENCIES
   gitlab-turbolinks-classic (~> 2.5, >= 2.5.6)
   gitlab_omniauth-ldap (~> 1.2.1)
   gollum-lib (~> 4.2)
-  gollum-rugged_adapter (~> 0.4.2)
+  gollum-rugged_adapter (~> 0.4.3)!
   gon (~> 6.1.0)
   google-api-client (~> 0.8.6)
   grape (~> 0.18.0)
@@ -976,7 +981,7 @@ DEPENDENCIES
   rubocop-rspec (~> 1.9.1)
   ruby-fogbugz (~> 0.2.1)
   ruby-prof (~> 0.16.2)
-  rugged (~> 0.24.0)
+  rugged (~> 0.25.1.1)
   sanitize (~> 2.0)
   sass-rails (~> 5.0.6)
   scss_lint (~> 0.47.0)

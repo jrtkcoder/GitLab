@@ -16,7 +16,7 @@ gem 'default_value_for', '~> 3.0.0'
 gem 'mysql2', '~> 0.3.16', group: :mysql
 gem 'pg', '~> 0.18.2', group: :postgres
 
-gem 'rugged', '~> 0.24.0'
+gem 'rugged', '~> 0.25.1.1'
 
 # Authentication libraries
 gem 'devise',                 '~> 4.2'
@@ -59,7 +59,8 @@ gem 'gitlab_omniauth-ldap', '~> 1.2.1', require: 'omniauth-ldap'
 # Git Wiki
 # Required manually in config/initializers/gollum.rb to control load order
 gem 'gollum-lib', '~> 4.2', require: false
-gem 'gollum-rugged_adapter', '~> 0.4.2', require: false
+# https://github.com/gollum/rugged_adapter/pull/22
+gem 'gollum-rugged_adapter', '~> 0.4.3', require: false, github: 'gollum/rugged_adapter'
 
 # Language detection
 gem 'github-linguist', '~> 4.7.0', require: 'linguist'
