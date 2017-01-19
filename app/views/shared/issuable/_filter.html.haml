@@ -76,7 +76,7 @@
 
           = hidden_field_tag 'update[issuable_ids]', []
           = hidden_field_tag :state_event, params[:state_event]
-          .filter-item.inline.pull-right
+          .filter-item.inline
             = button_tag "Update #{type.to_s.humanize(capitalize: false)}", class: "btn update_selected_issues btn-save"
   - has_labels = @labels && @labels.any?
   .row-content-block.second-block.filtered-labels{ class: ("hidden" unless has_labels) }

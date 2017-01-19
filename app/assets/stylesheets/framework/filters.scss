@@ -5,6 +5,14 @@
   &.reset-filters {
     padding: 7px;
   }
+
+  &.update-issues-btn {
+    float: right;
+
+    @media (max-width: $screen-sm-max) {
+      float: none;
+    }
+  }
 }
 
 @media (min-width: $screen-sm-min) {
@@ -20,6 +28,11 @@
   .filter-item {
     display: block;
     margin: 0 0 10px;
+  }
+
+  .dropdown-menu-toggle,
+  .update-issues-btn .btn {
+    width: 100%;
   }
 }
 
