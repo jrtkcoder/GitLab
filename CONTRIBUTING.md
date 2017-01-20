@@ -363,6 +363,8 @@ When having your code reviewed and when reviewing merge requests please take the
 1. Contains functionality we think other users will benefit from too
 1. Doesn't add configuration options or settings options since they complicate
    making and testing future changes
+1. Changes do not adversely degrade performance. For example, avoid repeated
+   polling of endpoints that require a significant number of database queries.
 1. Changes after submitting the merge request should be in separate commits
    (no squashing). If necessary, you will be asked to squash when the review is
    over, before merging.
@@ -398,6 +400,7 @@ the feature you contribute through all of these steps.
 1. Description explaining the relevancy (see following item)
 1. Working and clean code that is commented where needed
 1. Unit and integration tests that pass on the CI server
+1. Performance/scalability implications have been considered, addressed, and tested
 1. [Documented][doc-styleguide] in the /doc directory
 1. Changelog entry added
 1. Reviewed and any concerns are addressed
