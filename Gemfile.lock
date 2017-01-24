@@ -148,6 +148,8 @@ GEM
       activesupport (~> 4.0)
       html-pipeline
       rack (~> 1.0)
+    declarative (0.0.8)
+      uber (>= 0.0.15)
     default_value_for (3.0.2)
       activerecord (>= 3.2.0, < 5.1)
     descendants_tracker (0.0.4)
@@ -326,8 +328,14 @@ GEM
       multi_json (>= 1.3.2)
     grape-swagger (0.26.0)
       grape (>= 0.16.2)
+    grape-swagger-entity (0.1.5)
+      grape-entity
+      grape-swagger (>= 0.20.4)
     grape-swagger-rails (0.3.0)
       railties (>= 3.2.12)
+    grape-swagger-representable (0.1.3)
+      grape-swagger (>= 0.20.2)
+      representable
     haml (4.0.7)
       tilt
     haml_lint (0.18.2)
@@ -608,6 +616,9 @@ GEM
       redis-store (~> 1.2.0)
     redis-store (1.2.0)
       redis (>= 2.2)
+    representable (3.0.2)
+      declarative (~> 0.0.5)
+      uber (>= 0.0.15, < 0.2.0)
     request_store (1.3.1)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
@@ -782,6 +793,7 @@ GEM
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     u2f (0.2.1)
+    uber (0.1.0)
     uglifier (2.7.2)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
@@ -898,7 +910,9 @@ DEPENDENCIES
   grape (~> 0.18.0)
   grape-entity (~> 0.6.0)
   grape-swagger
+  grape-swagger-entity
   grape-swagger-rails
+  grape-swagger-representable
   haml_lint (~> 0.18.2)
   hamlit (~> 2.6.1)
   health_check (~> 2.2.0)
