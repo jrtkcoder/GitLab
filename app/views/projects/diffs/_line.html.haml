@@ -22,7 +22,6 @@
         %a{ href: "##{line_code}", data: { linenumber: link_text } }
       - if discussion && !plain
         %diff-note-avatars{ "discussion-id" => discussion.id }
-          = custom_icon("collapse", size: 11)
     %td.new_line.diff-line-num{ class: type, data: { linenumber: line.new_pos } }
       - link_text = type == "old" ? " " : line.new_pos
       - if plain
