@@ -16,7 +16,7 @@
             - left_line_code = diff_file.line_code(left)
             - left_position = diff_file.position(left)
             %td.old_line.diff-line-num{ id: left_line_code, class: left.type, data: { linenumber: left.old_pos } }
-              %a{ href: "##{left_line_code}" }= raw(left.old_pos)
+              %a{ href: "##{left_line_code}", data: { linenumber: left.old_pos } }
               - if discussion_left
                 %diff-note-avatars{ "discussion-id" => discussion_left.id }
                   = custom_icon("collapse", size: 11)
@@ -32,7 +32,7 @@
             - right_line_code = diff_file.line_code(right)
             - right_position = diff_file.position(right)
             %td.new_line.diff-line-num{ id: right_line_code, class: right.type, data: { linenumber: right.new_pos } }
-              %a{ href: "##{right_line_code}" }= raw(right.new_pos)
+              %a{ href: "##{right_line_code}", data: { linenumber: right.new_pos } }
               - if discussion_right
                 %diff-note-avatars{ "discussion-id" => discussion_right.id }
                   = custom_icon("collapse", size: 11)
