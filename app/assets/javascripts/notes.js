@@ -652,7 +652,6 @@
           notes = note.closest(".notes");
 
           if (typeof gl.diffNotesCompileComponents !== 'undefined') {
-
             if (gl.diffNoteApps[noteElId]) {
               gl.diffNoteApps[noteElId].$destroy();
             }

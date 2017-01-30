@@ -18,7 +18,7 @@
       authorAvatar: 'test',
       noteTruncated: 'test...',
     });
-  };
+  }
 
   beforeEach(() => {
     CommentsStore.state = {};
