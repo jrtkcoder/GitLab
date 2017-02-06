@@ -107,26 +107,6 @@ module API
           desc: 'Enable SSL verification for communication'
         }
       ],
-      'builds-email' => [
-        {
-          required: true,
-          name: :recipients,
-          type: String,
-          desc: 'Comma-separated list of recipient email addresses'
-        },
-        {
-          required: false,
-          name: :add_pusher,
-          type: Boolean,
-          desc: 'Add pusher to recipients list'
-        },
-        {
-          required: false,
-          name: :notify_only_broken_builds,
-          type: Boolean,
-          desc: 'Notify only broken builds'
-        }
-      ],
       'campfire' => [
         {
           required: true,
@@ -542,7 +522,6 @@ module API
       BambooService,
       BugzillaService,
       BuildkiteService,
-      BuildsEmailService,
       CampfireService,
       CustomIssueTrackerService,
       DroneCiService,

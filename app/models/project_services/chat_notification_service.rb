@@ -122,17 +122,6 @@ class ChatNotificationService < Service
     data[:object_attributes][:action] == 'update'
   end
 
-  def should_build_be_notified?(data)
-    case data[:commit][:status]
-    when 'success'
-      !notify_only_broken_builds?
-    when 'failed'
-      true
-    else
-      false
-    end
-  end
-
   def should_pipeline_be_notified?(data)
     case data[:object_attributes][:status]
     when 'success'

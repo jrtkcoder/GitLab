@@ -11,7 +11,7 @@ class MigrateBuildEventsToPipelineEvents < ActiveRecord::Migration
                                  'notify_only_broken_pipelines')
           , pipeline_events = #{true_value}
           , build_events = #{false_value}
-      WHERE type IN ('SlackService', 'MattermostService')
+      WHERE type IN ('SlackService', 'MattermostService', 'HipchatService')
         AND build_events = #{true_value};
     SQL
 

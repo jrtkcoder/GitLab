@@ -317,13 +317,13 @@ describe HipchatService, models: true do
         end
 
         it "calls Hipchat API" do
-          hipchat.notify_only_broken_builds = false
+          hipchat.notify_only_broken_pipeline = false
           hipchat.execute(data)
           expect(WebMock).to have_requested(:post, api_url).once
         end
 
         it "notifies only broken" do
-          hipchat.notify_only_broken_builds = true
+          hipchat.notify_only_broken_pipeline = true
           hipchat.execute(data)
           expect(WebMock).not_to have_requested(:post, api_url).once
         end

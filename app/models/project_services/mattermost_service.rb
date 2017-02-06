@@ -30,7 +30,6 @@ class MattermostService < ChatNotificationService
     [
       { type: 'text', name: 'webhook', placeholder: 'http://mattermost_host/hooks/...' },
       { type: 'text', name: 'username', placeholder: 'username' },
-      { type: 'checkbox', name: 'notify_only_broken_builds' },
       { type: 'checkbox', name: 'notify_only_broken_pipelines' },
     ]
   end
