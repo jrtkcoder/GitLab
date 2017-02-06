@@ -36,7 +36,10 @@ class MigrateBuildEventsToPipelineEvents < ActiveRecord::Migration
   def spawn(query)
     Thread.new do
       ActiveRecord::Base.connection_pool.with_connection do
-        ActiveRecord::Base.connection.execute(query)
+        query.split(';').each do |statement|
+          next if statement.blank?
+          ActiveRecord::Base.connection.execute(statement)
+        end
       end
     end
   end
