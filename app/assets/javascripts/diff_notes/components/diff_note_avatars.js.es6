@@ -1,4 +1,6 @@
 /* global Vue CommentsStore Cookies notes */
+const collapseIcon = require('../icons/collapse_icon');
+
 (() => {
   const DiffNoteAvatars = Vue.extend({
     props: ['discussionId'],
@@ -8,7 +10,7 @@
         lineType: '',
         storeState: CommentsStore.state,
         shownAvatars: 3,
-        collapseIcon: require('../icons/collapse_icon'),
+        collapseIcon,
       };
     },
     template: `
