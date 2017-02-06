@@ -4,17 +4,7 @@ class MigrateBuildEventsToPipelineEvents < ActiveRecord::Migration
   DOWNTIME = false
 
   def up
-    execute <<-SQL.strip_heredoc
-      DELETE FROM services
-        WHERE type = 'BuildsEmailService'
-          AND active = #{false_value}
-          AND properties = '{"notify_only_broken_builds":true}';
-
-      DELETE FROM services
-        WHERE type = 'PipelinesEmailService'
-          AND active = #{false_value}
-          AND properties = '{"notify_only_broken_pipelines":true}';
-
+    slack_and_mattermost = spawn <<-SQL.strip_heredoc
       UPDATE services
         SET properties = replace(properties,
                                  'notify_only_broken_builds',
@@ -23,7 +13,9 @@ class MigrateBuildEventsToPipelineEvents < ActiveRecord::Migration
           , build_events = #{false_value}
       WHERE type IN ('SlackService', 'MattermostService')
         AND build_events = #{true_value};
+    SQL
 
+    builds_email = spawn <<-SQL.strip_heredoc
       UPDATE services
         SET type = 'PipelinesEmailService'
           , properties = replace(properties,
@@ -32,7 +24,25 @@ class MigrateBuildEventsToPipelineEvents < ActiveRecord::Migration
           , pipeline_events = #{true_value}
           , build_events = #{false_value}
       WHERE type = 'BuildsEmailService';
+
+      DELETE FROM services WHERE type = 'BuildsEmailService';
     SQL
+
+    [slack_and_mattermost, builds_email].each(&:join)
+  end
+
+  private
+
+  def spawn(query)
+    Thread.new do
+      ActiveRecord::Base.connection_pool.with_connection do
+        ActiveRecord::Base.connection.execute(query)
+      end
+    end
+  end
+
+  def quote(value)
+    ActiveRecord::Base.connection.quote(value)
   end
 
   def true_value
@@ -41,9 +51,5 @@ class MigrateBuildEventsToPipelineEvents < ActiveRecord::Migration
 
   def false_value
     quote(false)
-  end
-
-  def quote(value)
-    ActiveRecord::Base.connection.quote(value)
   end
 end
