@@ -45,14 +45,11 @@ class MigrateBuildEventsToPipelineEvents < ActiveRecord::Migration
     end
   end
 
-  def with_connection
+  def with_connection(&block)
     pool = ActiveRecord::Base.establish_connection
-    connection = pool.connection
-
-    yield(connection)
-
+    pool.with_connection(&block)
   ensure
-    connection.close
+    pool.disconnect!
   end
 
   def quote(value)
