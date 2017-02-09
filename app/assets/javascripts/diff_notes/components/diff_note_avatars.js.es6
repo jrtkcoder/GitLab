@@ -55,6 +55,15 @@ const collapseIcon = require('../icons/collapse_icon');
 
         this.lineType = $(this.$el).closest('.diff-line-num').hasClass('old_line') ? 'old' : 'new';
       });
+
+      $(document).on('toggle.comments', () => {
+        this.$nextTick(() => {
+          this.setDiscussionVisible();
+        });
+      });
+    },
+    destroyed() {
+      $(document).off('toggle.comments');
     },
     watch: {
       storeState: {
@@ -112,9 +121,10 @@ const collapseIcon = require('../icons/collapse_icon');
 
         // Toggle the active state of the toggle all button
         this.toggleDiscussionsToggleState();
-        this.setDiscussionVisible();
 
         this.$nextTick(() => {
+          this.setDiscussionVisible();
+
           $('.has-tooltip', this.$el).tooltip('fixTitle');
           $('.has-tooltip', this.$el).tooltip('hide');
         });

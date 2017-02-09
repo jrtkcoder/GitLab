@@ -202,9 +202,9 @@ window.ES6Promise.polyfill();
       if ($this.hasClass('active')) {
         notesHolders.show().find('.hide, .content').show();
       } else {
-        notesHolders.hide();
+        notesHolders.hide().find('.content').hide();
       }
-      $this.trigger('blur');
+      $(document).trigger('toggle.comments');
       return e.preventDefault();
     });
     $document.off('click', '.js-confirm-danger');
