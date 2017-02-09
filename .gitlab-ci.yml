@@ -243,6 +243,7 @@ rubocop:
 
 rake haml_lint: *exec
 rake scss_lint: *exec
+rake config_lint: *exec
 rake brakeman: *exec
 rake flay: *exec
 license_finder: *exec
@@ -450,9 +451,9 @@ pages:
   script:
     - mv public/ .public/
     - mkdir public/
-    - mv coverage public/coverage-ruby
-    - mv coverage-javascript/default/ public/coverage-javascript/
-    - mv eslint-report.html public/
+    - mv coverage/ public/coverage-ruby/ || true
+    - mv coverage-javascript/default/ public/coverage-javascript/ || true
+    - mv eslint-report.html public/ || true
   artifacts:
     paths:
       - public

@@ -1,12 +1,14 @@
 {
   "private": true,
   "scripts": {
-    "dev-server": "node_modules/.bin/webpack-dev-server --config config/webpack.config.js",
+    "dev-server": "webpack-dev-server --config config/webpack.config.js",
     "eslint": "eslint --max-warnings 0 --ext .js,.js.es6 .",
     "eslint-fix": "npm run eslint -- --fix",
     "eslint-report": "npm run eslint -- --format html --output-file ./eslint-report.html",
     "karma": "karma start config/karma.config.js --single-run",
-    "karma-start": "karma start config/karma.config.js"
+    "karma-start": "karma start config/karma.config.js",
+    "webpack": "webpack --config config/webpack.config.js",
+    "webpack-prod": "NODE_ENV=production npm run webpack"
   },
   "dependencies": {
     "babel": "^5.8.38",
@@ -23,6 +25,7 @@
     "jquery-ujs": "1.2.1",
     "json-loader": "^0.5.4",
     "mousetrap": "1.4.6",
+    "pikaday": "^1.5.1",
     "select2": "3.5.2-browserify",
     "stats-webpack-plugin": "^0.4.2",
     "underscore": "1.8.3",

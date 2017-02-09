@@ -23,9 +23,9 @@ describe User, models: true do
     it { is_expected.to have_many(:recent_events).class_name('Event') }
     it { is_expected.to have_many(:issues).dependent(:destroy) }
     it { is_expected.to have_many(:notes).dependent(:destroy) }
-    it { is_expected.to have_many(:assigned_issues).dependent(:destroy) }
+    it { is_expected.to have_many(:assigned_issues).dependent(:nullify) }
     it { is_expected.to have_many(:merge_requests).dependent(:destroy) }
-    it { is_expected.to have_many(:assigned_merge_requests).dependent(:destroy) }
+    it { is_expected.to have_many(:assigned_merge_requests).dependent(:nullify) }
     it { is_expected.to have_many(:identities).dependent(:destroy) }
     it { is_expected.to have_one(:abuse_report) }
     it { is_expected.to have_many(:spam_logs).dependent(:destroy) }
@@ -141,6 +141,11 @@ describe User, models: true do
           user = build(:user, email: "example@test.com")
           expect(user).to be_invalid
         end
+
+        it 'accepts example@test.com when added by another user' do
+          user = build(:user, email: "example@test.com", created_by_id: 1)
+          expect(user).to be_valid
+        end
       end
 
       context 'domain blacklist' do
@@ -158,6 +163,11 @@ describe User, models: true do
           it 'rejects info@example.com' do
             user = build(:user, email: 'info@example.com')
             expect(user).not_to be_valid
+          end
+
+          it 'accepts info@example.com when added by another user' do
+            user = build(:user, email: 'info@example.com', created_by_id: 1)
+            expect(user).to be_valid
           end
         end
 
@@ -1232,7 +1242,7 @@ describe User, models: true do
     end
 
     it 'does not include projects for which issues are disabled' do
-      project = create(:empty_project, issues_access_level: ProjectFeature::DISABLED)
+      project = create(:empty_project, :issues_disabled)
 
       expect(user.projects_where_can_admin_issues.to_a).to be_empty
       expect(user.can?(:admin_issue, project)).to eq(false)
@@ -1420,6 +1430,39 @@ describe User, models: true do
     it 'stores the correct access levels' do
       expect(user.project_authorizations.where(access_level: Gitlab::Access::GUEST).exists?).to eq(true)
       expect(user.project_authorizations.where(access_level: Gitlab::Access::REPORTER).exists?).to eq(true)
+    end
+  end
+
+  describe '#access_level=' do
+    let(:user) { build(:user) }
+
+    it 'does nothing for an invalid access level' do
+      user.access_level = :invalid_access_level
+
+      expect(user.access_level).to eq(:regular)
+      expect(user.admin).to be false
+    end
+
+    it "assigns the 'admin' access level" do
+      user.access_level = :admin
+
+      expect(user.access_level).to eq(:admin)
+      expect(user.admin).to be true
+    end
+
+    it "doesn't clear existing access levels when an invalid access level is passed in" do
+      user.access_level = :admin
+      user.access_level = :invalid_access_level
+
+      expect(user.access_level).to eq(:admin)
+      expect(user.admin).to be true
+    end
+
+    it "accepts string values in addition to symbols" do
+      user.access_level = 'admin'
+
+      expect(user.access_level).to eq(:admin)
+      expect(user.admin).to be true
     end
   end
 end
