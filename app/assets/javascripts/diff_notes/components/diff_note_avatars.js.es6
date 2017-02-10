@@ -1,4 +1,5 @@
-/* global Vue CommentsStore Cookies notes */
+/* global CommentsStore Cookies notes */
+const Vue = require('vue');
 const collapseIcon = require('../icons/collapse_icon');
 
 (() => {
