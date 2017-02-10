@@ -47,6 +47,9 @@ gem 'rqrcode-rails3', '~> 0.1.7'
 gem 'attr_encrypted', '~> 3.0.0'
 gem 'u2f', '~> 0.2.1'
 
+# GitLab Pages
+gem 'validates_hostname', '~> 1.0.6'
+
 # Browser detection
 gem 'browser', '~> 2.2'
 
@@ -281,7 +284,7 @@ group :development, :test do
   gem 'rspec-retry',        '~> 0.4.5'
   gem 'spinach-rails',      '~> 0.2.1'
   gem 'spinach-rerun-reporter', '~> 0.0.2'
-  gem 'rspec_profiling'
+  gem 'rspec_profiling',    '~> 0.0.5'
 
   # Prevent occasions where minitest is not bundled in packaged versions of ruby (see #3826)
   gem 'minitest', '~> 5.7.0'
