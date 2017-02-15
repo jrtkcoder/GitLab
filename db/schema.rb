@@ -98,19 +98,19 @@ ActiveRecord::Schema.define(version: 20170215200045) do
     t.text "help_page_text_html"
     t.text "shared_runners_text_html"
     t.text "after_sign_up_text_html"
+    t.boolean "sidekiq_throttling_enabled", default: false
+    t.string "sidekiq_throttling_queues"
+    t.decimal "sidekiq_throttling_factor"
     t.boolean "housekeeping_enabled", default: true, null: false
     t.boolean "housekeeping_bitmaps_enabled", default: true, null: false
     t.integer "housekeeping_incremental_repack_period", default: 10, null: false
     t.integer "housekeeping_full_repack_period", default: 50, null: false
     t.integer "housekeeping_gc_period", default: 200, null: false
-    t.boolean "sidekiq_throttling_enabled", default: false
-    t.string "sidekiq_throttling_queues"
-    t.decimal "sidekiq_throttling_factor"
     t.boolean "html_emails_enabled", default: true
     t.string "plantuml_url"
     t.boolean "plantuml_enabled"
-    t.integer "max_pages_size", default: 100, null: false
     t.integer "terminal_max_session_time", default: 0, null: false
+    t.integer "max_pages_size", default: 100, null: false
   end
 
   create_table "audit_events", force: :cascade do |t|
@@ -249,10 +249,13 @@ ActiveRecord::Schema.define(version: 20170215200045) do
     t.integer "duration"
     t.integer "user_id"
     t.integer "lock_version"
+    t.integer "trigger_id"
+    t.text "trigger_variables"
   end
 
   add_index "ci_commits", ["gl_project_id", "sha"], name: "index_ci_commits_on_gl_project_id_and_sha", using: :btree
   add_index "ci_commits", ["gl_project_id", "status"], name: "index_ci_commits_on_gl_project_id_and_status", using: :btree
+  add_index "ci_commits", ["gl_project_id", "trigger_id"], name: "index_ci_commits_on_gl_project_id_and_trigger_id", using: :btree
   add_index "ci_commits", ["gl_project_id"], name: "index_ci_commits_on_gl_project_id", using: :btree
   add_index "ci_commits", ["status"], name: "index_ci_commits_on_status", using: :btree
   add_index "ci_commits", ["user_id"], name: "index_ci_commits_on_user_id", using: :btree
@@ -376,6 +379,8 @@ ActiveRecord::Schema.define(version: 20170215200045) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "gl_project_id"
+    t.integer "owner_id"
+    t.string "description"
   end
 
   add_index "ci_triggers", ["gl_project_id"], name: "index_ci_triggers_on_gl_project_id", using: :btree
@@ -580,9 +585,9 @@ ActiveRecord::Schema.define(version: 20170215200045) do
   end
 
   add_index "labels", ["group_id", "project_id", "title"], name: "index_labels_on_group_id_and_project_id_and_title", unique: true, using: :btree
-  add_index "labels", ["type", "project_id"], name: "index_labels_on_type_and_project_id", using: :btree
   add_index "labels", ["project_id"], name: "index_labels_on_project_id", using: :btree
   add_index "labels", ["title"], name: "index_labels_on_title", using: :btree
+  add_index "labels", ["type", "project_id"], name: "index_labels_on_type_and_project_id", using: :btree
 
   create_table "lfs_objects", force: :cascade do |t|
     t.string "oid", null: false
@@ -1331,6 +1336,8 @@ ActiveRecord::Schema.define(version: 20170215200045) do
   add_index "web_hooks", ["project_id"], name: "index_web_hooks_on_project_id", using: :btree
 
   add_foreign_key "boards", "projects"
+  add_foreign_key "ci_commits", "ci_triggers", column: "trigger_id", on_delete: :cascade
+  add_foreign_key "ci_triggers", "users", column: "owner_id", on_delete: :nullify
   add_foreign_key "issue_metrics", "issues", on_delete: :cascade
   add_foreign_key "label_priorities", "labels", on_delete: :cascade
   add_foreign_key "label_priorities", "projects", on_delete: :cascade
