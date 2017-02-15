@@ -56,7 +56,7 @@
       %span by
       - if build.pipeline.user
         = user_avatar(user: build.pipeline.user, size: 20)
-      - else
+      - elif build.pipeline.trigger
         %span.monospace API
 
   - if admin

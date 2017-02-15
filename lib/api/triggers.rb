@@ -32,7 +32,7 @@ module API
         end
 
         # create request and trigger builds
-        pipeline = Ci::CreatePipelineService.new(project, nil, ref: params[:ref].to_s).
+        pipeline = Ci::CreatePipelineService.new(project, trigger.owner, ref: params[:ref].to_s).
           execute(ignore_skip_ci: true, trigger: trigger, trigger_variables: variables)
         if pipeline
           present pipeline, with: Entities::Pipeline
@@ -80,7 +80,7 @@ module API
         authenticate!
         authorize! :admin_build, user_project
 
-        trigger = user_project.triggers.create
+        trigger = user_project.triggers.create(owner: current_user)
 
         present trigger, with: Entities::Trigger
       end

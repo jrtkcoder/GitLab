@@ -14,6 +14,8 @@
         %h4.panel-title
           Manage your project's triggers
       .panel-body
+        = render "projects/triggers/form", btn_text: "Add trigger"
+
         - if @triggers.any?
           .table-responsive
             %table.table
@@ -21,15 +23,16 @@
                 %th
                   %strong Token
                 %th
+                  %strong Description
+                %th
+                  %strong Owner
+                %th
                   %strong Last used
                 %th
               = render partial: 'projects/triggers/trigger', collection: @triggers, as: :trigger
         - else
           %p.settings-message.text-center.append-bottom-default
             No triggers have been created yet. Add one using the button below.
-
-        = form_for @trigger, url: url_for(controller: '/projects/triggers', action: 'create') do |f|
-          = f.submit "Add trigger", class: 'btn btn-success'
 
       .panel-footer
 

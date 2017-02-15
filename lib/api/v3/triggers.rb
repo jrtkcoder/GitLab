@@ -29,7 +29,7 @@ module API
           end
 
           # create request and trigger builds
-          pipeline = Ci::CreatePipelineService.new(project, nil, ref: params[:ref].to_s).
+          pipeline = Ci::CreatePipelineService.new(project, trigger.owner, ref: params[:ref].to_s).
             execute(ignore_skip_ci: true, trigger: trigger, trigger_variables: variables)
           if pipeline
             data = { id: pipeline.trigger_id, variables: pipeline.trigger_variables }
