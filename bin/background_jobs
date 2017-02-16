@@ -38,7 +38,7 @@ start_no_deamonize()
 
 start_sidekiq()
 {
-  exec bundle exec sidekiq -C "${sidekiq_config}" -e $RAILS_ENV -P $sidekiq_pidfile "$@"
+  exec bundle exec sidekiq -C "${sidekiq_config}" -L $sidekiq_logfile -e $RAILS_ENV -P $sidekiq_pidfile "$@" 
 }
 
 load_ok()
