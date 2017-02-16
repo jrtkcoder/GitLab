@@ -41,6 +41,7 @@ var config = {
     lib_d3:               './lib/d3.js',
     lib_vue:              './lib/vue_resource.js',
     vue_pipelines:        './vue_pipelines_index/index.js',
+	vue_merge_request_widget: './vue_merge_request_widget/index.js',
   },
 
   output: {
