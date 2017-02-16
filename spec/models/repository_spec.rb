@@ -1011,27 +1011,72 @@ describe Repository, models: true do
       expect(repository.root_ref).to be_an_instance_of(String)
     end
 
-    it 'caches the output' do
-      expect(repository.raw_repository).to receive(:root_ref).
-        once.
-        and_return('master')
+    context 'with gitaly disabled' do
+      before { allow(Gitlab::GitalyClient).to receive(:feature_enabled?).and_return(false) }
 
-      repository.root_ref
-      repository.root_ref
+      it 'caches the output' do
+        expect(repository.raw_repository).to receive(:root_ref).
+          once.
+          and_return('master')
+
+        repository.root_ref
+        repository.root_ref
+      end
+    end
+
+    context 'with gitaly enabled' do
+      before do
+        allow(Gitlab::GitalyClient).to receive(:feature_enabled?).and_return(true)
+        double = double(:stub, find_default_branch_name: OpenStruct.new(name: ''))
+        allow(Gitaly::Ref::Stub).to receive(:new).and_return(double)
+      end
+
+      it 'caches the output' do
+        expect_any_instance_of(Gitlab::GitalyClient::Ref).to receive(:default_branch_name).
+          once.
+          and_return('master')
+
+        repository.root_ref
+        repository.root_ref
+      end
     end
   end
 
   describe '#expire_root_ref_cache' do
-    it 'expires the root reference cache' do
-      repository.root_ref
+    context 'with gitaly disabled' do
+      before { allow(Gitlab::GitalyClient).to receive(:feature_enabled?).and_return(false) }
 
-      expect(repository.raw_repository).to receive(:root_ref).
-        once.
-        and_return('foo')
+      it 'expires the root reference cache' do
+        repository.root_ref
 
-      repository.expire_root_ref_cache
+        expect(repository.raw_repository).to receive(:root_ref).
+          once.
+          and_return('foo')
 
-      expect(repository.root_ref).to eq('foo')
+        repository.expire_root_ref_cache
+
+        expect(repository.root_ref).to eq('foo')
+      end
+    end
+
+    context 'with gitaly enabled' do
+      before do
+        allow(Gitlab::GitalyClient).to receive(:feature_enabled?).and_return(true)
+        double = double(:stub, find_default_branch_name: OpenStruct.new(name: ''))
+        allow(Gitaly::Ref::Stub).to receive(:new).and_return(double)
+      end
+
+      it 'expires the root reference cache' do
+        repository.root_ref
+
+        expect_any_instance_of(Gitlab::GitalyClient::Ref).to receive(:default_branch_name).
+          once.
+          and_return('foo')
+
+        repository.expire_root_ref_cache
+
+        expect(repository.root_ref).to eq('foo')
+      end
     end
   end
 

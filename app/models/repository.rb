@@ -471,11 +471,17 @@ class Repository
   end
 
   def root_ref
-    if raw_repository
-      raw_repository.root_ref
-    else
-      # When the repo does not exist we raise this error so no data is cached.
-      raise Rugged::ReferenceError
+    Gitlab::GitalyClient.migrate(:root_ref) do |is_enabled|
+      if is_enabled
+        gitaly_ref_client.default_branch_name
+      else
+        if raw_repository
+          raw_repository.root_ref
+        else
+          # When the repo does not exist we raise this error so no data is cached.
+          raise Rugged::ReferenceError
+        end
+      end
     end
   end
   cache_method :root_ref
@@ -500,11 +506,25 @@ class Repository
   cache_method :commit_count, fallback: 0
 
   def branch_names
-    branches.map(&:name)
+    Gitlab::GitalyClient.migrate(:branch_names) do |is_enabled|
+      if is_enabled
+        gitaly_ref_client.branch_names
+      else
+        branches.map(&:name)
+      end
+    end
   end
   cache_method :branch_names, fallback: []
 
-  delegate :tag_names, to: :raw_repository
+  def tag_names
+    Gitlab::GitalyClient.migrate(:tag_names) do |is_enabled|
+      if is_enabled
+        gitaly_ref_client.tag_names
+      else
+        raw_repository.tag_names
+      end
+    end
+  end
   cache_method :tag_names, fallback: []
 
   def branch_count
@@ -1065,9 +1085,10 @@ class Repository
     else
       begin
         instance_variable_set(ivar, cache.fetch(key, &block))
-      rescue Rugged::ReferenceError, Gitlab::Git::Repository::NoRepository
+      rescue Rugged::ReferenceError, Gitlab::Git::Repository::NoRepository, GRPC::Unknown
         # if e.g. HEAD or the entire repository doesn't exist we want to
         # gracefully handle this and not cache anything.
+        # TODO: Improve Gitaly error handling and change `GRPC::Unknown` for `GRPC::NotFound`
         fallback
       end
     end
@@ -1134,5 +1155,9 @@ class Repository
 
   def repository_event(event, tags = {})
     Gitlab::Metrics.add_event(event, { path: path_with_namespace }.merge(tags))
+  end
+
+  def gitaly_ref_client
+    @gitaly_ref_client ||= Gitlab::GitalyClient::Ref.new(path_to_repo)
   end
 end
