@@ -1,6 +1,6 @@
 module MergeRequests
   class MergeWhenPipelineSucceedsService < MergeRequests::BaseService
-    # Marks the passed `merge_request` to be merged when the build succeeds or
+    # Marks the passed `merge_request` to be merged when the merge_when_pipeline_succeeds or
     # updates the params for the automatic merge
     def execute(merge_request)
       merge_request.merge_params.merge!(params)

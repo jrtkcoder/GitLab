@@ -1,7 +1,7 @@
 # See http://doc.gitlab.com/ce/development/migration_style_guide.html
 # for more information on how to write migrations for GitLab.
 
-class RenameMergeWhenBuildSuceeds < ActiveRecord::Migration
+class RenameOnlyAllowMergeIfBuildSucceeds < ActiveRecord::Migration
   include Gitlab::Database::MigrationHelpers
 
   # Set this constant to true if this migration requires downtime.
@@ -10,7 +10,7 @@ class RenameMergeWhenBuildSuceeds < ActiveRecord::Migration
   # When a migration requires downtime you **must** uncomment the following
   # constant and define a short and easy to understand explanation as to why the
   # migration requires downtime.
-  DOWNTIME_REASON = 'Renaming the column merge_when_build_succeeds'
+  DOWNTIME_REASON = 'Renaming the column only_allow_merge_if_build_succeeds'
 
   # When using the methods "add_concurrent_index" or "add_column_with_default"
   # you must disable the use of transactions as these methods can not run in an
@@ -24,6 +24,6 @@ class RenameMergeWhenBuildSuceeds < ActiveRecord::Migration
   # disable_ddl_transaction!
 
   def change
-    rename_column :merge_requests, :merge_when_build_succeeds, :merge_when_pipeline_succeeds
+    rename_column :projects, :only_allow_merge_if_build_succeeds, :only_allow_merge_if_pipeline_succeeds
   end
 end

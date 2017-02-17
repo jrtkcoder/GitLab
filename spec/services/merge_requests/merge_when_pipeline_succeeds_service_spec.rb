@@ -82,7 +82,7 @@ describe MergeRequests::MergeWhenPipelineSucceedsService do
                              sha: merge_request_head, status: 'success')
       end
 
-      it "merges all merge requests with merge when build succeeds enabled" do
+      it "merges all merge requests with merge when merge_when_pipeline_succeeds enabled" do
         expect(MergeWorker).to receive(:perform_async)
         service.trigger(triggering_pipeline)
       end

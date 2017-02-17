@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Only allow merge requests to be merged if the build succeeds', feature: true do
+feature 'Only allow merge requests to be merged if the merge_when_pipeline_succeeds', feature: true do
   let(:merge_request) { create(:merge_request_with_diffs) }
   let(:project)       { merge_request.target_project }
 
@@ -27,7 +27,7 @@ feature 'Only allow merge requests to be merged if the build succeeds', feature:
       status: status)
     end
 
-    context 'when merge requests can only be merged if the build succeeds' do
+    context 'when merge requests can only be merged if the merge_when_pipeline_succeeds' do
       before do
         project.update_attribute(:only_allow_merge_if_build_succeeds, true)
       end

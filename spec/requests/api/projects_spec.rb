@@ -339,7 +339,7 @@ describe API::Projects, api: true  do
       expect(json_response['only_allow_merge_if_build_succeeds']).to be_falsey
     end
 
-    it 'sets a project as allowing merge only if build succeeds' do
+    it 'sets a project as allowing merge only if merge_when_pipeline_succeeds' do
       project = attributes_for(:project, { only_allow_merge_if_build_succeeds: true })
       post api('/projects', user), project
       expect(json_response['only_allow_merge_if_build_succeeds']).to be_truthy
@@ -462,7 +462,7 @@ describe API::Projects, api: true  do
       expect(json_response['only_allow_merge_if_build_succeeds']).to be_falsey
     end
 
-    it 'sets a project as allowing merge only if build succeeds' do
+    it 'sets a project as allowing merge only if merge_when_pipeline_succeeds' do
       project = attributes_for(:project, { only_allow_merge_if_build_succeeds: true })
       post api("/projects/user/#{user.id}", admin), project
       expect(json_response['only_allow_merge_if_build_succeeds']).to be_truthy

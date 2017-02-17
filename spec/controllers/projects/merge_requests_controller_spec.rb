@@ -331,7 +331,7 @@ describe Projects::MergeRequestsController do
           expect(assigns(:status)).to eq(:merge_when_pipeline_succeeds)
         end
 
-        it 'sets the MR to merge when the build succeeds' do
+        it 'sets the MR to merge when the merge_when_pipeline_succeeds' do
           service = double(:merge_when_pipeline_succeeds_service)
 
           expect(MergeRequests::MergeWhenPipelineSucceedsService)
