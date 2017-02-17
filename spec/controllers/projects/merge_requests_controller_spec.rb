@@ -342,9 +342,9 @@ describe Projects::MergeRequestsController do
           merge_when_pipeline_succeeds
         end
 
-        context 'when project.only_allow_merge_if_build_succeeds? is true' do
+        context 'when project.only_allow_merge_if_merge_when_pipeline_succeeds? is true' do
           before do
-            project.update_column(:only_allow_merge_if_build_succeeds, true)
+            project.update_column(:only_allow_merge_if_merge_when_pipeline_succeeds, true)
           end
 
           it 'returns :merge_when_pipeline_succeeds' do
