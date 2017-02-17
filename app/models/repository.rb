@@ -1104,6 +1104,10 @@ class Repository
     fetch_ref(path_to_repo, ref, ref_path)
   end
 
+  def create_ref_from_sha(ref_path, sha)
+    rugged.references.create(ref_path, sha)
+  end
+
   def ls_files(ref)
     actual_ref = ref || root_ref
     raw_repository.ls_files(actual_ref)

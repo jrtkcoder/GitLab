@@ -8,28 +8,33 @@ describe 'forked project import', services: true do
   let(:shared) { Gitlab::ImportExport::Shared.new(relative_path: project.path_with_namespace) }
   let(:forked_from_project) { create(:project) }
   let(:fork_link) { create(:forked_project_link, forked_from_project: project_with_repo) }
+  let(:repo_saver) { Gitlab::ImportExport::RepoSaver.new(project: project_with_repo, shared: shared) }
+  let(:bundle_path) { File.join(shared.export_path, Gitlab::ImportExport.project_bundle_filename) }
+
+  let(:repo_restorer) do
+    Gitlab::ImportExport::RepoRestorer.new(path_to_bundle: bundle_path, shared: shared, project: project)
+  end
 
   let!(:merge_request) do
-    create(:merge_request, source_project: fork_link.forked_to_project,
-           target_project: project_with_repo)
+    create(:merge_request, source_project: fork_link.forked_to_project, target_project: project_with_repo)
   end
 
   let(:saver) do
-    Gitlab::ImportExport::ProjectTreeSaver.new(project: project_with_repo,
-                                               current_user: user,
-                                               shared: shared)
+    Gitlab::ImportExport::ProjectTreeSaver.new(project: project_with_repo, current_user: user, shared: shared)
   end
 
   let(:restorer) do
-    Gitlab::ImportExport::ProjectTreeRestorer.new(user: user,
-                                                  shared: shared,
-                                                  project: project)
+    Gitlab::ImportExport::ProjectTreeRestorer.new(user: user, shared: shared, project: project)
   end
 
   before do
     allow_any_instance_of(Gitlab::ImportExport).to receive(:storage_path).and_return(export_path)
 
-    saver.save && restorer.restore
+    saver.save
+    repo_saver.save
+
+    repo_restorer.restore
+    restorer.restore
   end
 
   after do
@@ -39,6 +44,6 @@ describe 'forked project import', services: true do
   end
 
   it 'can access the MR' do
-    expect(project.merge_requests.first.ensure_ref_fetched).not_to raise_error
+    expect { project.merge_requests.first.ensure_ref_fetched }.not_to raise_error
   end
 end

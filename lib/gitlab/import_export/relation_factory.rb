@@ -29,11 +29,12 @@ module Gitlab
         new(*args).create
       end
 
-      def initialize(relation_sym:, relation_hash:, members_mapper:, user:, project_id:)
+      def initialize(relation_sym:, relation_hash:, members_mapper:, user:, project:)
         @relation_name = OVERRIDES[relation_sym] || relation_sym
-        @relation_hash = relation_hash.except('noteable_id').merge('project_id' => project_id)
+        @relation_hash = relation_hash.except('noteable_id').merge('project_id' => project.id)
         @members_mapper = members_mapper
         @user = user
+        @project = project
         @imported_object_retries = 0
       end
 
@@ -106,9 +107,22 @@ module Gitlab
             object.trace = trace
             object.commit_id = nil
           end
+        elsif @relation_name == :merge_requests
+          diff_head_sha = @relation_hash.delete('diff_head_sha')
+          mr = imported_object
+
+          if fork_merge_request? && diff_head_sha
+            @project.repository.create_ref_from_sha("refs/merge-requests/#{mr.iid}/head", diff_head_sha)
+          end
+
+          mr
         else
           imported_object
         end
+      end
+
+      def fork_merge_request?
+        @relation_hash['source_project_id'] == -1
       end
 
       def update_project_references
@@ -168,6 +182,7 @@ module Gitlab
       def imported_object
         yield(existing_or_new_object) if block_given?
         existing_or_new_object.importing = true if existing_or_new_object.respond_to?(:importing)
+
         existing_or_new_object
       rescue ActiveRecord::RecordNotUnique
         # as the operation is not atomic, retry in the unlikely scenario an INSERT is
