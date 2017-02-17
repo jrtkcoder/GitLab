@@ -1,3 +1,4 @@
+# TODO: Remove this class after the data is all migrated
 class BuildEmailWorker
   include Sidekiq::Worker
   include BuildQueue

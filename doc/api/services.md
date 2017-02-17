@@ -139,43 +139,6 @@ Get Buildkite service settings for a project.
 GET /projects/:id/services/buildkite
 ```
 
-## Build-Emails
-
-Get emails for GitLab CI builds.
-
-### Create/Edit Build-Emails service
-
-Set Build-Emails service for a project.
-
-```
-PUT /projects/:id/services/builds-email
-```
-
-Parameters:
-
-| Attribute | Type | Required | Description |
-| --------- | ---- | -------- | ----------- |
-| `recipients` | string | yes | Comma-separated list of recipient email addresses |
-| `add_pusher` | boolean | no | Add pusher to recipients list |
-| `notify_only_broken_builds` | boolean | no | Notify only broken builds |
-
-
-### Delete Build-Emails service
-
-Delete Build-Emails service for a project.
-
-```
-DELETE /projects/:id/services/builds-email
-```
-
-### Get Build-Emails service settings
-
-Get Build-Emails service settings for a project.
-
-```
-GET /projects/:id/services/builds-email
-```
-
 ## Campfire
 
 Simple web-based real-time group chat
@@ -580,7 +543,7 @@ Parameters:
 | --------- | ---- | -------- | ----------- |
 | `recipients` | string | yes | Comma-separated list of recipient email addresses |
 | `add_pusher` | boolean | no | Add pusher to recipients list |
-| `notify_only_broken_builds` | boolean | no | Notify only broken pipelines |
+| `notify_only_broken_pipelines` | boolean | no | Notify only broken pipelines |
 
 
 ### Delete Pipeline-Emails service
