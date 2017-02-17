@@ -8,4 +8,5 @@
     %button.btn.btn-nr.btn-default.append-right-10.js-comment-resolve-button{ "v-if" => "showButton", type: "submit", data: { project_path: "#{project_path(@merge_request.project)}" } }
       {{ buttonText }}
 
+= render "projects/merge_requests/show/mr_box"
 #notes= render "projects/notes/notes_with_form"

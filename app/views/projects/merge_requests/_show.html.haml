@@ -9,7 +9,6 @@
   = render "projects/merge_requests/show/mr_title"
 
   .merge-request-details.issuable-details{ data: { id: @merge_request.project.id } }
-    = render "projects/merge_requests/show/mr_box"
     .append-bottom-default.mr-source-target.prepend-top-default
       - if @merge_request.open?
         .pull-right
