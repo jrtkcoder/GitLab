@@ -32,7 +32,8 @@ changes to be reviewed.
 > **Note:**
 You need to have jobs configured to enable this feature.
 
-You can prevent merge requests from being merged if their pipeline did not succeed.
+You can prevent merge requests from being merged if their pipeline did not succeed
+or if there are discussions to be resolved.
 
 Navigate to your project's settings page, select the
 **Only allow merge requests to be merged if the pipeline succeeds** check box and
