@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170216141440) do
+ActiveRecord::Schema.define(version: 20170217132157) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -688,7 +688,7 @@ ActiveRecord::Schema.define(version: 20170216141440) do
     t.integer "updated_by_id"
     t.text "merge_error"
     t.text "merge_params"
-    t.boolean "merge_when_build_succeeds", default: false, null: false
+    t.boolean "merge_when_pipeline_succeeds", default: false, null: false
     t.integer "merge_user_id"
     t.string "merge_commit_sha"
     t.datetime "deleted_at"
