@@ -107,7 +107,8 @@
 
   .mr-widget-body,
   .ci_widget,
-  .mr-widget-footer {
+  .mr-widget-footer,
+  .mr-widget-segment {
     padding: $gl-padding;
   }
 
@@ -210,7 +211,8 @@
     }
   }
 
-  .mr-widget-footer {
+  .mr-widget-footer,
+  .mr-widget-segment {
     border-top: 1px solid $gray-darker;
   }
 

@@ -19,6 +19,8 @@
 }
 
 .detail-page-description {
+  margin-top: 16px;
+
   .title {
     margin: 0 0 16px;
     font-size: 2em;
@@ -35,9 +37,5 @@
         margin-bottom: 0;
       }
     }
-  }
-
-  &.info-well {
-    border-top: 0;
   }
 }

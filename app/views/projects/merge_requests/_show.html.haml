@@ -40,12 +40,6 @@
 
     = render "projects/merge_requests/widget/show.html.haml"
 
-    - if @merge_request.source_branch_exists? && @merge_request.mergeable? && @merge_request.can_be_merged_by?(current_user)
-      .merge-manually.light.prepend-top-default
-        You can also accept this merge request manually using the
-        = succeed '.' do
-          = link_to "command line", "#modal_merge_info", class: "how_to_merge_link vlink", title: "How To Merge", "data-toggle" => "modal"
-
     .content-block.content-block-small.emoji-list-container
       = render 'award_emoji/awards_block', awardable: @merge_request, inline: true
 

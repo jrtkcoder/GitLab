@@ -30,6 +30,13 @@
     - elsif @merge_request.can_be_merged? || resolved_conflicts
       = render 'projects/merge_requests/widget/open/accept'
 
+  - if @merge_request.source_branch_exists? && @merge_request.mergeable? && @merge_request.can_be_merged_by?(current_user)
+    .mr-widget-segment.hidden-xs
+      .merge-manually
+        You can also accept this merge request manually using the
+        = succeed '.' do
+          = link_to "command line", "#modal_merge_info", class: "how_to_merge_link vlink", title: "How To Merge", "data-toggle" => "modal"
+
   - if mr_closes_issues.present? || mr_issues_mentioned_but_not_closing.present?
     .mr-widget-footer
       %span
