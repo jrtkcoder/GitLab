@@ -246,6 +246,10 @@
   }
 }
 
+.mr-title {
+  margin: $gl-padding 0;
+}
+
 .label-branch {
   color: $gl-text-color;
   font-family: $monospace_font;
@@ -253,7 +257,6 @@
   overflow: hidden;
   font-size: 90%;
   margin: 0 3px;
-  word-break: break-all;
 }
 
 .commits-empty {
@@ -334,10 +337,6 @@
     position: absolute;
     right: 0;
   }
-}
-
-.mr-source-target {
-  line-height: 31px;
 }
 
 .panel-new-merge-request {

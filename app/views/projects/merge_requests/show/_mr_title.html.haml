@@ -34,5 +34,5 @@
         = link_to edit_namespace_project_merge_request_path(@project.namespace, @project, @merge_request), class: "hidden-xs hidden-sm btn btn-grouped issuable-edit" do
           Edit
 
-%h2.title
+%h2.title.mr-title
   = markdown_field(@merge_request, :title)

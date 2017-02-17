@@ -19,7 +19,6 @@
 }
 
 .detail-page-description {
-  margin-top: 16px;
 
   .title {
     margin: 0 0 16px;
@@ -37,5 +36,9 @@
         margin-bottom: 0;
       }
     }
+  }
+
+  &.mr-description {
+    margin-top: 16px;
   }
 }
