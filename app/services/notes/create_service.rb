@@ -2,11 +2,19 @@ module Notes
   class CreateService < BaseService
     def execute
       merge_request_diff_head_sha = params.delete(:merge_request_diff_head_sha)
+      in_reply_to_discussion_id = params.delete(:in_reply_to_discussion_id)
 
-      note = Note.new(params)
-      note.project = project
-      note.author  = current_user
-      note.system  = false
+      # TODO: Remove
+      params[:type] = DiscussionNote.name if params.delete(:new_discussion)
+
+      note = project.notes.new(params)
+      note.author = current_user
+      note.system = false
+
+      if note.is_a?(DiscussionNote) && in_reply_to_discussion_id
+        discussion_exists = note.noteable.notes.discussion_notes.find_discussion(in_reply_to_discussion_id)
+        note.in_reply_to_discussion_id = in_reply_to_discussion_id if discussion_exists
+      end
 
       if note.award_emoji?
         noteable = note.noteable

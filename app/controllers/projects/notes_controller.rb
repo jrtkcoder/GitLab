@@ -6,12 +6,13 @@ class Projects::NotesController < Projects::ApplicationController
   before_action :authorize_create_note!, only: [:create]
   before_action :authorize_admin_note!, only: [:update, :destroy]
   before_action :authorize_resolve_note!, only: [:resolve, :unresolve]
-  before_action :find_current_user_notes, only: [:index]
 
   def index
     current_fetched_at = Time.now.to_i
 
     notes_json = { notes: [], last_fetched_at: current_fetched_at }
+
+    @notes = notes_finder.execute.inc_author
 
     @notes.each do |note|
       next if note.cross_reference_not_visible_for?(current_user)
@@ -111,6 +112,17 @@ class Projects::NotesController < Projects::ApplicationController
     )
   end
 
+  def discussion_html(discussion)
+    return if discussion.single_note?(target)
+
+    render_to_string(
+      "discussions/_discussion",
+      layout: false,
+      formats: [:html],
+      locals: { discussion: discussion }
+    )
+  end
+
   def diff_discussion_html(discussion)
     return unless discussion.diff_discussion?
 
@@ -132,17 +144,6 @@ class Projects::NotesController < Projects::ApplicationController
       layout: false,
       formats: [:html],
       locals: locals
-    )
-  end
-
-  def discussion_html(discussion)
-    return unless discussion.diff_discussion?
-
-    render_to_string(
-      "discussions/_discussion",
-      layout: false,
-      formats: [:html],
-      locals: { discussion: discussion }
     )
   end
 
@@ -168,9 +169,8 @@ class Projects::NotesController < Projects::ApplicationController
         note: note.note
       )
 
-      if note.diff_note?
-        discussion = note.to_discussion
-
+      discussion = note.to_discussion
+      unless discussion.single_note?(target)
         attrs.merge!(
           diff_discussion_html: diff_discussion_html(discussion),
           discussion_html: discussion_html(discussion)
@@ -213,11 +213,16 @@ class Projects::NotesController < Projects::ApplicationController
   def note_params
     params.require(:note).permit(
       :note, :noteable, :noteable_id, :noteable_type, :project_id,
-      :attachment, :line_code, :commit_id, :type, :position
+      :attachment, :line_code, :commit_id, :type, :position,
+      :in_reply_to_discussion_id, :new_discussion
     )
   end
 
-  def find_current_user_notes
-    @notes = NotesFinder.new(project, current_user, params).execute.inc_author
+  def notes_finder
+    @notes_finder ||= NotesFinder.new(project, current_user, params)
+  end
+
+  def target
+    notes_finder.target
   end
 end

@@ -8,6 +8,7 @@ class Note < ActiveRecord::Base
   include FasterCacheKeys
   include CacheMarkdownField
   include AfterCommitQueue
+  include ResolvableNote
 
   cache_markdown_field :note, pipeline: :note
 
@@ -22,6 +23,9 @@ class Note < ActiveRecord::Base
   # Attribute used to store the attributes that have ben changed by slash commands.
   attr_accessor :commands_changes
 
+  # The discussion ID for the `DiscussionNote` thread being replied to
+  attr_accessor :in_reply_to_discussion_id
+
   default_value_for :system, false
 
   attr_mentionable :note, pipeline: :note
@@ -31,9 +35,6 @@ class Note < ActiveRecord::Base
   belongs_to :noteable, polymorphic: true, touch: true
   belongs_to :author, class_name: "User"
   belongs_to :updated_by, class_name: "User"
-
-  # Only used by DiffNote, but defined here so that it can be used in `Note.includes`
-  belongs_to :resolved_by, class_name: "User"
 
   has_many :todos, dependent: :destroy
   has_many :events, as: :target, dependent: :destroy
@@ -53,6 +54,7 @@ class Note < ActiveRecord::Base
   validates :noteable_id, presence: true, unless: [:for_commit?, :importing?]
   validates :commit_id, presence: true, if: :for_commit?
   validates :author, presence: true
+  validates :discussion_id, presence: true, format: { with: /\A\h{40}\z/ }
 
   validate unless: [:for_commit?, :importing?, :for_personal_snippet?] do |note|
     unless note.noteable.try(:project) == note.project
@@ -72,8 +74,9 @@ class Note < ActiveRecord::Base
   scope :inc_author, ->{ includes(:author) }
   scope :inc_relations_for_view, ->{ includes(:project, :author, :updated_by, :resolved_by, :award_emoji) }
 
+  scope :discussion_notes, ->{ where(type: 'DiscussionNote') }
   scope :diff_notes, ->{ where(type: ['LegacyDiffNote', 'DiffNote']) }
-  scope :non_diff_notes, ->{ where(type: ['Note', nil]) }
+  scope :non_diff_notes, ->{ where(type: ['Note', 'DiscussionNote', nil]) }
 
   scope :with_associations, -> do
     # FYI noteable cannot be loaded for LegacyDiffNote for commits
@@ -91,22 +94,28 @@ class Note < ActiveRecord::Base
       ActiveModel::Name.new(self, nil, 'note')
     end
 
-    def build_discussion_id(noteable_type, noteable_id)
-      [:discussion, noteable_type.try(:underscore), noteable_id].join("-")
-    end
-
-    def discussion_id(*args)
-      Digest::SHA1.hexdigest(build_discussion_id(*args))
+    def resolvable?
+      false
     end
 
     def discussions
-      Discussion.for_notes(fresh)
+      Discussion.build_collection(fresh)
+    end
+
+    def find_discussion(discussion_id)
+      notes = where(discussion_id: discussion_id).fresh.to_a
+      return if notes.empty?
+
+      Discussion.build(notes)
     end
 
     def grouped_diff_discussions
-      active_notes = diff_notes.fresh.select(&:active?)
-      Discussion.for_diff_notes(active_notes).
-        map { |d| [d.line_code, d] }.to_h
+      diff_notes.
+        fresh.
+        select(&:active?).
+        group_by(&:line_code).
+        map { |line_code, notes| [line_code, DiffDiscussion.build(notes)] }.
+        to_h
     end
 
     def count_for_collection(ids, type)
@@ -136,16 +145,8 @@ class Note < ActiveRecord::Base
     true
   end
 
-  def resolvable?
+  def part_of_discussion?
     false
-  end
-
-  def resolved?
-    false
-  end
-
-  def to_be_resolved?
-    resolvable? && !resolved?
   end
 
   def max_attachment_size
@@ -224,7 +225,7 @@ class Note < ActiveRecord::Base
   end
 
   def can_be_award_emoji?
-    noteable.is_a?(Awardable)
+    noteable.is_a?(Awardable) && !part_of_discussion?
   end
 
   def contains_emoji_only?
@@ -237,6 +238,28 @@ class Note < ActiveRecord::Base
 
   def to_ability_name
     for_personal_snippet? ? 'personal_snippet' : noteable_type.underscore
+  end
+
+  def discussion_class
+    if for_commit?
+      CommitDiscussion
+    else
+      SingleNoteDiscussion
+    end
+  end
+
+  # Returns a discussion containing just this note
+  def to_discussion
+    Discussion.build([self])
+  end
+
+  # Returns the entire discussion this note is part of
+  def discussion
+    if part_of_discussion?
+      self.noteable.notes.find_discussion(self.discussion_id)
+    else
+      to_discussion
+    end
   end
 
   private
@@ -264,16 +287,6 @@ class Note < ActiveRecord::Base
   end
 
   def set_discussion_id
-    self.discussion_id = Digest::SHA1.hexdigest(build_discussion_id)
-  end
-
-  def build_discussion_id
-    if for_merge_request?
-      # Notes on merge requests are always in a discussion of their own,
-      # so we generate a unique discussion ID.
-      [:discussion, :note, SecureRandom.hex].join("-")
-    else
-      self.class.build_discussion_id(noteable_type, noteable_id || commit_id)
-    end
+    self.discussion_id = discussion_class.discussion_id(self)
   end
 end

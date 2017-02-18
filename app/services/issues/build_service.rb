@@ -15,7 +15,7 @@ module Issues
     end
 
     def description_from_merge_request
-      if merge_request_for_resolving_discussions.resolvable_discussions.empty?
+      if merge_request_for_resolving_discussions.discussions_to_be_resolved.empty?
         return "There are no unresolved discussions. "\
                "Review the conversation in #{merge_request_for_resolving_discussions.to_reference}"
       end
@@ -25,7 +25,7 @@ module Issues
     end
 
     def items_for_discussions
-      merge_request_for_resolving_discussions.resolvable_discussions.map { |discussion| item_for_discussion(discussion) }
+      merge_request_for_resolving_discussions.discussions_to_be_resolved.map { |discussion| item_for_discussion(discussion) }
     end
 
     def item_for_discussion(discussion)

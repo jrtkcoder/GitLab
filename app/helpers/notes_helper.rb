@@ -53,31 +53,21 @@ module NotesHelper
     }
 
     if use_legacy_diff_note
-      discussion_id = LegacyDiffNote.discussion_id(
-        @comments_target[:noteable_type],
-        @comments_target[:noteable_id] || @comments_target[:commit_id],
-        line_code
-      )
-
-      data.merge!(
-        note_type: LegacyDiffNote.name,
-        discussion_id: discussion_id
-      )
+      new_note = LegacyDiffNote.new(@comments_target)
+      new_note.line_code = line_code
+      discussion_id = new_note.discussion_class.discussion_id(new_note)
     else
-      discussion_id = DiffNote.discussion_id(
-        @comments_target[:noteable_type],
-        @comments_target[:noteable_id] || @comments_target[:commit_id],
-        position
-      )
+      new_note = DiffNote.new(@comments_target)
+      new_note.position = position
+      discussion_id = new_note.discussion_class.discussion_id(new_note)
 
-      data.merge!(
-        position: position.to_json,
-        note_type: DiffNote.name,
-        discussion_id: discussion_id
-      )
+      data[:position] = position.to_json
     end
 
-    data
+    data.merge(
+      note_type: new_note.type,
+      discussion_id: discussion_id
+    )
   end
 
   def link_to_reply_discussion(discussion, line_type = nil)
