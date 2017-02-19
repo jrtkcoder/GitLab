@@ -95,9 +95,9 @@ require('./u2f/util');
 
 // droplab
 require('./droplab/droplab');
-require('./droplab/droplab_ajax');
-require('./droplab/droplab_ajax_filter');
-require('./droplab/droplab_filter');
+require('./droplab/plugins/ajax');
+require('./droplab/plugins/ajax_filter');
+require('./droplab/plugins/filter');
 
 // everything else
 require('./abuse_reports');
@@ -211,7 +211,6 @@ require('./version_check_image');
 require('./visibility_select');
 require('./wikis');
 require('./zen_mode');
-
 require('vendor/fuzzaldrin-plus');
 require('es6-promise').polyfill();
 
