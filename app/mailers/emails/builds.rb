@@ -1,4 +1,4 @@
-# TODO: Remove this module after the data is all migrated
+# TODO: Remove this module in 9.1
 module Emails
   module Builds
     def build_fail_email(build_id, to)

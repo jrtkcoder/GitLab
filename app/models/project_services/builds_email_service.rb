@@ -1,4 +1,4 @@
-# TODO: Remove this class after the data is all migrated
+# TODO: Remove this class in 9.1
 class BuildsEmailService < Service
   prop_accessor :recipients
   boolean_accessor :add_pusher
