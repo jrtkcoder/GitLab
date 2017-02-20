@@ -768,7 +768,7 @@ describe MergeRequest, models: true do
   end
 
   describe '#check_if_can_be_merged' do
-    let(:project) { create(:empty_project, only_allow_merge_if_merge_when_pipeline_succeeds: true) }
+    let(:project) { create(:empty_project, only_allow_merge_if_pipeline_succeeds: true) }
 
     subject { create(:merge_request, source_project: project, merge_status: :unchecked) }
 
@@ -889,7 +889,7 @@ describe MergeRequest, models: true do
   end
 
   describe '#mergeable_ci_state?' do
-    let(:project) { create(:empty_project, only_allow_merge_if_merge_when_pipeline_succeeds: true) }
+    let(:project) { create(:empty_project, only_allow_merge_if_pipeline_succeeds: true) }
     let(:pipeline) { create(:ci_empty_pipeline) }
 
     subject { build(:merge_request, target_project: project) }
@@ -932,7 +932,7 @@ describe MergeRequest, models: true do
     end
 
     context 'when merges are not restricted to green builds' do
-      subject { build(:merge_request, target_project: build(:empty_project, only_allow_merge_if_merge_when_pipeline_succeeds: false)) }
+      subject { build(:merge_request, target_project: build(:empty_project, only_allow_merge_if_pipeline_succeeds: false)) }
 
       context 'and a failed pipeline is associated' do
         before do
@@ -1537,7 +1537,7 @@ describe MergeRequest, models: true do
         status:  status)
     end
 
-    let(:project)       { create(:project, :public, :repository, only_allow_merge_if_merge_when_pipeline_succeeds: true) }
+    let(:project)       { create(:project, :public, :repository, only_allow_merge_if_pipeline_succeeds: true) }
     let(:developer)     { create(:user) }
     let(:user)          { create(:user) }
     let(:merge_request) { create(:merge_request, source_project: project) }

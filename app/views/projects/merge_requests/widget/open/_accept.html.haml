@@ -13,7 +13,7 @@
           %span.btn-group
             = button_tag class: "btn btn-create js-merge-button merge_when_pipeline_succeeds" do
               Merge When Pipeline Succeeds
-            - unless @project.only_allow_merge_if_merge_when_pipeline_succeeds?
+            - unless @project.only_allow_merge_if_pipeline_succeeds?
               = button_tag class: "btn btn-success dropdown-toggle", 'data-toggle' => 'dropdown' do
                 = icon('caret-down')
                 %span.sr-only

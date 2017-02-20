@@ -29,7 +29,7 @@ feature 'Only allow merge requests to be merged if the merge_when_pipeline_succe
 
     context 'when merge requests can only be merged if the merge_when_pipeline_succeeds' do
       before do
-        project.update_attribute(:only_allow_merge_if_merge_when_pipeline_succeeds, true)
+        project.update_attribute(:only_allow_merge_if_pipeline_succeeds, true)
       end
 
       context 'when CI is running' do
@@ -88,7 +88,7 @@ feature 'Only allow merge requests to be merged if the merge_when_pipeline_succe
 
     context 'when merge requests can be merged when the build failed' do
       before do
-        project.update_attribute(:only_allow_merge_if_merge_when_pipeline_succeeds, false)
+        project.update_attribute(:only_allow_merge_if_pipeline_succeeds, false)
       end
 
       context 'when CI is running' do
