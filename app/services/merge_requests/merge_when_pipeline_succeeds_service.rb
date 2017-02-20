@@ -10,7 +10,7 @@ module MergeRequests
 
       unless already_approved
         merge_request.merge_when_pipeline_succeeds = true
-        merge_request.merge_user                = @current_user
+        merge_request.merge_user = @current_user
 
         SystemNoteService.merge_when_pipeline_succeeds(merge_request, @project, @current_user, merge_request.diff_head_commit)
       end
