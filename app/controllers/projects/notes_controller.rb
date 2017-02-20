@@ -113,7 +113,7 @@ class Projects::NotesController < Projects::ApplicationController
   end
 
   def discussion_html(discussion)
-    return if discussion.single_note?(target)
+    return if discussion.render_as_individual_notes?(target)
 
     render_to_string(
       "discussions/_discussion",
@@ -170,7 +170,7 @@ class Projects::NotesController < Projects::ApplicationController
       )
 
       discussion = note.to_discussion
-      unless discussion.single_note?(target)
+      unless discussion.render_as_individual_notes?(target)
         attrs.merge!(
           diff_discussion_html: diff_discussion_html(discussion),
           discussion_html: discussion_html(discussion)

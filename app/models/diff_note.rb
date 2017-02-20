@@ -20,12 +20,6 @@ class DiffNote < Note
   before_validation :set_discussion_id
   after_save :keep_around_commits
 
-  class << self
-    def resolvable?
-      true
-    end
-  end
-
   def new_diff_note?
     true
   end
@@ -74,10 +68,6 @@ class DiffNote < Note
     diff_refs ||= noteable_diff_refs
 
     self.position.diff_refs == diff_refs
-  end
-
-  def resolvable?
-    super && for_merge_request?
   end
 
   private

@@ -94,10 +94,6 @@ class Note < ActiveRecord::Base
       ActiveModel::Name.new(self, nil, 'note')
     end
 
-    def resolvable?
-      false
-    end
-
     def discussions
       Discussion.build_collection(fresh)
     end

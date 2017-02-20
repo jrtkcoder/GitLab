@@ -13,11 +13,6 @@ module ResolvableNote
   end
 
   module ClassMethods
-    # To be defined in any Note subclasses that are actually resolvable
-    # def resolvable?
-    #   true
-    # end
-
     # This method must be kept in sync with `#resolve!`
     def resolve!(current_user)
       unresolved.update_all(resolved_at: Time.now, resolved_by_id: current_user.id)
@@ -31,7 +26,7 @@ module ResolvableNote
 
   # If you update this method remember to also update the scope `resolvable`
   def resolvable?
-    self.class.resolvable? && !system?
+    to_discussion.potentially_resolvable? && !system?
   end
 
   def resolved?

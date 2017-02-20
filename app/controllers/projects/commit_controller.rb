@@ -94,18 +94,18 @@ class Projects::CommitController < Projects::ApplicationController
 
     @diffs = commit.diffs(opts)
     @notes_count = commit.notes.count
-    
+
     @environment = EnvironmentsFinder.new(@project, current_user, commit: @commit).execute.last
   end
 
   def define_note_vars
     @grouped_diff_discussions = commit.notes.grouped_diff_discussions
-    @notes = commit.notes.non_diff_notes.fresh
+    @discussions = commit.notes.non_diff_notes.discussions
 
-    Banzai::NoteRenderer.render(
-      @grouped_diff_discussions.values.flat_map(&:notes) + @notes,
+    @notes = Banzai::NoteRenderer.render(
+      @grouped_diff_discussions.values.flat_map(&:notes) + @discussions.flat_map(&:notes),
       @project,
-      current_user,
+      current_user
     )
 
     @note = @project.build_commit_note(commit)

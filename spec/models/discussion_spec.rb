@@ -631,7 +631,7 @@ describe Discussion, model: true do
     end
   end
 
-  describe '#single_note?' do
+  describe '#render_as_individual_notes?' do
     # TODO: Test
   end
 

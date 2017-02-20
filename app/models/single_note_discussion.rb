@@ -7,7 +7,7 @@ class SingleNoteDiscussion < Discussion
     false
   end
 
-  def single_note?(target)
+  def render_as_individual_notes?(target)
     true
   end
 end

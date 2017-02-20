@@ -40,10 +40,6 @@ class DiffDiscussion < Discussion
     false
   end
 
-  def potentially_resolvable?
-    first_note.for_merge_request?
-  end
-
   def active?
     return @active if @active.present?
 

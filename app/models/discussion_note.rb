@@ -1,18 +1,12 @@
 class DiscussionNote < Note
-  validates :noteable_type, inclusion: { in: ['MergeRequest'] }
-
-  class << self
-    def resolvable?
-      true
-    end
-  end
+  validates :noteable_type, inclusion: { in: ['MergeRequest', 'Commit'] }
 
   def part_of_discussion?
     true
   end
 
   def discussion_class
-    Discussion
+    DiscussionDiscussion
   end
 
   private

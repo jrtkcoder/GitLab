@@ -1,5 +1,4 @@
 class LegacyDiffDiscussion < DiffDiscussion
-
   def self.unique_position_identifier(note)
     note.line_code
   end

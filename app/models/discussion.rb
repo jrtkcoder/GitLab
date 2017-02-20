@@ -40,13 +40,6 @@ class Discussion
     @notes = notes
   end
 
-  def last_resolved_note
-    return unless resolved?
-
-    @last_resolved_note ||= resolved_notes.sort_by(&:resolved_at).last
-  end
-  MEMOIZED_VALUES << :last_resolved_note
-
   def last_updated_at
     last_note.created_at
   end
@@ -66,10 +59,10 @@ class Discussion
   end
 
   def potentially_resolvable?
-    true
+    first_note.for_merge_request?
   end
 
-  def single_note?(target)
+  def render_as_individual_notes?(target)
     false
   end
 
@@ -88,16 +81,26 @@ class Discussion
   MEMOIZED_VALUES << :resolved
 
   def first_note
-    @first_note ||= @notes.first
+    @first_note ||= notes.first
   end
   MEMOIZED_VALUES << :first_note
 
   def first_note_to_resolve
-    @first_note_to_resolve ||= notes.detect(&:to_be_resolved?)
+    return unless resolvable?
+
+    @first_note_to_resolve ||= notes.find(&:to_be_resolved?)
   end
+  MEMOIZED_VALUES << :first_note_to_resolve
+
+  def last_resolved_note
+    return unless resolved?
+
+    @last_resolved_note ||= resolved_notes.sort_by(&:resolved_at).last
+  end
+  MEMOIZED_VALUES << :last_resolved_note
 
   def last_note
-    @last_note ||= @notes.last
+    @last_note ||= notes.last
   end
   MEMOIZED_VALUES << :last_note
 

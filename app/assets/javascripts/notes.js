@@ -340,7 +340,7 @@ require('./task_list');
         // Add note to 'Changes' page discussions
         discussionContainer.append(note_html);
         // Init discussion on 'Discussion' page if it is merge request page
-        if ($('body').attr('data-page').indexOf('projects:merge_request') === 0) {
+        if ($('body').attr('data-page').indexOf('projects:merge_request') === 0 || !note.diff_discussion_html) {
           $('ul.main-notes-list').append(note.discussion_html).renderGFM();
         }
       } else {
