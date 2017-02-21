@@ -49,11 +49,15 @@
 
     static filterHint(input, item) {
       const updatedItem = item;
+      const itemKey = item.hint ? item.hint.replace(':', '') : '';
       const query = gl.DropdownUtils.getSearchInput(input);
-      let { lastToken } = gl.FilteredSearchTokenizer.processTokens(query);
-      lastToken = lastToken.key || lastToken || '';
+      const tokenizedQuery = gl.FilteredSearchTokenizer.processTokens(query);
+      const lastToken = tokenizedQuery.lastToken.key || tokenizedQuery.lastToken || '';
+      const itemHintInQuery = tokenizedQuery.tokens.map(t => t.key).indexOf(itemKey) > -1;
 
-      if (!lastToken || query.split('').last() === ' ') {
+      if (item.type !== 'array' && itemHintInQuery) {
+        updatedItem.droplab_hidden = true;
+      } else if (!lastToken || query.split('').last() === ' ') {
         updatedItem.droplab_hidden = false;
       } else if (lastToken) {
         const split = lastToken.split(':');

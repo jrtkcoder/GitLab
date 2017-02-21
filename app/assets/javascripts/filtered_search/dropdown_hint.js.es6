@@ -53,6 +53,7 @@ require('./filtered_search_dropdown');
         icon: 'fa-tag',
         hint: 'label:',
         tag: '&lt;~label&gt;',
+        type: 'array',
       }];
 
       this.droplab.changeHookList(this.hookId, this.dropdown, [droplabFilter], this.config);
