@@ -153,7 +153,7 @@ module API
       params_hash = custom_params || params
       attrs = {}
       keys.each do |key|
-        if params_hash[key].present? or (params_hash.has_key?(key) and params_hash[key] == false)
+        if params_hash[key].present? || (params_hash.has_key?(key) && params_hash[key] == false)
           attrs[key] = params_hash[key]
         end
       end
@@ -213,6 +213,10 @@ module API
       if model.errors.any?
         render_api_error!(model.errors.messages || '400 Bad Request', 400)
       end
+    end
+
+    def render_spam_error!
+      render_api_error!({ error: 'Spam detected' }, 400)
     end
 
     def render_api_error!(message, status)
