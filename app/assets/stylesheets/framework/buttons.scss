@@ -369,3 +369,57 @@
     width: 100%;
   }
 }
+
+.toggle-button {
+  @include transition(background-color 0.3s ease-in-out);
+  outline: none;
+  border: 0;
+  position: relative;
+  height: 25px;
+  width: 46px;
+  border-radius: 50px;
+
+  &:focus {
+    outline: 0;
+  }
+
+  > span {
+    display: none !important;
+  }
+
+  &.unsubscribed {
+    background-color: $sidebar-collapsed-icon-color;
+
+    &:before {
+      @include transition(left 0.2s ease-in-out);
+      content: '';
+      display: block;
+      position: absolute;
+      left: 1px;
+      top: 1px;
+      z-index: 1;
+      border-radius: 50%;
+      background-color: $white-light;
+      height: 23px;
+      width: 23px;
+    }
+  }
+
+  &.subscribed {
+    background-color: $active-item-blue;
+
+    &:before {
+      @include transition(left 0.2s ease-in-out);
+      content: '';
+      display: block;
+      position: absolute;
+      left: 22px;
+      top: 1px;
+      z-index: 1;
+      border-radius: 50%;
+      background-color: $white-light;
+      height: 23px;
+      width: 23px;
+    }
+  }
+}
