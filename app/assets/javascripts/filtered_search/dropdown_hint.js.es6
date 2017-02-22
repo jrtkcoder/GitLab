@@ -40,13 +40,15 @@ require('./filtered_search_dropdown');
       const dropdownData = [];
 
       [].forEach.call(this.input.parentElement.querySelectorAll('.dropdown-menu'), (dropdownMenu) => {
-        const { icon, hint, tag } = dropdownMenu.dataset;
+        const { icon, hint, tag, type } = dropdownMenu.dataset;
         if (icon && hint && tag) {
-          dropdownData.push({
-            icon: `fa-${icon}`,
-            hint,
-            tag: `&lt;${tag}&gt;`,
-          });
+          dropdownData.push(
+            Object.assign({
+              icon: `fa-${icon}`,
+              hint,
+              tag: `&lt;${tag}&gt;`,
+            }, type && { type }),
+          );
         }
       });
 
