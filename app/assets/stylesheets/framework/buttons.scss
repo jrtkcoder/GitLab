@@ -371,8 +371,7 @@
 }
 
 .toggle-button {
-  @include transition(background-color 0.3s ease-in-out);
-  outline: none;
+  @include transition(background-color .1s ease-in-out);
   border: 0;
   position: relative;
   height: 25px;
@@ -383,25 +382,28 @@
     outline: 0;
   }
 
-  > span {
-    display: none !important;
+  .subscription-label {
+    display: none;
+  }
+
+  &:before {
+    @include transition(left 0.2s ease-in-out);
+    content: '';
+    display: block;
+    position: absolute;
+    top: 1px;
+    z-index: 1;
+    border-radius: 50%;
+    background-color: $white-light;
+    height: 23px;
+    width: 23px;
   }
 
   &.unsubscribed {
     background-color: $sidebar-collapsed-icon-color;
 
     &:before {
-      @include transition(left 0.2s ease-in-out);
-      content: '';
-      display: block;
-      position: absolute;
       left: 1px;
-      top: 1px;
-      z-index: 1;
-      border-radius: 50%;
-      background-color: $white-light;
-      height: 23px;
-      width: 23px;
     }
   }
 
@@ -409,17 +411,7 @@
     background-color: $active-item-blue;
 
     &:before {
-      @include transition(left 0.2s ease-in-out);
-      content: '';
-      display: block;
-      position: absolute;
       left: 22px;
-      top: 1px;
-      z-index: 1;
-      border-radius: 50%;
-      background-color: $white-light;
-      height: 23px;
-      width: 23px;
     }
   }
 }
