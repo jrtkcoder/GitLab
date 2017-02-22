@@ -8,7 +8,7 @@
           Manage your project's triggers
       .panel-body
         = render "projects/triggers/form", btn_text: "Add trigger"
-
+        %hr
         - if @triggers.any?
           .table-responsive
             %table.table
