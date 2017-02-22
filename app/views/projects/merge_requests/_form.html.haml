@@ -2,7 +2,8 @@
   = render 'shared/issuable/form', f: f, issuable: @merge_request
 
 :javascript
-  $('.assign-to-me-link').on('click', function(e){
-    $('#merge_request_assignee_id').val("#{current_user.id}").trigger("change");
+  $('.assign-to-me-link').on('click', function(e) {
+    $('#merge_request_assignee_id').val('#{current_user.id}');
+    $('.js-user-search .dropdown-toggle-text').text('#{current_user.name}');
     e.preventDefault();
   });
