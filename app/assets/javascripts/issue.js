@@ -4,6 +4,7 @@
 require('./flash');
 require('vendor/jquery.waitforimages');
 require('./task_list');
+require('./gl_lightbox');
 
 (function() {
   var bind = function(fn, me) { return function() { return fn.apply(me, arguments); }; };
