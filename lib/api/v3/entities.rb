@@ -45,6 +45,14 @@ module API
         expose :created_at, :updated_at
         expose :awardable_id, :awardable_type
       end
+
+      class Project < ::API::Entities::Project
+        expose :only_allow_merge_if_pipeline_succeeds, as: :only_allow_merge_if_build_succeeds
+      end
+
+      class MergeRequest < ::API::Entities::MergeRequest
+        expose :merge_when_pipeline_succeeds, as: :merge_when_build_succeeds
+      end
     end
   end
 end
