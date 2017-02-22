@@ -37,7 +37,7 @@ class Projects::TriggersController < Projects::ApplicationController
     if trigger.update(update_params)
       redirect_to namespace_project_settings_ci_cd_path(@project.namespace, @project), notice: 'Trigger was successfully updated.'
     else
-      render action: "show"
+      render action: "edit"
     end
   end
 
