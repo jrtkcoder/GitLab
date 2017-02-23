@@ -340,6 +340,8 @@ describe API::V3::Projects, api: true do
 
       post v3_api('/projects', user), project
 
+      project[:only_allow_merge_if_pipeline_succeeds] = project.delete(:only_allow_merge_if_build_succeeds)
+
       project.each_pair do |k, v|
         next if %i[has_external_issue_tracker issues_enabled merge_requests_enabled wiki_enabled].include?(k)
         expect(json_response[k.to_s]).to eq(v)
@@ -642,7 +644,7 @@ describe API::V3::Projects, api: true do
         expect(json_response['shared_with_groups'][0]['group_id']).to eq(group.id)
         expect(json_response['shared_with_groups'][0]['group_name']).to eq(group.name)
         expect(json_response['shared_with_groups'][0]['group_access_level']).to eq(link.group_access)
-        expect(json_response['only_allow_merge_if_build_succeeds']).to eq(project.only_allow_merge_if_build_succeeds)
+        expect(json_response['only_allow_merge_if_build_succeeds']).to eq(project.only_allow_merge_if_pipeline_succeeds)
         expect(json_response['only_allow_merge_if_all_discussions_are_resolved']).to eq(project.only_allow_merge_if_all_discussions_are_resolved)
       end
 

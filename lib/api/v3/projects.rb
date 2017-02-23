@@ -5,6 +5,10 @@ module API
 
       before { authenticate_non_get! }
 
+      after_validation do
+        set_only_allow_merge_if_pipeline_succeeds!
+      end
+
       helpers do
         params :optional_params do
           optional :description, type: String, desc: 'The description of the project'
@@ -35,6 +39,12 @@ module API
             attrs[:visibility_level] = (publik == true) ? Gitlab::VisibilityLevel::PUBLIC : Gitlab::VisibilityLevel::PRIVATE
           end
           attrs
+        end
+
+        def set_only_allow_merge_if_pipeline_succeeds!
+          if params[:only_allow_merge_if_build_succeeds]
+            params[:only_allow_merge_if_pipeline_succeeds] = params.delete(:only_allow_merge_if_build_succeeds)
+          end
         end
       end
 
@@ -390,7 +400,7 @@ module API
         end
 
         desc 'Share the project with a group' do
-          success ::API::V3::Entities::ProjectGroupLink
+          success ::API::Entities::ProjectGroupLink
         end
         params do
           requires :group_id, type: Integer, desc: 'The ID of a group'
@@ -412,7 +422,7 @@ module API
           link = user_project.project_group_links.new(declared_params(include_missing: false))
 
           if link.save
-            present link, with: ::API::V3::Entities::ProjectGroupLink
+            present link, with: ::API::Entities::ProjectGroupLink
           else
             render_api_error!(link.errors.full_messages.first, 409)
           end
