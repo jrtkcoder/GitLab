@@ -75,7 +75,7 @@ module API
         expose :runners_token, if: lambda { |_project, options| options[:user_can_admin_project] }
         expose :public_builds
         expose :shared_with_groups do |project, options|
-          SharedGroup.represent(project.project_group_links.all, options)
+          ::API::Entities::SharedGroup.represent(project.project_group_links.all, options)
         end
         expose :only_allow_merge_if_pipeline_succeeds, as: :only_allow_merge_if_build_succeeds
         expose :request_access_enabled
@@ -85,6 +85,10 @@ module API
       end
 
       class MergeRequest < Grape::Entity
+        expose :id, :iid
+        expose(:project_id) { |entity| entity.project.id }
+        expose :title, :description
+        expose :state, :created_at, :updated_at
         expose :target_branch, :source_branch
         expose :upvotes, :downvotes
         expose :author, :assignee, using: ::API::Entities::UserBasic
