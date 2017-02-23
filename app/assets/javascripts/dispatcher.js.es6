@@ -36,6 +36,7 @@
 /* global Shortcuts */
 
 import GroupsList from './groups_list';
+import updateLineNumbersOnBlobPermalinks from './blob/update_line_numbers_on_blob_permalinks';
 
 const ShortcutsBlob = require('./shortcuts_blob');
 const UserCallout = require('./user_callout');
@@ -244,6 +245,19 @@ const UserCallout = require('./user_callout');
             skipResetBindings: true,
             fileBlobPermalinkUrl,
           });
+
+          const updateBlameAndBlobPermalinkCb = () => {
+            // Wait for the hash to update from the LineHighlighter callback
+            setTimeout(() => {
+              updateLineNumbersOnBlobPermalinks(
+                document.querySelectorAll('.js-data-file-blob-permalink-url, .js-blob-blame-link'),
+              );
+            }, 0);
+          };
+          Array.prototype.forEach.call(document.querySelectorAll('.diff-line-num[data-line-number]'), (lineNumElement) => {
+            lineNumElement.addEventListener('click', updateBlameAndBlobPermalinkCb);
+          });
+          updateBlameAndBlobPermalinkCb();
           break;
         case 'groups:labels:new':
         case 'groups:labels:edit':
