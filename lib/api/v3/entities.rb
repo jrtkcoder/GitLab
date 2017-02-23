@@ -51,7 +51,7 @@ module API
         expose :public?, as: :public
         expose :archived?, as: :archived
         expose :visibility_level, :ssh_url_to_repo, :http_url_to_repo, :web_url
-        expose :owner, using: ::Entities::UserBasic, unless: ->(project, options) { project.group }
+        expose :owner, using: ::API::Entities::UserBasic, unless: ->(project, options) { project.group }
         expose :name, :name_with_namespace
         expose :path, :path_with_namespace
         expose :container_registry_enabled
@@ -68,7 +68,7 @@ module API
         expose :lfs_enabled?, as: :lfs_enabled
         expose :creator_id
         expose :namespace, using: 'API::Entities::Namespace'
-        expose :forked_from_project, using: Entities::BasicProjectDetails, if: lambda{ |project, options| project.forked? }
+        expose :forked_from_project, using: ::API::Entities::BasicProjectDetails, if: lambda{ |project, options| project.forked? }
         expose :avatar_url
         expose :star_count, :forks_count
         expose :open_issues_count, if: lambda { |project, options| project.feature_available?(:issues, options[:current_user]) && project.default_issues_tracker? }
@@ -87,11 +87,11 @@ module API
       class MergeRequest < Grape::Entity
         expose :target_branch, :source_branch
         expose :upvotes, :downvotes
-        expose :author, :assignee, using: Entities::UserBasic
+        expose :author, :assignee, using: ::API::Entities::UserBasic
         expose :source_project_id, :target_project_id
         expose :label_names, as: :labels
         expose :work_in_progress?, as: :work_in_progress
-        expose :milestone, using: Entities::Milestone
+        expose :milestone, using: ::API::Entities::Milestone
         expose :merge_when_pipeline_succeeds, as: :merge_when_build_succeeds
         expose :merge_status
         expose :diff_head_sha, as: :sha
