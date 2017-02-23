@@ -132,12 +132,12 @@ module API
           end
 
           desc 'Show the merge request changes' do
-            success ::API::V3::Entities::MergeRequestChanges
+            success ::API::Entities::MergeRequestChanges
           end
           get "#{path}/changes" do
             merge_request = find_merge_request_with_access(params[:merge_request_id])
 
-            present merge_request, with: ::API::V3::Entities::MergeRequestChanges, current_user: current_user
+            present merge_request, with: ::API::Entities::MergeRequestChanges, current_user: current_user
           end
 
           desc 'Update a merge request' do
@@ -176,7 +176,7 @@ module API
             optional :should_remove_source_branch, type: Boolean,
                                                    desc: 'When true, the source branch will be deleted if possible'
             optional :merge_when_build_succeeds, type: Boolean,
-                                                    desc: 'When true, this merge request will be merged when the build succeeds'
+                                                 desc: 'When true, this merge request will be merged when the build succeeds'
             optional :sha, type: String, desc: 'When present, must have the HEAD SHA of the source branch'
           end
           put "#{path}/merge" do
