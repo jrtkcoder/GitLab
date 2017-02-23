@@ -51,7 +51,7 @@ module API
         expose :public?, as: :public
         expose :archived?, as: :archived
         expose :visibility_level, :ssh_url_to_repo, :http_url_to_repo, :web_url
-        expose :owner, using: Entities::UserBasic, unless: ->(project, options) { project.group }
+        expose :owner, using: ::Entities::UserBasic, unless: ->(project, options) { project.group }
         expose :name, :name_with_namespace
         expose :path, :path_with_namespace
         expose :container_registry_enabled
