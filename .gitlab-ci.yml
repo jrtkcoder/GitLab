@@ -328,12 +328,13 @@ docs_links_check:
   image: "registry.gitlab.com/axil/nanoc-bootstrap:2.4-onbuild"
   stage: test
   <<: *dedicated-runner
-  variables: {}
+  variables:
+    GIT_DEPTH: "3"
   cache: {}
   dependencies: []
   before_script: []
   script:
-    - mv /builds/gitlab-org/gitlab-ce/doc /usr/src/app/content/
+    - mv doc/ /usr/src/app/content/
     - cd /usr/src/app/
     - bundle exec nanoc
     - bundle exec nanoc check internal_links
