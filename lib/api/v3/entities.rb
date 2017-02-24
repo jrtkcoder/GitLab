@@ -84,6 +84,20 @@ module API
         expose :statistics, using: 'API::Entities::ProjectStatistics', if: :statistics
       end
 
+      class ProjectWithAccess < Project
+        expose :permissions do
+          expose :project_access, using: ::API::Entities::ProjectAccess do |project, options|
+            project.project_members.find_by(user_id: options[:current_user].id)
+          end
+
+          expose :group_access, using: ::API::Entities::GroupAccess do |project, options|
+            if project.group
+              project.group.group_members.find_by(user_id: options[:current_user].id)
+            end
+          end
+        end
+      end
+
       class MergeRequest < Grape::Entity
         expose :id, :iid
         expose(:project_id) { |entity| entity.project.id }

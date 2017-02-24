@@ -340,7 +340,7 @@ describe API::V3::Projects, api: true do
 
       post v3_api('/projects', user), project
 
-      project[:only_allow_merge_if_pipeline_succeeds] = project.delete(:only_allow_merge_if_build_succeeds)
+      #project[:only_allow_merge_if_pipeline_succeeds] = project.delete(:only_allow_merge_if_build_succeeds)
 
       project.each_pair do |k, v|
         next if %i[has_external_issue_tracker issues_enabled merge_requests_enabled wiki_enabled].include?(k)

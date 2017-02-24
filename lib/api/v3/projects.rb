@@ -43,7 +43,7 @@ module API
         end
 
         def set_only_allow_merge_if_pipeline_succeeds!
-          if params[:only_allow_merge_if_build_succeeds]
+          if params.has_key?(:only_allow_merge_if_build_succeeds)
             params[:only_allow_merge_if_pipeline_succeeds] = params.delete(:only_allow_merge_if_build_succeeds)
           end
         end
@@ -105,7 +105,7 @@ module API
           use :collection_params
         end
         get '/visible' do
-          entity = current_user ? ::API::Entities::ProjectWithAccess : ::API::Entities::BasicProjectDetails
+          entity = current_user ? ::API::V3::Entities::ProjectWithAccess : ::API::Entities::BasicProjectDetails
           present_projects ProjectsFinder.new.execute(current_user), with: entity
         end
 
@@ -119,7 +119,7 @@ module API
           authenticate!
 
           present_projects current_user.authorized_projects,
-            with: ::API::Entities::ProjectWithAccess
+            with: ::API::V3::Entities::ProjectWithAccess
         end
 
         desc 'Get an owned projects list for authenticated user' do
@@ -133,7 +133,7 @@ module API
           authenticate!
 
           present_projects current_user.owned_projects,
-            with: ::API::Entities::ProjectWithAccess,
+            with: ::API::V3::Entities::ProjectWithAccess,
             statistics: params[:statistics]
         end
 
@@ -159,7 +159,7 @@ module API
         get '/all' do
           authenticated_as_admin!
 
-          present_projects Project.all, with: ::API::Entities::ProjectWithAccess, statistics: params[:statistics]
+          present_projects Project.all, with: ::API::V3::Entities::ProjectWithAccess, statistics: params[:statistics]
         end
 
         desc 'Search for projects the current user has access to' do
@@ -234,10 +234,10 @@ module API
       end
       resource :projects, requirements: { id: /[^\/]+/ } do
         desc 'Get a single project' do
-          success ::API::Entities::ProjectWithAccess
+          success ::API::V3::Entities::ProjectWithAccess
         end
         get ":id" do
-          entity = current_user ? ::API::Entities::ProjectWithAccess : ::API::Entities::BasicProjectDetails
+          entity = current_user ? ::API::V3::Entities::ProjectWithAccess : ::API::Entities::BasicProjectDetails
           present user_project, with: entity, current_user: current_user,
                                 user_can_admin_project: can?(current_user, :admin_project, user_project)
         end
