@@ -317,7 +317,13 @@ class Commit
   end
 
   def raw_diffs(*args)
-    raw.diffs(*args)
+    Gitlab::GitalyClient.migrate(:commit_raw_diffs) do |is_enabled|
+      if is_enabled
+        Gitlab::GitalyClient::Commit.diff_from_parent(self)
+      else
+        raw.diffs(*args)
+      end
+    end
   end
 
   def diffs(diff_options = nil)
