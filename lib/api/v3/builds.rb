@@ -26,7 +26,7 @@ module API
         end
 
         desc 'Get a project builds' do
-          success V3::Entities::Build
+          success ::API::V3::Entities::Build
         end
         params do
           use :optional_scope
@@ -36,7 +36,7 @@ module API
           builds = user_project.builds.order('id DESC')
           builds = filter_builds(builds, params[:scope])
 
-          present paginate(builds), with: Entities::Build,
+          present paginate(builds), with: ::API::V3::Entities::Build,
             user_can_download_artifacts: can?(current_user, :read_build, user_project)
         end
 

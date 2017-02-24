@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe API::Notes, api: true  do
+describe API::V3::Notes, api: true  do
   include ApiHelpers
   let(:user) { create(:user) }
   let!(:project) { create(:project, :public, namespace: user.namespace) }
@@ -32,10 +32,6 @@ describe API::Notes, api: true  do
   before { project.team << [user, :reporter] }
 
   describe "GET /projects/:id/noteable/:noteable_id/notes" do
-    it_behaves_like 'a paginated resources' do
-      let(:request) { get api("/projects/#{project.id}/issues/#{issue.id}/notes", user) }
-    end
-
     context "when noteable is an Issue" do
       it "returns an array of issue notes" do
         get api("/projects/#{project.id}/issues/#{issue.id}/notes", user)

@@ -39,7 +39,7 @@ module API
 
         desc 'List merge requests' do
           detail 'iid filter is deprecated have been removed on V4'
-          success ::API::Entities::MergeRequest
+          success ::API::V3::Entities::MergeRequest
         end
         params do
           optional :state, type: String, values: %w[opened closed merged all], default: 'all',
@@ -66,11 +66,11 @@ module API
             end
 
           merge_requests = merge_requests.reorder(params[:order_by] => params[:sort])
-          present paginate(merge_requests), with: ::API::Entities::MergeRequest, current_user: current_user, project: user_project
+          present paginate(merge_requests), with: ::API::V3::Entities::MergeRequest, current_user: current_user, project: user_project
         end
 
         desc 'Create a merge request' do
-          success ::API::Entities::MergeRequest
+          success ::API::V3::Entities::MergeRequest
         end
         params do
           requires :title, type: String, desc: 'The title of the merge request'
@@ -89,7 +89,7 @@ module API
           merge_request = ::MergeRequests::CreateService.new(user_project, current_user, mr_params).execute
 
           if merge_request.valid?
-            present merge_request, with: ::API::Entities::MergeRequest, current_user: current_user, project: user_project
+            present merge_request, with: ::API::V3::Entities::MergeRequest, current_user: current_user, project: user_project
           else
             handle_merge_request_errors! merge_request.errors
           end
@@ -114,12 +114,12 @@ module API
             if status == :deprecated
               detail DEPRECATION_MESSAGE
             end
-            success ::API::Entities::MergeRequest
+            success ::API::V3::Entities::MergeRequest
           end
           get path do
             merge_request = find_merge_request_with_access(params[:merge_request_id])
 
-            present merge_request, with: ::API::Entities::MergeRequest, current_user: current_user, project: user_project
+            present merge_request, with: ::API::V3::Entities::MergeRequest, current_user: current_user, project: user_project
           end
 
           desc 'Get the commits of a merge request' do
@@ -132,16 +132,16 @@ module API
           end
 
           desc 'Show the merge request changes' do
-            success ::API::Entities::MergeRequestChanges
+            success ::API::V3::Entities::MergeRequestChanges
           end
           get "#{path}/changes" do
             merge_request = find_merge_request_with_access(params[:merge_request_id])
 
-            present merge_request, with: ::API::Entities::MergeRequestChanges, current_user: current_user
+            present merge_request, with: ::API::V3::Entities::MergeRequestChanges, current_user: current_user
           end
 
           desc 'Update a merge request' do
-            success ::API::Entities::MergeRequest
+            success ::API::V3::Entities::MergeRequest
           end
           params do
             optional :title, type: String, allow_blank: false, desc: 'The title of the merge request'
@@ -162,14 +162,14 @@ module API
             merge_request = ::MergeRequests::UpdateService.new(user_project, current_user, mr_params).execute(merge_request)
 
             if merge_request.valid?
-              present merge_request, with: ::API::Entities::MergeRequest, current_user: current_user, project: user_project
+              present merge_request, with: ::API::V3::Entities::MergeRequest, current_user: current_user, project: user_project
             else
               handle_merge_request_errors! merge_request.errors
             end
           end
 
           desc 'Merge a merge request' do
-            success ::API::Entities::MergeRequest
+            success ::API::V3::Entities::MergeRequest
           end
           params do
             optional :merge_commit_message, type: String, desc: 'Custom merge commit message'
@@ -209,11 +209,11 @@ module API
                 .execute(merge_request)
             end
 
-            present merge_request, with: ::API::Entities::MergeRequest, current_user: current_user, project: user_project
+            present merge_request, with: ::API::V3::Entities::MergeRequest, current_user: current_user, project: user_project
           end
 
           desc 'Cancel merge if "Merge When Pipeline Succeeds" is enabled' do
-            success ::API::Entities::MergeRequest
+            success ::API::V3::Entities::MergeRequest
           end
           post "#{path}/cancel_merge_when_build_succeeds" do
             merge_request = find_project_merge_request(params[:merge_request_id])
