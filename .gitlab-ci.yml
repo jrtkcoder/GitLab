@@ -324,6 +324,20 @@ migration paths:
     - source scripts/prepare_build.sh
     - bundle exec rake db:migrate
 
+docs_links_check:
+  image: "registry.gitlab.com/axil/nanoc-bootstrap:2.4-onbuild"
+  stage: test
+  <<: *dedicated-runner
+  variables: {}
+  cache: {}
+  dependencies: []
+  before_script: []
+  script:
+    - mv /builds/gitlab-org/gitlab-ce/doc /usr/src/app/content/
+    - cd /usr/src/app/
+    - bundle exec nanoc
+    - bundle exec nanoc check internal_links
+
 coverage:
   stage: post-test
   services: []
