@@ -4,7 +4,7 @@
       %span= trigger.token
       = clipboard_button(clipboard_text: trigger.token, title: "Copy trigger token to clipboard")
     - else
-      %span= truncate(trigger.token, length: 6)
+      %span= truncate(trigger.token, length: 11)
 
     .label-container
       - if trigger.owner.blank?
@@ -27,5 +27,5 @@
 
   %td.text-right
     = link_to 'Take ownership', take_namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: 'Are you sure?'}, method: :post, class: "btn btn-warning btn-sm"
-    = link_to 'Edit', edit_namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: 'Are you sure?'}, method: :get, class: "btn btn-warning btn-sm"
+    = link_to 'Edit', edit_namespace_project_trigger_path(@project.namespace, @project, trigger), method: :get, class: "btn btn-warning btn-sm"
     = link_to 'Revoke', namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: 'Are you sure?'}, method: :delete, class: "btn btn-warning btn-sm"
