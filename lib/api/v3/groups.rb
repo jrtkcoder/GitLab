@@ -126,11 +126,11 @@ module API
         delete ":id" do
           group = find_group!(params[:id])
           authorize! :admin_group, group
-          DestroyGroupService.new(group, current_user).execute
+          ::Groups::DestroyService.new(group, current_user).execute
         end
 
         desc 'Get a list of projects in this group.' do
-          success Entities::Project
+          success V3::Entities::Project
         end
         params do
           optional :archived, type: Boolean, default: false, desc: 'Limit by archived status'
@@ -149,7 +149,7 @@ module API
           group = find_group!(params[:id])
           projects = GroupProjectsFinder.new(group).execute(current_user)
           projects = filter_projects(projects)
-          entity = params[:simple] ? Entities::BasicProjectDetails : Entities::Project
+          entity = params[:simple] ? ::API::Entities::BasicProjectDetails : ::API::V3::Entities::Project
           present paginate(projects), with: entity, current_user: current_user
         end
 

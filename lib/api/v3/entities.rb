@@ -16,7 +16,7 @@ module API
         expose :id, :status, :stage, :name, :ref, :tag, :coverage
         expose :created_at, :started_at, :finished_at
         expose :user, with: ::API::Entities::User
-        expose :artifacts_file, using: ::API::Entities::JobArtifactFile, if: -> (build, opts) { build.artifacts? }
+        expose :artifacts_file, using: ::API::Entities::JobArtifactFile, if: -> (build, _opts) { build.artifacts? }
         expose :commit, with: ::API::Entities::RepoCommit
         expose :runner, with: ::API::Entities::Runner
         expose :pipeline, with: ::API::Entities::PipelineBasic
@@ -41,20 +41,20 @@ module API
         expose :shared_runners_enabled
         expose :lfs_enabled?, as: :lfs_enabled
         expose :creator_id
-        expose :namespace, using: 'API::Entities::Namespace'
-        expose :forked_from_project, using: ::API::Entities::BasicProjectDetails, if: lambda{ |project, options| project.forked? }
+        expose :namespace, using: ::API::Entities::Namespace
+        expose :forked_from_project, using: ::API::Entities::BasicProjectDetails, if: lambda{ |project, _options| project.forked? }
         expose :avatar_url
         expose :star_count, :forks_count
         expose :open_issues_count, if: lambda { |project, options| project.feature_available?(:issues, options[:current_user]) && project.default_issues_tracker? }
         expose :runners_token, if: lambda { |_project, options| options[:user_can_admin_project] }
         expose :public_builds
         expose :shared_with_groups do |project, options|
-          SharedGroup.represent(project.project_group_links.all, options)
+          ::API::Entities::SharedGroup.represent(project.project_group_links.all, options)
         end
         expose :only_allow_merge_if_build_succeeds
         expose :request_access_enabled
         expose :only_allow_merge_if_all_discussions_are_resolved
-        expose :statistics, using: 'API::Entities::ProjectStatistics', if: :statistics
+        expose :statistics, using: ::API::V3::Entities::ProjectStatistics, if: :statistics
       end
 
       class BuildArtifactFile < Grape::Entity
@@ -66,7 +66,7 @@ module API
       end
 
       class Environment < EnvironmentBasic
-        expose :project, using: Entities::Project
+        expose :project, using: ::API::V3::Entities::Project
       end
 
       class Deployment < Grape::Entity
@@ -153,7 +153,7 @@ module API
         expose :note_events, :build_events, :pipeline_events, :wiki_page_events
       end
 
-      class ProjectWithAccess < Project
+      class ProjectWithAccess < V3::Entities::Project
         expose :permissions do
           expose :project_access, using: ::API::Entities::ProjectAccess do |project, options|
             project.project_members.find_by(user_id: options[:current_user].id)

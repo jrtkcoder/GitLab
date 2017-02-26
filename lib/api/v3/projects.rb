@@ -73,11 +73,11 @@ module API
           end
 
           def present_projects(projects, options = {})
-            options = options.reverse_merge(
-              with: ::API::Entities::Project,
+            options = {
+              with: ::API::V3::Entities::Project,
               current_user: current_user,
               simple: params[:simple],
-            )
+            }.merge(options)
 
             projects = filter_projects(projects)
             projects = projects.with_statistics if options[:statistics]
@@ -122,7 +122,7 @@ module API
           authenticate!
 
           present_projects current_user.owned_projects,
-            with: ::API::Entities::ProjectWithAccess,
+            with: ::API::V3::Entities::ProjectWithAccess,
             statistics: params[:statistics]
         end
 
