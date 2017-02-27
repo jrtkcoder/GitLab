@@ -63,7 +63,16 @@ var config = {
             'stage-2'
           ]
         }
-      }
+      },
+      {
+        // expose jQuery as window.$ and window.jQuery
+        // this is necessary for legacy plugins to work properly
+        test: require.resolve('jquery'),
+        use: [
+          { loader: 'expose-loader', options: '$' },
+          { loader: 'expose-loader', options: 'jQuery' },
+        ]
+      },
     ]
   },
 
