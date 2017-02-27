@@ -80,8 +80,10 @@ module Gitlab
     #   import_repository("/path/to/storage", "gitlab/gitlab-ci", "https://github.com/randx/six.git")
     #
     def import_repository(storage, name, url)
-      output, status = Popen::popen([gitlab_shell_projects_path, 'import-project',
-                                     storage, "#{name}.git", url, '900'])
+      # Timeout should be less than 900 ideally, to prevent the memory killer
+      # to silently kill the process without knowing we are timing out here.
+      output, status = Popen.popen([gitlab_shell_projects_path, 'import-project',
+                                    storage, "#{name}.git", url, '800'])
       raise Error, output unless status.zero?
       true
     end
@@ -143,7 +145,7 @@ module Gitlab
     #   batch_add_keys { |adder| adder.add_key("key-42", "sha-rsa ...") }
     def batch_add_keys(&block)
       IO.popen(%W(#{gitlab_shell_path}/bin/gitlab-keys batch-add-keys), 'w') do |io|
-        block.call(KeyAdder.new(io))
+        yield(KeyAdder.new(io))
       end
     end
 
@@ -172,7 +174,7 @@ module Gitlab
     #   add_namespace("/path/to/storage", "gitlab")
     #
     def add_namespace(storage, name)
-      FileUtils.mkdir(full_path(storage, name), mode: 0770) unless exists?(storage, name)
+      FileUtils.mkdir_p(full_path(storage, name), mode: 0770) unless exists?(storage, name)
     end
 
     # Remove directory from repositories storage

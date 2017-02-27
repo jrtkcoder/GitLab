@@ -72,7 +72,7 @@ class Note < ActiveRecord::Base
   scope :inc_author, ->{ includes(:author) }
   scope :inc_relations_for_view, ->{ includes(:project, :author, :updated_by, :resolved_by, :award_emoji) }
 
-  scope :diff_notes, ->{ where(type: ['LegacyDiffNote', 'DiffNote']) }
+  scope :diff_notes, ->{ where(type: %w(LegacyDiffNote DiffNote)) }
   scope :non_diff_notes, ->{ where(type: ['Note', nil]) }
 
   scope :with_associations, -> do
@@ -107,6 +107,12 @@ class Note < ActiveRecord::Base
       active_notes = diff_notes.fresh.select(&:active?)
       Discussion.for_diff_notes(active_notes).
         map { |d| [d.line_code, d] }.to_h
+    end
+
+    def count_for_collection(ids, type)
+      user.select('noteable_id', 'COUNT(*) as count').
+        group(:noteable_id).
+        where(noteable_type: type, noteable_id: ids)
     end
   end
 

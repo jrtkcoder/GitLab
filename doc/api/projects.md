@@ -36,6 +36,8 @@ Parameters:
 | `sort` | string | no | Return projects sorted in `asc` or `desc` order. Default is `desc` |
 | `search` | string | no | Return list of authorized projects matching the search criteria |
 | `simple` | boolean | no | Return only the ID, URL, name, and path of each project |
+| `owned` | boolean | no | Limit by projects owned by the current user |
+| `starred` | boolean | no | Limit by projects starred by the current user |
 
 ```json
 [
@@ -75,7 +77,8 @@ Parameters:
       "id": 3,
       "name": "Diaspora",
       "path": "diaspora",
-      "kind": "group"
+      "kind": "group",
+      "full_path": "diaspora"
     },
     "archived": false,
     "avatar_url": "http://example.com/uploads/project/avatar/4/uploads/avatar.png",
@@ -125,7 +128,8 @@ Parameters:
       "id": 4,
       "name": "Brightbox",
       "path": "brightbox",
-      "kind": "group"
+      "kind": "group",
+      "full_path": "brightbox"
     },
     "permissions": {
       "project_access": {
@@ -151,190 +155,6 @@ Parameters:
   }
 ]
 ```
-
-Get a list of projects which the authenticated user can see.
-
-```
-GET /projects/visible
-```
-
-Parameters:
-
-| Attribute | Type | Required | Description |
-| --------- | ---- | -------- | ----------- |
-| `archived` | boolean | no | Limit by archived status |
-| `visibility` | string | no | Limit by visibility `public`, `internal`, or `private` |
-| `order_by` | string | no | Return projects ordered by `id`, `name`, `path`, `created_at`, `updated_at`, or `last_activity_at` fields. Default is `created_at` |
-| `sort` | string | no | Return projects sorted in `asc` or `desc` order. Default is `desc` |
-| `search` | string | no | Return list of authorized projects matching the search criteria |
-| `simple` | boolean | no | Return only the ID, URL, name, and path of each project |
-
-```json
-[
-  {
-    "id": 4,
-    "description": null,
-    "default_branch": "master",
-    "public": false,
-    "visibility_level": 0,
-    "ssh_url_to_repo": "git@example.com:diaspora/diaspora-client.git",
-    "http_url_to_repo": "http://example.com/diaspora/diaspora-client.git",
-    "web_url": "http://example.com/diaspora/diaspora-client",
-    "tag_list": [
-      "example",
-      "disapora client"
-    ],
-    "owner": {
-      "id": 3,
-      "name": "Diaspora",
-      "created_at": "2013-09-30T13:46:02Z"
-    },
-    "name": "Diaspora Client",
-    "name_with_namespace": "Diaspora / Diaspora Client",
-    "path": "diaspora-client",
-    "path_with_namespace": "diaspora/diaspora-client",
-    "issues_enabled": true,
-    "open_issues_count": 1,
-    "merge_requests_enabled": true,
-    "builds_enabled": true,
-    "wiki_enabled": true,
-    "snippets_enabled": false,
-    "container_registry_enabled": false,
-    "created_at": "2013-09-30T13:46:02Z",
-    "last_activity_at": "2013-09-30T13:46:02Z",
-    "creator_id": 3,
-    "namespace": {
-      "id": 3,
-      "name": "Diaspora",
-      "path": "diaspora",
-      "kind": "group"
-    },
-    "archived": false,
-    "avatar_url": "http://example.com/uploads/project/avatar/4/uploads/avatar.png",
-    "shared_runners_enabled": true,
-    "forks_count": 0,
-    "star_count": 0,
-    "runners_token": "b8547b1dc37721d05889db52fa2f02",
-    "public_builds": true,
-    "shared_with_groups": []
-  },
-  {
-    "id": 6,
-    "description": null,
-    "default_branch": "master",
-    "public": false,
-    "visibility_level": 0,
-    "ssh_url_to_repo": "git@example.com:brightbox/puppet.git",
-    "http_url_to_repo": "http://example.com/brightbox/puppet.git",
-    "web_url": "http://example.com/brightbox/puppet",
-    "tag_list": [
-      "example",
-      "puppet"
-    ],
-    "owner": {
-      "id": 4,
-      "name": "Brightbox",
-      "created_at": "2013-09-30T13:46:02Z"
-    },
-    "name": "Puppet",
-    "name_with_namespace": "Brightbox / Puppet",
-    "path": "puppet",
-    "path_with_namespace": "brightbox/puppet",
-    "issues_enabled": true,
-    "open_issues_count": 1,
-    "merge_requests_enabled": true,
-    "builds_enabled": true,
-    "wiki_enabled": true,
-    "snippets_enabled": false,
-    "container_registry_enabled": false,
-    "created_at": "2013-09-30T13:46:02Z",
-    "last_activity_at": "2013-09-30T13:46:02Z",
-    "creator_id": 3,
-    "namespace": {
-      "id": 4,
-      "name": "Brightbox",
-      "path": "brightbox",
-      "kind": "group"
-    },
-    "permissions": {
-      "project_access": {
-        "access_level": 10,
-        "notification_level": 3
-      },
-      "group_access": {
-        "access_level": 50,
-        "notification_level": 3
-      }
-    },
-    "archived": false,
-    "avatar_url": null,
-    "shared_runners_enabled": true,
-    "forks_count": 0,
-    "star_count": 0,
-    "runners_token": "b8547b1dc37721d05889db52fa2f02",
-    "public_builds": true,
-    "shared_with_groups": []
-  }
-]
-```
-
-### List owned projects
-
-Get a list of projects which are owned by the authenticated user.
-
-```
-GET /projects/owned
-```
-
-Parameters:
-
-| Attribute | Type | Required | Description |
-| --------- | ---- | -------- | ----------- |
-| `archived` | boolean | no | Limit by archived status |
-| `visibility` | string | no | Limit by visibility `public`, `internal`, or `private` |
-| `order_by` | string | no | Return projects ordered by `id`, `name`, `path`, `created_at`, `updated_at`, or `last_activity_at` fields. Default is `created_at` |
-| `sort` | string | no | Return projects sorted in `asc` or `desc` order. Default is `desc` |
-| `search` | string | no | Return list of authorized projects matching the search criteria |
-| `simple` | boolean | no | Return only the ID, URL, name, and path of each project |
-| `statistics` | boolean | no | Include project statistics |
-
-### List starred projects
-
-Get a list of projects which are starred by the authenticated user.
-
-```
-GET /projects/starred
-```
-
-Parameters:
-
-| Attribute | Type | Required | Description |
-| --------- | ---- | -------- | ----------- |
-| `archived` | boolean | no | Limit by archived status |
-| `visibility` | string | no | Limit by visibility `public`, `internal`, or `private` |
-| `order_by` | string | no | Return projects ordered by `id`, `name`, `path`, `created_at`, `updated_at`, or `last_activity_at` fields. Default is `created_at` |
-| `sort` | string | no | Return projects sorted in `asc` or `desc` order. Default is `desc` |
-| `search` | string | no | Return list of authorized projects matching the search criteria |
-| `simple` | boolean | no | Return only the ID, URL, name, and path of each project |
-
-### List ALL projects
-
-Get a list of all GitLab projects (admin only).
-
-```
-GET /projects/all
-```
-
-Parameters:
-
-| Attribute | Type | Required | Description |
-| --------- | ---- | -------- | ----------- |
-| `archived` | boolean | no | Limit by archived status |
-| `visibility` | string | no | Limit by visibility `public`, `internal`, or `private` |
-| `order_by` | string | no | Return projects ordered by `id`, `name`, `path`, `created_at`, `updated_at`, or `last_activity_at` fields. Default is `created_at` |
-| `sort` | string | no | Return projects sorted in `asc` or `desc` order. Default is `desc` |
-| `search` | string | no | Return list of authorized projects matching the search criteria |
-| `statistics` | boolean | no | Include project statistics |
 
 ### Get single project
 
@@ -389,7 +209,8 @@ Parameters:
     "id": 3,
     "name": "Diaspora",
     "path": "diaspora",
-    "kind": "group"
+    "kind": "group",
+    "full_path": "diaspora"
   },
   "permissions": {
     "project_access": {
@@ -586,8 +407,6 @@ Parameters:
       },
       "created_at": "2015-12-04T10:33:56.698Z",
       "system": false,
-      "upvote": false,
-      "downvote": false,
       "noteable_id": 377,
       "noteable_type": "Issue"
     },
@@ -705,7 +524,7 @@ Parameters:
 Forks a project into the user namespace of the authenticated user or the one provided.
 
 ```
-POST /projects/fork/:id
+POST /projects/:id/fork
 ```
 
 Parameters:
@@ -767,7 +586,8 @@ Example response:
     "id": 3,
     "name": "Diaspora",
     "path": "diaspora",
-    "kind": "group"
+    "kind": "group",
+    "full_path": "diaspora"
   },
   "archived": true,
   "avatar_url": "http://example.com/uploads/project/avatar/3/uploads/avatar.png",
@@ -787,7 +607,7 @@ Example response:
 Unstars a given project. Returns status code `304` if the project is not starred.
 
 ```
-DELETE /projects/:id/star
+POST /projects/:id/unstar
 ```
 
 | Attribute | Type | Required | Description |
@@ -795,7 +615,7 @@ DELETE /projects/:id/star
 | `id` | integer/string | yes | The ID of the project or NAMESPACE/PROJECT_NAME |
 
 ```bash
-curl --request DELETE --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" "https://gitlab.example.com/api/v3/projects/5/star"
+curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" "https://gitlab.example.com/api/v3/projects/5/unstar"
 ```
 
 Example response:
@@ -832,7 +652,8 @@ Example response:
     "id": 3,
     "name": "Diaspora",
     "path": "diaspora",
-    "kind": "group"
+    "kind": "group",
+    "full_path": "diaspora"
   },
   "archived": true,
   "avatar_url": "http://example.com/uploads/project/avatar/3/uploads/avatar.png",
@@ -903,7 +724,8 @@ Example response:
     "id": 3,
     "name": "Diaspora",
     "path": "diaspora",
-    "kind": "group"
+    "kind": "group",
+    "full_path": "diaspora"
   },
   "permissions": {
     "project_access": {
@@ -985,7 +807,8 @@ Example response:
     "id": 3,
     "name": "Diaspora",
     "path": "diaspora",
-    "kind": "group"
+    "kind": "group",
+    "full_path": "diaspora"
   },
   "permissions": {
     "project_access": {
@@ -1370,3 +1193,17 @@ Parameters:
 | `query` | string | yes | A string contained in the project name |
 | `order_by` | string | no | Return requests ordered by `id`, `name`, `created_at` or `last_activity_at` fields |
 | `sort` | string | no | Return requests sorted in `asc` or `desc` order |
+
+## Start the Housekeeping task for a Project
+
+>**Note:** This feature was introduced in GitLab 9.0
+
+```
+POST /projects/:id/housekeeping
+```
+
+Parameters:
+
+| Attribute | Type | Required | Description |
+| --------- | ---- | -------- | ----------- |
+| `id` | integer/string | yes | The ID of the project or NAMESPACE/PROJECT_NAME |

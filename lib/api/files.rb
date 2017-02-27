@@ -1,12 +1,11 @@
 module API
-  # Projects API
   class Files < Grape::API
     helpers do
       def commit_params(attrs)
         {
           file_path: attrs[:file_path],
-          start_branch: attrs[:branch_name],
-          target_branch: attrs[:branch_name],
+          start_branch: attrs[:branch],
+          target_branch: attrs[:branch],
           commit_message: attrs[:commit_message],
           file_content: attrs[:content],
           file_content_encoding: attrs[:encoding],
@@ -18,13 +17,13 @@ module API
       def commit_response(attrs)
         {
           file_path: attrs[:file_path],
-          branch_name: attrs[:branch_name]
+          branch: attrs[:branch]
         }
       end
 
       params :simple_file_params do
         requires :file_path, type: String, desc: 'The path to new file. Ex. lib/class.rb'
-        requires :branch_name, type: String, desc: 'The name of branch'
+        requires :branch, type: String, desc: 'The name of branch'
         requires :commit_message, type: String, desc: 'Commit Message'
         optional :author_email, type: String, desc: 'The email of the author'
         optional :author_name, type: String, desc: 'The name of the author'
@@ -117,7 +116,7 @@ module API
         authorize! :push_code, user_project
 
         file_params = declared_params(include_missing: false)
-        result = ::Files::DeleteService.new(user_project, current_user, commit_params(file_params)).execute
+        result = ::Files::DestroyService.new(user_project, current_user, commit_params(file_params)).execute
 
         if result[:status] == :success
           status(200)

@@ -16,7 +16,7 @@ describe Projects::UploadsController do
       it "returns an error" do
         post :create,
           namespace_id: project.namespace.to_param,
-          project_id: project.to_param,
+          project_id: project,
           format: :json
         expect(response).to have_http_status(422)
       end
@@ -26,7 +26,7 @@ describe Projects::UploadsController do
       before do
         post :create,
           namespace_id: project.namespace.to_param,
-          project_id: project.to_param,
+          project_id: project,
           file: jpg,
           format: :json
       end
@@ -41,7 +41,7 @@ describe Projects::UploadsController do
       before do
         post :create,
           namespace_id: project.namespace.to_param,
-          project_id: project.to_param,
+          project_id: project,
           file: txt,
           format: :json
       end
@@ -57,7 +57,7 @@ describe Projects::UploadsController do
     let(:go) do
       get :show,
         namespace_id: project.namespace.to_param,
-        project_id:   project.to_param,
+        project_id:   project,
         secret:       "123456",
         filename:     "image.jpg"
     end
@@ -170,68 +170,24 @@ describe Projects::UploadsController do
             project.team << [user, :master]
           end
 
-          context "when the user is blocked" do
+          context "when the file exists" do
             before do
-              user.block
-              project.team << [user, :master]
+              allow_any_instance_of(FileUploader).to receive(:file).and_return(jpg)
+              allow(jpg).to receive(:exists?).and_return(true)
             end
 
-            context "when the file exists" do
-              before do
-                allow_any_instance_of(FileUploader).to receive(:file).and_return(jpg)
-                allow(jpg).to receive(:exists?).and_return(true)
-              end
+            it "responds with status 200" do
+              go
 
-              context "when the file is an image" do
-                before do
-                  allow_any_instance_of(FileUploader).to receive(:image?).and_return(true)
-                end
-
-                it "responds with status 200" do
-                  go
-
-                  expect(response).to have_http_status(200)
-                end
-              end
-
-              context "when the file is not an image" do
-                it "redirects to the sign in page" do
-                  go
-
-                  expect(response).to redirect_to(new_user_session_path)
-                end
-              end
-            end
-
-            context "when the file doesn't exist" do
-              it "redirects to the sign in page" do
-                go
-
-                expect(response).to redirect_to(new_user_session_path)
-              end
+              expect(response).to have_http_status(200)
             end
           end
 
-          context "when the user isn't blocked" do
-            context "when the file exists" do
-              before do
-                allow_any_instance_of(FileUploader).to receive(:file).and_return(jpg)
-                allow(jpg).to receive(:exists?).and_return(true)
-              end
+          context "when the file doesn't exist" do
+            it "responds with status 404" do
+              go
 
-              it "responds with status 200" do
-                go
-
-                expect(response).to have_http_status(200)
-              end
-            end
-
-            context "when the file doesn't exist" do
-              it "responds with status 404" do
-                go
-
-                expect(response).to have_http_status(404)
-              end
+              expect(response).to have_http_status(404)
             end
           end
         end

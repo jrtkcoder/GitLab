@@ -14,6 +14,10 @@ FactoryGirl.define do
       action { Todo::MENTIONED }
     end
 
+    trait :directly_addressed do
+      action { Todo::DIRECTLY_ADDRESSED }
+    end
+
     trait :on_commit do
       commit_id RepoHelpers.sample_commit.id
       target_type "Commit"
@@ -34,6 +38,10 @@ FactoryGirl.define do
 
     trait :unmergeable do
       action { Todo::UNMERGEABLE }
+    end
+
+    trait :pending do
+      state :pending
     end
 
     trait :done do

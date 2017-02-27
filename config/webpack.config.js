@@ -5,11 +5,14 @@ var path = require('path');
 var webpack = require('webpack');
 var StatsPlugin = require('stats-webpack-plugin');
 var CompressionPlugin = require('compression-webpack-plugin');
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 var ROOT_PATH = path.resolve(__dirname, '..');
 var IS_PRODUCTION = process.env.NODE_ENV === 'production';
 var IS_DEV_SERVER = process.argv[1].indexOf('webpack-dev-server') !== -1;
 var DEV_SERVER_PORT = parseInt(process.env.DEV_SERVER_PORT, 10) || 3808;
+var DEV_SERVER_LIVERELOAD = process.env.DEV_SERVER_LIVERELOAD !== 'false';
+var WEBPACK_REPORT = process.env.WEBPACK_REPORT;
 
 var config = {
   context: path.join(ROOT_PATH, 'app/assets/javascripts'),
@@ -22,6 +25,7 @@ var config = {
     commit_pipelines:     './commit/pipelines/pipelines_bundle.js',
     diff_notes:           './diff_notes/diff_notes_bundle.js',
     environments:         './environments/environments_bundle.js',
+    environments_folder:  './environments/folder/environments_folder_bundle.js',
     filtered_search:      './filtered_search/filtered_search_bundle.js',
     graphs:               './graphs/graphs_bundle.js',
     issuable:             './issuable/issuable_bundle.js',
@@ -59,12 +63,6 @@ var config = {
             'stage-2'
           ]
         }
-      },
-      {
-        test: /\.(js|es6)$/,
-        exclude: /node_modules/,
-        loader: 'imports-loader',
-        options: 'this=>window'
       }
     ]
   },
@@ -79,9 +77,7 @@ var config = {
       modules: false,
       assets: true
     }),
-    new CompressionPlugin({
-      asset: '[path].gz[query]',
-    }),
+    new webpack.IgnorePlugin(/moment/, /pikaday/),
   ],
 
   resolve: {
@@ -91,8 +87,7 @@ var config = {
       'bootstrap/js':   'bootstrap-sass/assets/javascripts/bootstrap',
       'emoji-aliases$': path.join(ROOT_PATH, 'fixtures/emojis/aliases.json'),
       'vendor':         path.join(ROOT_PATH, 'vendor/assets/javascripts'),
-      'vue$':           'vue/dist/vue.js',
-      'vue-resource$':  'vue-resource/dist/vue-resource.js'
+      'vue$':           'vue/dist/vue.common.js',
     }
   }
 }
@@ -100,7 +95,7 @@ var config = {
 if (IS_PRODUCTION) {
   config.devtool = 'source-map';
   config.plugins.push(
-    new webpack.NoErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.LoaderOptionsPlugin({
       minimize: true,
       debug: false
@@ -110,6 +105,9 @@ if (IS_PRODUCTION) {
     }),
     new webpack.DefinePlugin({
       'process.env': { NODE_ENV: JSON.stringify('production') }
+    }),
+    new CompressionPlugin({
+      asset: '[path].gz[query]',
     })
   );
 }
@@ -117,9 +115,23 @@ if (IS_PRODUCTION) {
 if (IS_DEV_SERVER) {
   config.devServer = {
     port: DEV_SERVER_PORT,
-    headers: { 'Access-Control-Allow-Origin': '*' }
+    headers: { 'Access-Control-Allow-Origin': '*' },
+    stats: 'errors-only',
+    inline: DEV_SERVER_LIVERELOAD
   };
   config.output.publicPath = '//localhost:' + DEV_SERVER_PORT + config.output.publicPath;
+}
+
+if (WEBPACK_REPORT) {
+  config.plugins.push(
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      generateStatsFile: true,
+      openAnalyzer: false,
+      reportFilename: path.join(ROOT_PATH, 'webpack-report/index.html'),
+      statsFilename: path.join(ROOT_PATH, 'webpack-report/stats.json'),
+    })
+  );
 }
 
 module.exports = config;

@@ -14,6 +14,7 @@ Parameters:
 | `order_by` | string | no | Order groups by `name` or `path`. Default is `name` |
 | `sort` | string | no | Order groups in `asc` or `desc` order. Default is `asc` |
 | `statistics` | boolean | no | Include group statistics (admins only) |
+| `owned` | boolean | no | Limit by groups owned by the current user |
 
 ```
 GET /groups
@@ -40,20 +41,6 @@ GET /groups
 
 You can search for groups by name or path, see below.
 
-## List owned groups
-
-Get a list of groups which are owned by the authenticated user.
-
-```
-GET /groups/owned
-```
-
-Parameters:
-
-| Attribute | Type | Required | Description |
-| --------- | ---- | -------- | ----------- |
-| `statistics` | boolean | no | Include group statistics |
-
 ## List a group's projects
 
 Get a list of projects in this group.
@@ -73,6 +60,8 @@ Parameters:
 | `sort` | string | no | Return projects sorted in `asc` or `desc` order. Default is `desc` |
 | `search` | string | no | Return list of authorized projects matching the search criteria |
 | `simple` | boolean | no | Return only the ID, URL, name, and path of each project |
+| `owned` | boolean | no | Limit by projects owned by the current user |
+| `starred` | boolean | no | Limit by projects starred by the current user |
 
 Example response:
 

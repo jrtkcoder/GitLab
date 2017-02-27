@@ -10,6 +10,11 @@
   font-size: 34px;
 }
 
+.environments-folder-name {
+  font-weight: normal;
+  padding-top: 20px;
+}
+
 @media (max-width: $screen-xs-max) {
   .environments-container {
     width: 100%;
@@ -30,7 +35,6 @@
     display: table-cell;
   }
 
-  .environments-name,
   .environments-commit,
   .environments-actions {
     width: 20%;
@@ -40,6 +44,7 @@
     width: 10%;
   }
 
+  .environments-name,
   .environments-deploy,
   .environments-build {
     width: 15%;
@@ -56,6 +61,22 @@
       float: none;
     }
   }
+
+  .btn-group {
+
+    > a {
+      color: $gl-text-color-secondary;
+    }
+
+    svg path {
+      fill: $gl-text-color-secondary;
+    }
+
+    .dropdown {
+      outline: none;
+    }
+  }
+
 
   .commit-title {
     margin: 0;
@@ -110,17 +131,20 @@
     }
   }
 
-  .children-row .environment-name {
-    margin-left: 17px;
-    margin-right: -17px;
-  }
-
   .folder-icon {
-    padding: 0 5px 0 0;
+    margin-right: 3px;
+    color: $gl-text-color-secondary;
+    display: inline-block;
+
+    .fa:nth-child(1) {
+      margin-right: 3px;
+    }
   }
 
   .folder-name {
     cursor: pointer;
+    color: $gl-text-color-secondary;
+    display: inline-block;
   }
 }
 

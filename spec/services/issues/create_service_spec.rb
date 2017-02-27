@@ -46,6 +46,7 @@ describe Issues::CreateService, services: true do
 
           expect(issue).to be_persisted
           expect(issue.title).to eq('Awesome issue')
+          expect(issue.description).to eq('please fix')
           expect(issue.assignee).to be_nil
           expect(issue.labels).to be_empty
           expect(issue.milestone).to be_nil
@@ -224,16 +225,6 @@ describe Issues::CreateService, services: true do
 
         context 'when spam log does not belong to a user' do
           let(:log_user) { create(:user) }
-
-          it 'does not mark spam_log as recaptcha_verified' do
-            expect { issue }.not_to change{SpamLog.last.recaptcha_verified}
-          end
-        end
-
-        context 'when spam log title does not match the issue title' do
-          before do
-            opts[:title] = 'Another issue'
-          end
 
           it 'does not mark spam_log as recaptcha_verified' do
             expect { issue }.not_to change{SpamLog.last.recaptcha_verified}

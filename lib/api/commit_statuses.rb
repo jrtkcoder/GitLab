@@ -40,12 +40,13 @@ module API
         requires :id,          type: String,  desc: 'The ID of a project'
         requires :sha,         type: String,  desc: 'The commit hash'
         requires :state,       type: String,  desc: 'The state of the status',
-                               values: ['pending', 'running', 'success', 'failed', 'canceled']
+                               values: %w(pending running success failed canceled)
         optional :ref,         type: String,  desc: 'The ref'
         optional :target_url,  type: String,  desc: 'The target URL to associate with this status'
         optional :description, type: String,  desc: 'A short description of the status'
         optional :name,        type: String,  desc: 'A string label to differentiate this status from the status of other systems. Default: "default"'
         optional :context,     type: String,  desc: 'A string label to differentiate this status from the status of other systems. Default: "default"'
+        optional :coverage,    type: Float,   desc: 'The total code coverage'
       end
       post ':id/statuses/:sha' do
         authorize! :create_commit_status, user_project
@@ -75,7 +76,8 @@ module API
           name: name,
           ref: ref,
           target_url: params[:target_url],
-          description: params[:description]
+          description: params[:description],
+          coverage: params[:coverage]
         )
 
         render_validation_error!(status) if status.invalid?

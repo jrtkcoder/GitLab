@@ -44,8 +44,8 @@ environment variable `SKIP`. You can skip:
 - `db` (database)
 - `uploads` (attachments)
 - `repositories` (Git repositories data)
-- `builds` (CI build output logs)
-- `artifacts` (CI build artifacts)
+- `builds` (CI job output logs)
+- `artifacts` (CI job artifacts)
 - `lfs` (LFS objects)
 - `registry` (Container Registry images)
 
@@ -83,6 +83,28 @@ Creating backup archive: $TIMESTAMP_gitlab_backup.tar [DONE]
 Deleting tmp directories...[DONE]
 Deleting old backups... [SKIPPING]
 ```
+
+## Backup Strategy Option
+
+> **Note:** Introduced as an option in 8.17
+
+The default backup strategy is to essentially stream data from the respective
+data locations to the backup using the Linux command `tar` and `gzip`. This works
+fine in most cases, but can cause problems when data is rapidly changing.
+
+When data changes while `tar` is reading it, the error `file changed as we read
+it` may occur, and will cause the backup process to fail. To combat this, 8.17
+introduces a new backup strategy called `copy`. The strategy copies data files
+to a temporary location before calling `tar` and `gzip`, avoiding the error.
+
+A side-effect is that the backup process with take up to an additional 1X disk
+space. The process does its best to clean up the temporary files at each stage
+so the problem doesn't compound, but it could be a considerable change for large
+installations. This is why the `copy` strategy is not the default in 8.17.
+
+To use the `copy` strategy instead of the default streaming strategy, specify
+`STRATEGY=copy` in the Rake task command. For example,
+`sudo gitlab-rake gitlab:backup:create STRATEGY=copy`.
 
 ## Exclude specific directories from the backup
 

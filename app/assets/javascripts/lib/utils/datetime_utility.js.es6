@@ -2,7 +2,7 @@
 /* global timeago */
 /* global dateFormat */
 
-window.timeago = require('vendor/timeago');
+window.timeago = require('timeago.js');
 window.dateFormat = require('vendor/date.format');
 
 (function() {
@@ -123,4 +123,4 @@ window.dateFormat = require('vendor/date.format');
       return Math.floor((date2 - date1) / millisecondsPerDay);
     };
   })(window);
-}).call(this);
+}).call(window);

@@ -6,7 +6,7 @@ require('~/lib/utils/text_utility');
 (function() {
   describe('Header', function() {
     var todosPendingCount = '.todos-pending-count';
-    var fixtureTemplate = 'static/header.html.raw';
+    var fixtureTemplate = 'issues/open-issue.html.raw';
 
     function isTodosCountHidden() {
       return $(todosPendingCount).hasClass('hidden');
@@ -45,9 +45,9 @@ require('~/lib/utils/text_utility');
         expect(isTodosCountHidden()).toEqual(false);
       });
 
-      it('should add delimiter to todos-pending-count', function() {
-        expect($(todosPendingCount).text()).toEqual('1,000');
+      it('should show 99+ for todos-pending-count', function() {
+        expect($(todosPendingCount).text()).toEqual('99+');
       });
     });
   });
-}).call(this);
+}).call(window);

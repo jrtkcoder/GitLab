@@ -107,7 +107,10 @@ setup-test-env:
   <<: *dedicated-runner
   stage: prepare
   script:
-    - npm install
+    - node --version
+    - yarn --version
+    - yarn install --pure-lockfile
+    - yarn check # ensure that yarn.lock matches package.json
     - bundle exec rake gitlab:assets:compile
     - bundle exec ruby -Ispec -e 'require "spec_helper" ; TestEnv.init'
   artifacts:
@@ -237,7 +240,26 @@ rake db:seed_fu:
     paths:
       - log/development.log
 
-karma:
+rake gitlab:assets:compile:
+  stage: test
+  <<: *dedicated-runner
+  dependencies: []
+  variables:
+    NODE_ENV: "production"
+    RAILS_ENV: "production"
+    SETUP_DB: "false"
+    USE_DB: "false"
+    SKIP_STORAGE_VALIDATION: "true"
+    WEBPACK_REPORT: "true"
+  script:
+    - bundle exec rake yarn:install gitlab:assets:compile
+  artifacts:
+    name: webpack-report
+    expire_in: 31d
+    paths:
+    - webpack-report/
+
+rake karma:
   cache:
     paths:
       - vendor/ruby
@@ -246,13 +268,12 @@ karma:
   <<: *use-db
   <<: *dedicated-runner
   script:
-    - npm link istanbul
     - bundle exec rake karma
   artifacts:
     name: coverage-javascript
     expire_in: 31d
     paths:
-    - coverage-javascript/default/
+    - coverage-javascript/
 
 lint-doc:
   stage: test
@@ -279,7 +300,7 @@ bundler:audit:
     - master@gitlab/gitlabhq
     - master@gitlab/gitlab-ee
   script:
-    - "bundle exec bundle-audit check --update --ignore OSVDB-115941"
+    - "bundle exec bundle-audit check --update --ignore OSVDB-115941 CVE-2016-6316 CVE-2016-6317"
 
 migration paths:
   stage: test
@@ -325,11 +346,9 @@ lint:javascript:
     paths:
       - node_modules/
   stage: test
-  image: "node:7.1"
-  before_script:
-    - npm install
+  before_script: []
   script:
-    - npm --silent run eslint
+    - yarn run eslint
 
 lint:javascript:report:
   <<: *dedicated-runner
@@ -337,12 +356,10 @@ lint:javascript:report:
     paths:
       - node_modules/
   stage: post-test
-  image: "node:7.1"
-  before_script:
-    - npm install
+  before_script: []
   script:
     - find app/ spec/ -name '*.js' -or -name '*.js.es6' -exec sed --in-place 's|/\* eslint-disable .*\*/||' {} \; # run report over all files
-    - npm --silent run eslint-report || true # ignore exit code
+    - yarn run eslint-report || true # ignore exit code
   artifacts:
     name: eslint-report
     expire_in: 31d
@@ -389,14 +406,16 @@ pages:
   <<: *dedicated-runner
   dependencies:
     - coverage
-    - karma
+    - rake karma
+    - rake gitlab:assets:compile
     - lint:javascript:report
   script:
     - mv public/ .public/
     - mkdir public/
     - mv coverage/ public/coverage-ruby/ || true
-    - mv coverage-javascript/default/ public/coverage-javascript/ || true
+    - mv coverage-javascript/ public/coverage-javascript/ || true
     - mv eslint-report.html public/ || true
+    - mv webpack-report/ public/webpack-report/ || true
   artifacts:
     paths:
       - public

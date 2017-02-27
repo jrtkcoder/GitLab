@@ -2,7 +2,7 @@
 - content_for :page_specific_javascripts do
   = page_specific_javascript_bundle_tag('issuable')
 
-%aside.right-sidebar{ class: sidebar_gutter_collapsed_class, 'aria-live' => 'polite' }
+%aside.right-sidebar.js-right-sidebar{ data: { "offset-top" => "101", "spy" => "affix" }, class: sidebar_gutter_collapsed_class, 'aria-live' => 'polite' }
   .issuable-sidebar
     - can_edit_issuable = can?(current_user, :"admin_#{issuable.to_ability_name}", @project)
     .block.issuable-sidebar-header
@@ -173,7 +173,7 @@
     :javascript
       gl.IssuableResource = new gl.SubbableResource('#{issuable_json_path(issuable)}');
       new gl.IssuableTimeTracking("#{escape_javascript(serialize_issuable(issuable))}");
-      new MilestoneSelect('{"namespace":"#{@project.namespace.path}","path":"#{@project.path}"}');
+      new MilestoneSelect('{"full_path":"#{@project.full_path}"}');
       new LabelsSelect();
       new IssuableContext('#{escape_javascript(current_user.to_json(only: [:username, :id, :name]))}');
       gl.Subscription.bindAll('.subscription');

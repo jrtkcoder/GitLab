@@ -22,7 +22,7 @@ class Project < ActiveRecord::Base
   class BoardLimitExceeded < StandardError; end
 
   NUMBER_OF_PERMITTED_BOARDS = 1
-  UNKNOWN_IMPORT_URL = 'http://unknown.git'
+  UNKNOWN_IMPORT_URL = 'http://unknown.git'.freeze
 
   cache_markdown_field :description, pipeline: :description
 
@@ -70,8 +70,7 @@ class Project < ActiveRecord::Base
 
   after_validation :check_pending_delete
 
-  ActsAsTaggableOn.strict_case_match = true
-  acts_as_taggable_on :tags
+  acts_as_taggable
 
   attr_accessor :new_default_branch
   attr_accessor :old_path_with_namespace
@@ -172,9 +171,11 @@ class Project < ActiveRecord::Base
   accepts_nested_attributes_for :project_feature
 
   delegate :name, to: :owner, allow_nil: true, prefix: true
+  delegate :count, to: :forks, prefix: true
   delegate :members, to: :team, prefix: true
   delegate :add_user, to: :team
   delegate :add_guest, :add_reporter, :add_developer, :add_master, to: :team
+  delegate :empty_repo?, to: :repository
 
   # Validations
   validates :creator, presence: true, on: :create
@@ -191,8 +192,8 @@ class Project < ActiveRecord::Base
     format: { with: Gitlab::Regex.project_path_regex,
               message: Gitlab::Regex.project_path_regex_message }
   validates :namespace, presence: true
-  validates_uniqueness_of :name, scope: :namespace_id
-  validates_uniqueness_of :path, scope: :namespace_id
+  validates :name, uniqueness: { scope: :namespace_id }
+  validates :path, uniqueness: { scope: :namespace_id }
   validates :import_url, addressable_url: true, if: :external_import?
   validates :star_count, numericality: { greater_than_or_equal_to: 0 }
   validate :check_limit, on: :create
@@ -213,6 +214,8 @@ class Project < ActiveRecord::Base
 
   # Scopes
   default_scope { where(pending_delete: false) }
+
+  scope :with_deleted, -> { unscope(where: :pending_delete) }
 
   scope :sorted_by_activity, -> { reorder(last_activity_at: :desc) }
   scope :sorted_by_stars, -> { reorder('projects.star_count DESC') }
@@ -356,7 +359,7 @@ class Project < ActiveRecord::Base
     end
 
     def reference_pattern
-      name_pattern = Gitlab::Regex::NAMESPACE_REGEX_STR
+      name_pattern = Gitlab::Regex::FULL_NAMESPACE_REGEX_STR
 
       %r{
         ((?<namespace>#{name_pattern})\/)?
@@ -451,13 +454,14 @@ class Project < ActiveRecord::Base
   end
 
   def add_import_job
-    if forked?
-      job_id = RepositoryForkWorker.perform_async(id, forked_from_project.repository_storage_path,
-                                                  forked_from_project.path_with_namespace,
-                                                  self.namespace.path)
-    else
-      job_id = RepositoryImportWorker.perform_async(self.id)
-    end
+    job_id =
+      if forked?
+        RepositoryForkWorker.perform_async(id, forked_from_project.repository_storage_path,
+          forked_from_project.path_with_namespace,
+          self.namespace.full_path)
+      else
+        RepositoryImportWorker.perform_async(self.id)
+      end
 
     if job_id
       Rails.logger.info "Import job started for #{path_with_namespace} with job ID #{job_id}"
@@ -469,7 +473,7 @@ class Project < ActiveRecord::Base
   def reset_cache_and_import_attrs
     ProjectCacheWorker.perform_async(self.id)
 
-    self.import_data.destroy if self.import_data
+    self.import_data&.destroy
   end
 
   def import_url=(value)
@@ -550,7 +554,7 @@ class Project < ActiveRecord::Base
   end
 
   def check_limit
-    unless creator.can_create_project? or namespace.kind == 'group'
+    unless creator.can_create_project? || namespace.kind == 'group'
       projects_limit = creator.projects_limit
 
       if projects_limit == 0
@@ -835,20 +839,12 @@ class Project < ActiveRecord::Base
     false
   end
 
-  def empty_repo?
-    repository.empty_repo?
-  end
-
   def repo
     repository.raw
   end
 
   def url_to_repo
     gitlab_shell.url_to_repo(path_with_namespace)
-  end
-
-  def namespace_dir
-    namespace.try(:path) || ''
   end
 
   def repo_exists?
@@ -873,8 +869,14 @@ class Project < ActiveRecord::Base
     url_to_repo
   end
 
-  def http_url_to_repo
-    "#{web_url}.git"
+  def http_url_to_repo(user = nil)
+    url = web_url
+
+    if user
+      url.sub!(%r{\Ahttps?://}) { |protocol| "#{protocol}#{user.username}@" }
+    end
+
+    "#{url}.git"
   end
 
   # Check if current branch name is marked as protected in the system
@@ -899,8 +901,8 @@ class Project < ActiveRecord::Base
 
   def rename_repo
     path_was = previous_changes['path'].first
-    old_path_with_namespace = File.join(namespace_dir, path_was)
-    new_path_with_namespace = File.join(namespace_dir, path)
+    old_path_with_namespace = File.join(namespace.full_path, path_was)
+    new_path_with_namespace = File.join(namespace.full_path, path)
 
     Rails.logger.error "Attempting to rename #{old_path_with_namespace} -> #{new_path_with_namespace}"
 
@@ -942,8 +944,8 @@ class Project < ActiveRecord::Base
 
     Gitlab::AppLogger.info "Project was renamed: #{old_path_with_namespace} -> #{new_path_with_namespace}"
 
-    Gitlab::UploadsTransfer.new.rename_project(path_was, path, namespace.path)
-    Gitlab::PagesTransfer.new.rename_project(path_was, path, namespace.path)
+    Gitlab::UploadsTransfer.new.rename_project(path_was, path, namespace.full_path)
+    Gitlab::PagesTransfer.new.rename_project(path_was, path, namespace.full_path)
   end
 
   # Expires various caches before a project is renamed.
@@ -1024,10 +1026,6 @@ class Project < ActiveRecord::Base
 
   def forked_from?(project)
     forked? && project == forked_from_project
-  end
-
-  def forks_count
-    forks.count
   end
 
   def origin_merge_requests
@@ -1150,19 +1148,25 @@ class Project < ActiveRecord::Base
   end
 
   def pages_url
+    subdomain, _, url_path = full_path.partition('/')
+
     # The hostname always needs to be in downcased
     # All web servers convert hostname to lowercase
-    host = "#{namespace.path}.#{Settings.pages.host}".downcase
+    host = "#{subdomain}.#{Settings.pages.host}".downcase
 
     # The host in URL always needs to be downcased
     url = Gitlab.config.pages.url.sub(/^https?:\/\//) do |prefix|
-      "#{prefix}#{namespace.path}."
+      "#{prefix}#{subdomain}."
     end.downcase
 
     # If the project path is the same as host, we serve it as group page
-    return url if host == path
+    return url if host == url_path
 
-    "#{url}/#{path}"
+    "#{url}/#{url_path}"
+  end
+
+  def pages_subdomain
+    full_path.partition('/').first
   end
 
   def pages_path
@@ -1179,8 +1183,8 @@ class Project < ActiveRecord::Base
     # 3. We asynchronously remove pages with force
     temp_path = "#{path}.#{SecureRandom.hex}.deleted"
 
-    if Gitlab::PagesTransfer.new.rename_project(path, temp_path, namespace.path)
-      PagesWorker.perform_in(5.minutes, :remove, namespace.path, temp_path)
+    if Gitlab::PagesTransfer.new.rename_project(path, temp_path, namespace.full_path)
+      PagesWorker.perform_in(5.minutes, :remove, namespace.full_path, temp_path)
     end
   end
 
@@ -1230,7 +1234,7 @@ class Project < ActiveRecord::Base
   end
 
   def ensure_dir_exist
-    gitlab_shell.add_namespace(repository_storage_path, namespace.path)
+    gitlab_shell.add_namespace(repository_storage_path, namespace.full_path)
   end
 
   def predefined_variables
@@ -1238,7 +1242,7 @@ class Project < ActiveRecord::Base
       { key: 'CI_PROJECT_ID', value: id.to_s, public: true },
       { key: 'CI_PROJECT_NAME', value: path, public: true },
       { key: 'CI_PROJECT_PATH', value: path_with_namespace, public: true },
-      { key: 'CI_PROJECT_NAMESPACE', value: namespace.path, public: true },
+      { key: 'CI_PROJECT_NAMESPACE', value: namespace.full_path, public: true },
       { key: 'CI_PROJECT_URL', value: web_url, public: true }
     ]
   end

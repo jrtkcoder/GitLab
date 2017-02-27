@@ -402,7 +402,7 @@ describe Project, models: true do
     let(:project) { create(:empty_project, path: "somewhere") }
 
     it 'returns the full web URL for this repo' do
-      expect(project.web_url).to eq("#{Gitlab.config.gitlab.url}/#{project.namespace.path}/somewhere")
+      expect(project.web_url).to eq("#{Gitlab.config.gitlab.url}/#{project.namespace.full_path}/somewhere")
     end
   end
 
@@ -803,7 +803,7 @@ describe Project, models: true do
       end
 
       let(:avatar_path) do
-        "/#{project.namespace.name}/#{project.path}/avatar"
+        "/#{project.full_path}/avatar"
       end
 
       it { should eq "http://#{Gitlab.config.gitlab.host}#{avatar_path}" }
@@ -1148,16 +1148,14 @@ describe Project, models: true do
     end
 
     it 'renames a repository' do
-      ns = project.namespace_dir
-
       expect(gitlab_shell).to receive(:mv_repository).
         ordered.
-        with(project.repository_storage_path, "#{ns}/foo", "#{ns}/#{project.path}").
+        with(project.repository_storage_path, "#{project.namespace.full_path}/foo", "#{project.full_path}").
         and_return(true)
 
       expect(gitlab_shell).to receive(:mv_repository).
         ordered.
-        with(project.repository_storage_path, "#{ns}/foo.wiki", "#{ns}/#{project.path}.wiki").
+        with(project.repository_storage_path, "#{project.namespace.full_path}/foo.wiki", "#{project.full_path}.wiki").
         and_return(true)
 
       expect_any_instance_of(SystemHooksService).
@@ -1166,7 +1164,7 @@ describe Project, models: true do
 
       expect_any_instance_of(Gitlab::UploadsTransfer).
         to receive(:rename_project).
-        with('foo', project.path, ns)
+        with('foo', project.path, project.namespace.full_path)
 
       expect(project).to receive(:expire_caches_before_rename)
 
@@ -1538,7 +1536,7 @@ describe Project, models: true do
       it 'schedules a RepositoryForkWorker job' do
         expect(RepositoryForkWorker).to receive(:perform_async).
           with(project.id, forked_from_project.repository_storage_path,
-              forked_from_project.path_with_namespace, project.namespace.path)
+              forked_from_project.path_with_namespace, project.namespace.full_path)
 
         project.add_import_job
       end
@@ -1752,7 +1750,7 @@ describe Project, models: true do
   describe 'inside_path' do
     let!(:project1) { create(:empty_project) }
     let!(:project2) { create(:empty_project) }
-    let!(:path) { project1.namespace.path }
+    let!(:path) { project1.namespace.full_path }
 
     it { expect(Project.inside_path(path)).to eq([project1]) }
   end
@@ -1767,7 +1765,7 @@ describe Project, models: true do
     end
 
     before do
-      project.repository.commit_file(User.last, '.gitlab/route-map.yml', route_map, message: 'Add .gitlab/route-map.yml', branch_name: 'master', update: false)
+      project.repository.create_file(User.last, '.gitlab/route-map.yml', route_map, message: 'Add .gitlab/route-map.yml', branch_name: 'master')
     end
 
     context 'when there is a .gitlab/route-map.yml at the commit' do
@@ -1852,8 +1850,8 @@ describe Project, models: true do
   end
 
   describe '#pages_url' do
-    let(:group) { create :group, name: group_name }
-    let(:project) { create :empty_project, namespace: group, name: project_name }
+    let(:group) { create :group, name: 'Group' }
+    let(:nested_group) { create :group, parent: group }
     let(:domain) { 'Example.com' }
 
     subject { project.pages_url }
@@ -1863,18 +1861,58 @@ describe Project, models: true do
       allow(Gitlab.config.pages).to receive(:url).and_return('http://example.com')
     end
 
-    context 'group page' do
-      let(:group_name) { 'Group' }
-      let(:project_name) { 'group.example.com' }
+    context 'top-level group' do
+      let(:project) { create :empty_project, namespace: group, name: project_name }
 
-      it { is_expected.to eq("http://group.example.com") }
+      context 'group page' do
+        let(:project_name) { 'group.example.com' }
+
+        it { is_expected.to eq("http://group.example.com") }
+      end
+
+      context 'project page' do
+        let(:project_name) { 'Project' }
+
+        it { is_expected.to eq("http://group.example.com/project") }
+      end
     end
 
-    context 'project page' do
-      let(:group_name) { 'Group' }
-      let(:project_name) { 'Project' }
+    context 'nested group' do
+      let(:project) { create :empty_project, namespace: nested_group, name: project_name }
+      let(:expected_url) { "http://group.example.com/#{nested_group.path}/#{project.path}" }
 
-      it { is_expected.to eq("http://group.example.com/project") }
+      context 'group page' do
+        let(:project_name) { 'group.example.com' }
+
+        it { is_expected.to eq(expected_url) }
+      end
+
+      context 'project page' do
+        let(:project_name) { 'Project' }
+
+        it { is_expected.to eq(expected_url) }
+      end
+    end
+  end
+
+  describe '#http_url_to_repo' do
+    let(:project) { create :empty_project }
+
+    context 'when no user is given' do
+      it 'returns the url to the repo without a username' do
+        url = project.http_url_to_repo
+
+        expect(url).to eq(project.http_url_to_repo)
+        expect(url).not_to include('@')
+      end
+    end
+
+    context 'when user is given' do
+      it 'returns the url to the repo with the username' do
+        user = build_stubbed(:user)
+
+        expect(project.http_url_to_repo(user)).to match(%r{https?:\/\/#{user.username}@})
+      end
     end
   end
 end

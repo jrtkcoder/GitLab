@@ -69,11 +69,12 @@ module ApplicationHelper
   end
 
   def avatar_icon(user_or_email = nil, size = nil, scale = 2)
-    if user_or_email.is_a?(User)
-      user = user_or_email
-    else
-      user = User.find_by_any_email(user_or_email.try(:downcase))
-    end
+    user =
+      if user_or_email.is_a?(User)
+        user_or_email
+      else
+        User.find_by_any_email(user_or_email.try(:downcase))
+      end
 
     if user
       user.avatar_url(size) || default_avatar
@@ -295,5 +296,14 @@ module ApplicationHelper
 
   def page_class
     "issue-boards-page" if current_controller?(:boards)
+  end
+
+  # Returns active css class when condition returns true
+  # otherwise returns nil.
+  #
+  # Example:
+  #   %li{ class: active_when(params[:filter] == '1') }
+  def active_when(condition)
+    'active' if condition
   end
 end

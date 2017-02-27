@@ -34,6 +34,8 @@ Example response:
       "committer_email": "john@example.com",
       "committer_name": "John Smith",
       "id": "7b5c3cc8be40ee161ae89a06bba6229da1032a0c",
+      "short_id": "7b5c3cc",
+      "title": "add projects API",
       "message": "add projects API",
       "parent_ids": [
         "4ad91d3c1144c406e50c7b33bae684bd6837faf8"
@@ -78,6 +80,8 @@ Example response:
     "committer_email": "john@example.com",
     "committer_name": "John Smith",
     "id": "7b5c3cc8be40ee161ae89a06bba6229da1032a0c",
+    "short_id": "7b5c3cc",
+    "title": "add projects API",
     "message": "add projects API",
     "parent_ids": [
       "4ad91d3c1144c406e50c7b33bae684bd6837faf8"
@@ -119,6 +123,8 @@ Example response:
     "committer_email": "john@example.com",
     "committer_name": "John Smith",
     "id": "7b5c3cc8be40ee161ae89a06bba6229da1032a0c",
+    "short_id": "7b5c3cc",
+    "title": "add projects API",
     "message": "add projects API",
     "parent_ids": [
       "4ad91d3c1144c406e50c7b33bae684bd6837faf8"
@@ -163,6 +169,8 @@ Example response:
     "committer_email": "john@example.com",
     "committer_name": "John Smith",
     "id": "7b5c3cc8be40ee161ae89a06bba6229da1032a0c",
+    "short_id": "7b5c3cc",
+    "title": "add projects API",
     "message": "add projects API",
     "parent_ids": [
       "4ad91d3c1144c406e50c7b33bae684bd6837faf8"
@@ -185,11 +193,11 @@ POST /projects/:id/repository/branches
 | Attribute | Type | Required | Description |
 | --------- | ---- | -------- | ----------- |
 | `id`          | integer | yes | The ID of a project |
-| `branch_name` | string  | yes | The name of the branch |
+| `branch` | string  | yes | The name of the branch |
 | `ref`         | string  | yes | The branch name or commit SHA to create branch from |
 
 ```bash
-curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" "https://gitlab.example.com/api/v3/projects/5/repository/branches?branch_name=newbranch&ref=master"
+curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" "https://gitlab.example.com/api/v3/projects/5/repository/branches?branch=newbranch&ref=master"
 ```
 
 Example response:
@@ -204,6 +212,8 @@ Example response:
     "committer_email": "john@example.com",
     "committer_name": "John Smith",
     "id": "7b5c3cc8be40ee161ae89a06bba6229da1032a0c",
+    "short_id": "7b5c3cc",
+    "title": "add projects API",
     "message": "add projects API",
     "parent_ids": [
       "4ad91d3c1144c406e50c7b33bae684bd6837faf8"

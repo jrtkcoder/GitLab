@@ -8,7 +8,9 @@ module Groups
     end
 
     def execute
-      group.projects.each do |project|
+      group.prepare_for_destroy
+
+      group.projects.with_deleted.each do |project|
         # Execute the destruction of the models immediately to ensure atomic cleanup.
         # Skip repository removal because we remove directory with namespace
         # that contain all these repositories
@@ -16,7 +18,8 @@ module Groups
       end
 
       group.children.each do |group|
-        DestroyService.new(group, current_user).async_execute
+        # This needs to be synchronous since the namespace gets destroyed below
+        DestroyService.new(group, current_user).execute
       end
 
       group.really_destroy!

@@ -12,7 +12,6 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user_from_private_token!
   before_action :authenticate_user!
   before_action :validate_user_service_ticket!
-  before_action :reject_blocked!
   before_action :check_password_expiration
   before_action :check_2fa_requirement
   before_action :ldap_security_check
@@ -75,7 +74,7 @@ class ApplicationController < ActionController::Base
 
   def authenticate_user!(*args)
     if redirect_to_home_page_url?
-      redirect_to current_application_settings.home_page_url and return
+      return redirect_to current_application_settings.home_page_url
     end
 
     super(*args)
@@ -87,22 +86,8 @@ class ApplicationController < ActionController::Base
     logger.error "\n#{exception.class.name} (#{exception.message}):\n#{application_trace.join}"
   end
 
-  def reject_blocked!
-    if current_user && current_user.blocked?
-      sign_out current_user
-      flash[:alert] = "Your account is blocked. Retry when an admin has unblocked it."
-      redirect_to new_user_session_path
-    end
-  end
-
   def after_sign_in_path_for(resource)
-    if resource.is_a?(User) && resource.respond_to?(:blocked?) && resource.blocked?
-      sign_out resource
-      flash[:alert] = "Your account is blocked. Retry when an admin has unblocked it."
-      new_user_session_path
-    else
-      stored_location_for(:redirect) || stored_location_for(resource) || root_path
-    end
+    stored_location_for(:redirect) || stored_location_for(resource) || root_path
   end
 
   def after_sign_out_path_for(resource)
@@ -146,7 +131,7 @@ class ApplicationController < ActionController::Base
     headers['X-UA-Compatible'] = 'IE=edge'
     headers['X-Content-Type-Options'] = 'nosniff'
     # Enabling HSTS for non-standard ports would send clients to the wrong port
-    if Gitlab.config.gitlab.https and Gitlab.config.gitlab.port == 443
+    if Gitlab.config.gitlab.https && Gitlab.config.gitlab.port == 443
       headers['Strict-Transport-Security'] = 'max-age=31536000'
     end
   end
@@ -167,7 +152,7 @@ class ApplicationController < ActionController::Base
 
   def check_password_expiration
     if current_user && current_user.password_expires_at && current_user.password_expires_at < Time.now && !current_user.ldap_user?
-      redirect_to new_profile_password_path and return
+      return redirect_to new_profile_password_path
     end
   end
 
@@ -196,7 +181,7 @@ class ApplicationController < ActionController::Base
   end
 
   def gitlab_ldap_access(&block)
-    Gitlab::LDAP::Access.open { |access| block.call(access) }
+    Gitlab::LDAP::Access.open { |access| yield(access) }
   end
 
   # JSON for infinite scroll via Pager object
@@ -233,7 +218,7 @@ class ApplicationController < ActionController::Base
 
   def require_email
     if current_user && current_user.temp_oauth_email? && session[:impersonator_id].nil?
-      redirect_to profile_path, notice: 'Please complete your profile with email address' and return
+      return redirect_to profile_path, notice: 'Please complete your profile with email address'
     end
   end
 

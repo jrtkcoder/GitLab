@@ -19,7 +19,8 @@ module API
         optional :visibility_level, type: Integer, values: [
           Gitlab::VisibilityLevel::PRIVATE,
           Gitlab::VisibilityLevel::INTERNAL,
-          Gitlab::VisibilityLevel::PUBLIC ], desc: 'Create a public project. The same as visibility_level = 20.'
+          Gitlab::VisibilityLevel::PUBLIC
+        ], desc: 'Create a public project. The same as visibility_level = 20.'
         optional :public_builds, type: Boolean, desc: 'Perform public builds'
         optional :request_access_enabled, type: Boolean, desc: 'Allow users to request member access'
         optional :only_allow_merge_if_build_succeeds, type: Boolean, desc: 'Only allow to merge if builds succeed'
@@ -50,6 +51,8 @@ module API
           optional :visibility, type: String, values: %w[public internal private],
                                 desc: 'Limit by visibility'
           optional :search, type: String, desc: 'Return list of authorized projects matching the search criteria'
+          optional :owned, type: Boolean, default: false, desc: 'Limit by owned by authenticated user'
+          optional :starred, type: Boolean, default: false, desc: 'Limit by starred status'
         end
 
         params :statistics_params do
@@ -82,62 +85,9 @@ module API
       params do
         use :collection_params
       end
-      get '/visible' do
-        entity = current_user ? Entities::ProjectWithAccess : Entities::BasicProjectDetails
-        present_projects ProjectsFinder.new.execute(current_user), with: entity
-      end
-
-      desc 'Get a projects list for authenticated user' do
-        success Entities::BasicProjectDetails
-      end
-      params do
-        use :collection_params
-      end
       get do
-        authenticate!
-
-        present_projects current_user.authorized_projects,
-          with: Entities::ProjectWithAccess
-      end
-
-      desc 'Get an owned projects list for authenticated user' do
-        success Entities::BasicProjectDetails
-      end
-      params do
-        use :collection_params
-        use :statistics_params
-      end
-      get '/owned' do
-        authenticate!
-
-        present_projects current_user.owned_projects,
-          with: Entities::ProjectWithAccess,
-          statistics: params[:statistics]
-      end
-
-      desc 'Gets starred project for the authenticated user' do
-        success Entities::BasicProjectDetails
-      end
-      params do
-        use :collection_params
-      end
-      get '/starred' do
-        authenticate!
-
-        present_projects current_user.viewable_starred_projects
-      end
-
-      desc 'Get all projects for admin user' do
-        success Entities::BasicProjectDetails
-      end
-      params do
-        use :collection_params
-        use :statistics_params
-      end
-      get '/all' do
-        authenticated_as_admin!
-
-        present_projects Project.all, with: Entities::ProjectWithAccess, statistics: params[:statistics]
+        entity = current_user ? Entities::ProjectWithAccess : Entities::BasicProjectDetails
+        present_projects ProjectsFinder.new.execute(current_user), with: entity, statistics: params[:statistics]
       end
 
       desc 'Create new project' do
@@ -220,7 +170,7 @@ module API
       params do
         optional :namespace, type: String, desc: 'The ID or name of the namespace that the project will be forked into'
       end
-      post 'fork/:id' do
+      post ':id/fork' do
         fork_params = declared_params(include_missing: false)
         namespace_id = fork_params[:namespace]
 
@@ -317,7 +267,7 @@ module API
       desc 'Unstar a project' do
         success Entities::Project
       end
-      delete ':id/star' do
+      post ':id/unstar' do
         if current_user.starred?(user_project)
           current_user.toggle_star(user_project)
           user_project.reload
@@ -332,6 +282,8 @@ module API
       delete ":id" do
         authorize! :remove_project, user_project
         ::Projects::DestroyService.new(user_project, current_user, {}).async_execute
+
+        accepted!
       end
 
       desc 'Mark this project as forked from another'
@@ -424,6 +376,19 @@ module API
         users = users.search(params[:search]) if params[:search].present?
 
         present paginate(users), with: Entities::UserBasic
+      end
+
+      desc 'Start the housekeeping task for a project' do
+        detail 'This feature was introduced in GitLab 9.0.'
+      end
+      post ':id/housekeeping' do
+        authorize_admin_project
+
+        begin
+          ::Projects::HousekeepingService.new(user_project).execute
+        rescue ::Projects::HousekeepingService::LeaseTaken => error
+          conflict!(error.message)
+        end
       end
     end
   end

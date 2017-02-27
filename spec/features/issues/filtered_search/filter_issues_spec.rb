@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 describe 'Filter issues', js: true, feature: true do
+  include FilteredSearchHelpers
   include WaitForAjax
 
   let!(:group) { create(:group) }
@@ -17,19 +18,6 @@ describe 'Filter issues', js: true, feature: true do
   let!(:multiple_words_label) { create(:label, project: project, title: "Two words") }
 
   let!(:closed_issue) { create(:issue, title: 'bug that is closed', project: project, state: :closed) }
-  let(:filtered_search) { find('.filtered-search') }
-
-  def input_filtered_search(search_term, submit: true)
-    filtered_search.set(search_term)
-
-    if submit
-      filtered_search.send_keys(:enter)
-    end
-  end
-
-  def expect_filtered_search_input(input)
-    expect(find('.filtered-search').value).to eq(input)
-  end
 
   def expect_no_issues_list
     page.within '.issues-list' do
@@ -113,13 +101,11 @@ describe 'Filter issues', js: true, feature: true do
       end
 
       it 'filters issues by invalid author' do
-        pending('to be tested, issue #26546')
-        expect(true).to be(false)
+        skip('to be tested, issue #26546')
       end
 
       it 'filters issues by multiple authors' do
-        pending('to be tested, issue #26546')
-        expect(true).to be(false)
+        skip('to be tested, issue #26546')
       end
     end
 
@@ -158,8 +144,7 @@ describe 'Filter issues', js: true, feature: true do
     end
 
     it 'sorting' do
-      pending('to be tested, issue #26546')
-      expect(true).to be(false)
+      skip('to be tested, issue #26546')
     end
   end
 
@@ -182,13 +167,11 @@ describe 'Filter issues', js: true, feature: true do
       end
 
       it 'filters issues by invalid assignee' do
-        pending('to be tested, issue #26546')
-        expect(true).to be(false)
+        skip('to be tested, issue #26546')
       end
 
       it 'filters issues by multiple assignees' do
-        pending('to be tested, issue #26546')
-        expect(true).to be(false)
+        skip('to be tested, issue #26546')
       end
     end
 
@@ -228,8 +211,7 @@ describe 'Filter issues', js: true, feature: true do
 
     context 'sorting' do
       it 'sorts' do
-        pending('to be tested, issue #26546')
-        expect(true).to be(false)
+        skip('to be tested, issue #26546')
       end
     end
   end
@@ -253,8 +235,7 @@ describe 'Filter issues', js: true, feature: true do
       end
 
       it 'filters issues by invalid label' do
-        pending('to be tested, issue #26546')
-        expect(true).to be(false)
+        skip('to be tested, issue #26546')
       end
 
       it 'filters issues by multiple labels' do
@@ -429,8 +410,7 @@ describe 'Filter issues', js: true, feature: true do
 
     context 'sorting' do
       it 'sorts' do
-        pending('to be tested, issue #26546')
-        expect(true).to be(false)
+        skip('to be tested, issue #26546')
       end
     end
   end
@@ -456,13 +436,11 @@ describe 'Filter issues', js: true, feature: true do
       end
 
       it 'filters issues by invalid milestones' do
-        pending('to be tested, issue #26546')
-        expect(true).to be(false)
+        skip('to be tested, issue #26546')
       end
 
       it 'filters issues by multiple milestones' do
-        pending('to be tested, issue #26546')
-        expect(true).to be(false)
+        skip('to be tested, issue #26546')
       end
 
       it 'filters issues by milestone containing special characters' do
@@ -523,8 +501,7 @@ describe 'Filter issues', js: true, feature: true do
 
     context 'sorting' do
       it 'sorts' do
-        pending('to be tested, issue #26546')
-        expect(true).to be(false)
+        skip('to be tested, issue #26546')
       end
     end
   end

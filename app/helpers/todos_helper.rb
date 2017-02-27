@@ -3,6 +3,10 @@ module TodosHelper
     @todos_pending_count ||= current_user.todos_pending_count
   end
 
+  def todos_count_format(count)
+    count > 99 ? '99+' : count
+  end
+
   def todos_done_count
     @todos_done_count ||= current_user.todos_done_count
   end
@@ -15,6 +19,7 @@ module TodosHelper
     when Todo::MARKED then 'added a todo for'
     when Todo::APPROVAL_REQUIRED then 'set you as an approver for'
     when Todo::UNMERGEABLE then 'Could not merge'
+    when Todo::DIRECTLY_ADDRESSED then 'directly addressed you on'
     end
   end
 
@@ -88,7 +93,8 @@ module TodosHelper
       { id: Todo::ASSIGNED, text: 'Assigned' },
       { id: Todo::MENTIONED, text: 'Mentioned' },
       { id: Todo::MARKED, text: 'Added' },
-      { id: Todo::BUILD_FAILED, text: 'Pipelines' }
+      { id: Todo::BUILD_FAILED, text: 'Pipelines' },
+      { id: Todo::DIRECTLY_ADDRESSED, text: 'Directly addressed' }
     ]
   end
 
@@ -144,6 +150,6 @@ module TodosHelper
   private
 
   def show_todo_state?(todo)
-    (todo.target.is_a?(MergeRequest) || todo.target.is_a?(Issue)) && ['closed', 'merged'].include?(todo.target.state)
+    (todo.target.is_a?(MergeRequest) || todo.target.is_a?(Issue)) && %w(closed merged).include?(todo.target.state)
   end
 end

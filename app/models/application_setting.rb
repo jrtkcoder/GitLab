@@ -5,7 +5,7 @@ class ApplicationSetting < ActiveRecord::Base
   add_authentication_token_field :runners_registration_token
   add_authentication_token_field :health_check_access_token
 
-  CACHE_KEY = 'application_setting.last'
+  CACHE_KEY = 'application_setting.last'.freeze
   DOMAIN_LIST_SEPARATOR = %r{\s*[,;]\s*     # comma or semicolon, optionally surrounded by whitespace
                             |               # or
                             \s              # any whitespace character
@@ -76,6 +76,12 @@ class ApplicationSetting < ActiveRecord::Base
             presence: true,
             numericality: { only_integer: true, greater_than: 0 }
 
+  validates :max_artifacts_size,
+            presence: true,
+            numericality: { only_integer: true, greater_than: 0 }
+
+  validates :default_artifacts_expire_in, presence: true, duration: true
+
   validates :container_registry_token_expire_delay,
             presence: true,
             numericality: { only_integer: true, greater_than: 0 }
@@ -116,31 +122,25 @@ class ApplicationSetting < ActiveRecord::Base
             numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
   validates_each :restricted_visibility_levels do |record, attr, value|
-    unless value.nil?
-      value.each do |level|
-        unless Gitlab::VisibilityLevel.options.has_value?(level)
-          record.errors.add(attr, "'#{level}' is not a valid visibility level")
-        end
+    value&.each do |level|
+      unless Gitlab::VisibilityLevel.options.has_value?(level)
+        record.errors.add(attr, "'#{level}' is not a valid visibility level")
       end
     end
   end
 
   validates_each :import_sources do |record, attr, value|
-    unless value.nil?
-      value.each do |source|
-        unless Gitlab::ImportSources.options.has_value?(source)
-          record.errors.add(attr, "'#{source}' is not a import source")
-        end
+    value&.each do |source|
+      unless Gitlab::ImportSources.options.has_value?(source)
+        record.errors.add(attr, "'#{source}' is not a import source")
       end
     end
   end
 
   validates_each :disabled_oauth_sign_in_sources do |record, attr, value|
-    unless value.nil?
-      value.each do |source|
-        unless Devise.omniauth_providers.include?(source.to_sym)
-          record.errors.add(attr, "'#{source}' is not an OAuth sign-in source")
-        end
+    value&.each do |source|
+      unless Devise.omniauth_providers.include?(source.to_sym)
+        record.errors.add(attr, "'#{source}' is not an OAuth sign-in source")
       end
     end
   end
@@ -174,6 +174,7 @@ class ApplicationSetting < ActiveRecord::Base
       after_sign_up_text: nil,
       akismet_enabled: false,
       container_registry_token_expire_delay: 5,
+      default_artifacts_expire_in: '30 days',
       default_branch_protection: Settings.gitlab['default_branch_protection'],
       default_project_visibility: Settings.gitlab.default_projects_features['visibility_level'],
       default_projects_limit: Settings.gitlab['default_projects_limit'],
@@ -207,9 +208,9 @@ class ApplicationSetting < ActiveRecord::Base
       sign_in_text: nil,
       signin_enabled: Settings.gitlab['signin_enabled'],
       signup_enabled: Settings.gitlab['signup_enabled'],
+      terminal_max_session_time: 0,
       two_factor_grace_period: 48,
-      user_default_external: false,
-      terminal_max_session_time: 0
+      user_default_external: false
     }
   end
 
@@ -221,6 +222,14 @@ class ApplicationSetting < ActiveRecord::Base
     create(defaults)
   end
 
+  def self.human_attribute_name(attr, _options = {})
+    if attr == :default_artifacts_expire_in
+      'Default artifacts expiration'
+    else
+      super
+    end
+  end
+
   def home_page_url_column_exist
     ActiveRecord::Base.connection.column_exists?(:application_settings, :home_page_url)
   end
@@ -230,11 +239,11 @@ class ApplicationSetting < ActiveRecord::Base
   end
 
   def domain_whitelist_raw
-    self.domain_whitelist.join("\n") unless self.domain_whitelist.nil?
+    self.domain_whitelist&.join("\n")
   end
 
   def domain_blacklist_raw
-    self.domain_blacklist.join("\n") unless self.domain_blacklist.nil?
+    self.domain_blacklist&.join("\n")
   end
 
   def domain_whitelist_raw=(values)
