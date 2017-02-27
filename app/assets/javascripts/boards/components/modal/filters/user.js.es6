@@ -1,7 +1,8 @@
 /* eslint-disable no-new */
 /* global Vue */
 /* global UsersSelect */
-module.exports = Vue.extend({
+
+export default Vue.extend({
   name: 'filter-user',
   props: {
     toggleClassName: {

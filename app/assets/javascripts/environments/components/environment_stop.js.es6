@@ -4,7 +4,7 @@
  */
 import Vue from 'vue';
 
-module.exports = Vue.component('stop-component', {
+export default Vue.component('stop-component', {
   props: {
     stopUrl: {
       type: String,

@@ -13,7 +13,7 @@ import '../../vue_shared/vue_resource_interceptor';
 window.Vue = Vue;
 Vue.use(VueResource);
 
-module.exports = Vue.component('environment-folder-view', {
+export default Vue.component('environment-folder-view', {
 
   components: {
     'environment-table': EnvironmentTable,

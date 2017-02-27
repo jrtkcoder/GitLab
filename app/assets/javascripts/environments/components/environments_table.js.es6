@@ -4,7 +4,7 @@
 import Vue from 'vue';
 import EnvironmentItem from './environment_item';
 
-module.exports = Vue.component('environment-table-component', {
+export default Vue.component('environment-table-component', {
 
   components: {
     'environment-item': EnvironmentItem,

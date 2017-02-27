@@ -17,7 +17,7 @@ import TerminalButtonComponent from './environment_terminal_button';
 
 const timeagoInstance = new Timeago();
 
-module.exports = Vue.component('environment-item', {
+export default Vue.component('environment-item', {
 
   components: {
     'commit-component': gl.CommitComponent,

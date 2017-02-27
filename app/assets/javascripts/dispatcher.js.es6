@@ -37,6 +37,7 @@
 
 import ShortcutsBlob from './shortcuts_blob';
 import UserCallout from './user_callout';
+import VersionCheckImage from './version_check_image';
 
 (function() {
   var Dispatcher;
@@ -262,7 +263,7 @@ import UserCallout from './user_callout';
           new BuildArtifacts();
           break;
         case 'help:index':
-          gl.VersionCheckImage.bindErrorEvent($('img.js-version-status-badge'));
+          VersionCheckImage.bindErrorEvent($('img.js-version-status-badge'));
           break;
         case 'search:show':
           new Search();

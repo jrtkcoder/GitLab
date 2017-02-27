@@ -1,6 +1,5 @@
 import ClassSpecHelper from './helpers/class_spec_helper';
 import VersionCheckImage from '~/version_check_image';
-import 'jquery';
 
 describe('VersionCheckImage', function () {
   describe('.bindErrorEvent', function () {

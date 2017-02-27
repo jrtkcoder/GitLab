@@ -4,7 +4,7 @@
  */
 import Vue from 'vue';
 
-module.exports = Vue.component('terminal-button-component', {
+export default Vue.component('terminal-button-component', {
   props: {
     terminalPath: {
       type: String,

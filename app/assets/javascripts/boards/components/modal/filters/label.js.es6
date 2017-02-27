@@ -1,7 +1,8 @@
 /* eslint-disable no-new */
 /* global Vue */
 /* global LabelsSelect */
-module.exports = Vue.extend({
+
+export default Vue.extend({
   name: 'filter-label',
   props: {
     labelPath: {

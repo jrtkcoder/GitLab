@@ -27,7 +27,7 @@ const USER_CALLOUT_TEMPLATE = `
   </div>
 </div>`;
 
-class UserCallout {
+export default class UserCallout {
   constructor() {
     this.isCalloutDismissed = Cookies.get(USER_CALLOUT_COOKIE);
     this.userCalloutBody = $(userCalloutElementName);
@@ -54,5 +54,3 @@ class UserCallout {
     }
   }
 }
-
-module.exports = UserCallout;

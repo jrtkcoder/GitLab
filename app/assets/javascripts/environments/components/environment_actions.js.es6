@@ -1,6 +1,6 @@
 import Vue from 'vue';
 
-module.exports = Vue.component('actions-component', {
+export default Vue.component('actions-component', {
   props: {
     actions: {
       type: Array,

@@ -3,7 +3,7 @@
  */
 import Vue from 'vue';
 
-module.exports = Vue.component('external-url-component', {
+export default Vue.component('external-url-component', {
   props: {
     externalUrl: {
       type: String,

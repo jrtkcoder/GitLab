@@ -3,7 +3,7 @@ import userFilter from './filters/user';
 import milestoneFilter from './filters/milestone';
 import labelFilter from './filters/label';
 
-module.exports = Vue.extend({
+export default Vue.extend({
   name: 'modal-filters',
   props: {
     projectId: {

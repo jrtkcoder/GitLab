@@ -4,7 +4,7 @@
  */
 import Vue from 'vue';
 
-module.exports = Vue.component('rollback-component', {
+export default Vue.component('rollback-component', {
   props: {
     retryUrl: {
       type: String,

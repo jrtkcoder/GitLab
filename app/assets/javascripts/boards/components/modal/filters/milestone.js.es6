@@ -1,7 +1,8 @@
 /* eslint-disable no-new */
 /* global Vue */
 /* global MilestoneSelect */
-module.exports = Vue.extend({
+
+export default Vue.extend({
   name: 'filter-milestone',
   props: {
     milestonePath: {

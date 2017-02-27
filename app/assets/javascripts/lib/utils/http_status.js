@@ -7,4 +7,4 @@ const statusCodes = {
   OK: 200,
 };
 
-module.exports = statusCodes;
+export default statusCodes;

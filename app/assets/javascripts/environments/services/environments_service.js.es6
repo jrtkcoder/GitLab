@@ -1,6 +1,6 @@
 import Vue from 'vue';
 
-class EnvironmentsService {
+export default class EnvironmentsService {
   constructor(endpoint) {
     this.environments = Vue.resource(endpoint);
   }
@@ -9,5 +9,3 @@ class EnvironmentsService {
     return this.environments.get();
   }
 }
-
-module.exports = EnvironmentsService;

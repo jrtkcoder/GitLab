@@ -6,7 +6,7 @@
  */
 import '../../vue_realtime_listener';
 
-class PipelinesStore {
+export default class PipelinesStore {
   constructor() {
     this.state = {};
     this.state.pipelines = [];
@@ -44,5 +44,3 @@ class PipelinesStore {
     gl.VueRealtimeListener(removeIntervals, startIntervals);
   }
 }
-
-module.exports = PipelinesStore;

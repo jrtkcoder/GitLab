@@ -1,6 +1,4 @@
-/* global ClassSpecHelper */
-
-import './class_spec_helper';
+import ClassSpecHelper from './class_spec_helper';
 
 describe('ClassSpecHelper', () => {
   describe('.itShouldBeAStaticMethod', function () {
