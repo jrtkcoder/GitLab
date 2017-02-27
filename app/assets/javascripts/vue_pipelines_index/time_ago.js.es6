@@ -1,8 +1,10 @@
 /* global Vue, gl */
 /* eslint-disable no-param-reassign */
 
-window.Vue = require('vue');
-require('../lib/utils/datetime_utility');
+import Vue from 'vue';
+import '../lib/utils/datetime_utility';
+
+window.Vue = Vue;
 
 ((gl) => {
   gl.VueTimeAgo = Vue.extend({

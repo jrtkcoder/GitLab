@@ -1,5 +1,5 @@
 /* global Flash */
-require('vendor/task_list');
+import 'vendor/task_list';
 
 class TaskList {
   constructor(options = {}) {

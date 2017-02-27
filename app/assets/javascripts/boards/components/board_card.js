@@ -1,5 +1,5 @@
 /* global Vue */
-require('./issue_card_inner');
+import './issue_card_inner';
 
 const Store = gl.issueBoards.BoardsStore;
 

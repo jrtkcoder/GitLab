@@ -4,7 +4,7 @@
 //
 // Handles single- and multi-line selection and highlight for blob views.
 //
-require('vendor/jquery.scrollTo');
+import 'vendor/jquery.scrollTo';
 
 //
 // ### Example Markup

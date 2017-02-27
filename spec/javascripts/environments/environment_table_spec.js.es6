@@ -1,4 +1,4 @@
-const EnvironmentTable = require('~/environments/components/environments_table');
+import EnvironmentTable from '~/environments/components/environments_table';
 
 describe('Environment item', () => {
   preloadFixtures('static/environments/element.html.raw');

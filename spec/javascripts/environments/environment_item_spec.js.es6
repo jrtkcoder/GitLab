@@ -1,5 +1,7 @@
-window.timeago = require('timeago.js');
-const EnvironmentItem = require('~/environments/components/environment_item');
+import timeago from 'timeago.js';
+import EnvironmentItem from '~/environments/components/environment_item';
+
+window.timeago = timeago;
 
 describe('Environment item', () => {
   preloadFixtures('static/environments/table.html.raw');

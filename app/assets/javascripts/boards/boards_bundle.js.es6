@@ -1,25 +1,27 @@
 /* eslint-disable one-var, quote-props, comma-dangle, space-before-function-paren */
-/* global Vue */
 /* global BoardService */
 
-window.Vue = require('vue');
-window.Vue.use(require('vue-resource'));
-require('./models/issue');
-require('./models/label');
-require('./models/list');
-require('./models/milestone');
-require('./models/user');
-require('./stores/boards_store');
-require('./stores/modal_store');
-require('./services/board_service');
-require('./mixins/modal_mixins');
-require('./mixins/sortable_default_options');
-require('./filters/due_date_filters');
-require('./components/board');
-require('./components/board_sidebar');
-require('./components/new_list_dropdown');
-require('./components/modal/index');
-require('../vue_shared/vue_resource_interceptor');
+import Vue from 'vue';
+import VueResource from 'vue-resource';
+import './models/issue';
+import './models/label';
+import './models/list';
+import './models/milestone';
+import './models/user';
+import './stores/boards_store';
+import './stores/modal_store';
+import './services/board_service';
+import './mixins/modal_mixins';
+import './mixins/sortable_default_options';
+import './filters/due_date_filters';
+import './components/board';
+import './components/board_sidebar';
+import './components/new_list_dropdown';
+import './components/modal/index';
+import '../vue_shared/vue_resource_interceptor';
+
+Vue.use(VueResource);
+window.Vue = Vue;
 
 $(() => {
   const $boardApp = document.getElementById('board-app');

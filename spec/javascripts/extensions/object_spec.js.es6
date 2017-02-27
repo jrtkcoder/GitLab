@@ -1,4 +1,4 @@
-require('~/extensions/object');
+import '~/extensions/object';
 
 describe('Object extensions', () => {
   describe('assign', () => {

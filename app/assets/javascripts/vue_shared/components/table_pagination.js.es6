@@ -1,7 +1,8 @@
-/* global Vue, gl */
 /* eslint-disable no-param-reassign, no-plusplus */
 
-window.Vue = require('vue');
+import Vue from 'vue';
+
+window.Vue = Vue;
 
 ((gl) => {
   const PAGINATION_UI_BUTTON_LIMIT = 4;

@@ -1,4 +1,4 @@
-const RollbackComponent = require('~/environments/components/environment_rollback');
+import RollbackComponent from '~/environments/components/environment_rollback';
 
 describe('Rollback Component', () => {
   preloadFixtures('static/environments/element.html.raw');

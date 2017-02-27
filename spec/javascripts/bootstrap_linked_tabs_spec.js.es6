@@ -1,4 +1,4 @@
-require('~/lib/utils/bootstrap_linked_tabs');
+import '~/lib/utils/bootstrap_linked_tabs';
 
 (() => {
   // TODO: remove this hack!

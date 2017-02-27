@@ -1,5 +1,5 @@
-require('~/vue_shared/components/pipelines_table_row');
-const pipeline = require('../../commit/pipelines/mock_data');
+import '~/vue_shared/components/pipelines_table_row';
+import pipeline from '../../commit/pipelines/mock_data';
 
 describe('Pipelines Table Row', () => {
   let component;

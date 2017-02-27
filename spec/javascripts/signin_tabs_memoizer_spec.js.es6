@@ -1,4 +1,4 @@
-require('~/signin_tabs_memoizer');
+import '~/signin_tabs_memoizer';
 
 ((global) => {
   describe('SigninTabsMemoizer', () => {

@@ -1,13 +1,16 @@
 /* eslint-disable no-new, no-param-reassign */
 /* global Vue, CommitsPipelineStore, PipelinesService, Flash */
 
-window.Vue = require('vue');
-window.Vue.use(require('vue-resource'));
-require('../../lib/utils/common_utils');
-require('../../vue_shared/vue_resource_interceptor');
-require('../../vue_shared/components/pipelines_table');
-require('./pipelines_service');
-const PipelineStore = require('./pipelines_store');
+import Vue from 'vue';
+import VueResource from 'vue-resource';
+import '../../lib/utils/common_utils';
+import '../../vue_shared/vue_resource_interceptor';
+import '../../vue_shared/components/pipelines_table';
+import './pipelines_service';
+import PipelineStore from './pipelines_store';
+
+window.Vue = Vue;
+Vue.use(VueResource);
 
 /**
  *

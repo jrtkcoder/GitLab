@@ -1,4 +1,4 @@
-const Vue = require('vue');
+import Vue from 'vue';
 
 module.exports = Vue.component('actions-component', {
   props: {

@@ -1,9 +1,9 @@
-require('~/lib/utils/url_utility');
-require('~/lib/utils/common_utils');
-require('~/filtered_search/filtered_search_token_keys');
-require('~/filtered_search/filtered_search_tokenizer');
-require('~/filtered_search/filtered_search_dropdown_manager');
-require('~/filtered_search/filtered_search_manager');
+import '~/lib/utils/url_utility';
+import '~/lib/utils/common_utils';
+import '~/filtered_search/filtered_search_token_keys';
+import '~/filtered_search/filtered_search_tokenizer';
+import '~/filtered_search/filtered_search_dropdown_manager';
+import '~/filtered_search/filtered_search_manager';
 
 (() => {
   describe('Filtered Search Manager', () => {

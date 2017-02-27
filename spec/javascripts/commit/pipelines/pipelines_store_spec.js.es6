@@ -1,4 +1,4 @@
-const PipelinesStore = require('~/commit/pipelines/pipelines_store');
+import PipelinesStore from '~/commit/pipelines/pipelines_store';
 
 describe('Store', () => {
   let store;

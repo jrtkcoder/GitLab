@@ -1,8 +1,8 @@
 /* eslint no-param-reassign: "off" */
 
-require('~/gfm_auto_complete');
-require('vendor/jquery.caret');
-require('vendor/jquery.atwho');
+import '~/gfm_auto_complete';
+import 'vendor/jquery.caret';
+import 'vendor/jquery.atwho';
 
 const global = window.gl || (window.gl = {});
 const GfmAutoComplete = global.GfmAutoComplete;

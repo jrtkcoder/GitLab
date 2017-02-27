@@ -2,7 +2,7 @@
  * Renders the stop "button" that allows stop an environment.
  * Used in environments table.
  */
-const Vue = require('vue');
+import Vue from 'vue';
 
 module.exports = Vue.component('stop-component', {
   props: {

@@ -1,11 +1,13 @@
 /* global Vue, gl */
 /* eslint-disable no-param-reassign */
 
-window.Vue = require('vue');
-require('../vue_shared/components/table_pagination');
-require('./store');
-require('../vue_shared/components/pipelines_table');
-const CommitPipelinesStoreWithTimeAgo = require('../commit/pipelines/pipelines_store');
+import Vue from 'vue';
+import '../vue_shared/components/table_pagination';
+import './store';
+import '../vue_shared/components/pipelines_table';
+import CommitPipelinesStoreWithTimeAgo from '../commit/pipelines/pipelines_store';
+
+window.Vue = Vue;
 
 ((gl) => {
   gl.VuePipelines = Vue.extend({

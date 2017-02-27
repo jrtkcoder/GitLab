@@ -1,4 +1,4 @@
-const StopComponent = require('~/environments/components/environment_stop');
+import StopComponent from '~/environments/components/environment_stop';
 
 describe('Stop Component', () => {
   preloadFixtures('static/environments/element.html.raw');

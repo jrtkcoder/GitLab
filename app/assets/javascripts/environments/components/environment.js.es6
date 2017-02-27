@@ -1,14 +1,17 @@
 /* eslint-disable no-param-reassign, no-new */
 /* global Flash */
 
-const Vue = window.Vue = require('vue');
-window.Vue.use(require('vue-resource'));
-const EnvironmentsService = require('../services/environments_service');
-const EnvironmentTable = require('./environments_table');
-const EnvironmentsStore = require('../stores/environments_store');
-require('../../vue_shared/components/table_pagination');
-require('../../lib/utils/common_utils');
-require('../../vue_shared/vue_resource_interceptor');
+import Vue from 'vue';
+import VueResource from 'vue-resource';
+import EnvironmentsService from '../services/environments_service';
+import EnvironmentTable from './environments_table';
+import EnvironmentsStore from '../stores/environments_store';
+import '../../vue_shared/components/table_pagination';
+import '../../lib/utils/common_utils';
+import '../../vue_shared/vue_resource_interceptor';
+
+window.Vue = Vue;
+Vue.use(VueResource);
 
 module.exports = Vue.component('environment-component', {
 

@@ -1,7 +1,7 @@
 /* global Vue */
-const userFilter = require('./filters/user');
-const milestoneFilter = require('./filters/milestone');
-const labelFilter = require('./filters/label');
+import userFilter from './filters/user';
+import milestoneFilter from './filters/milestone';
+import labelFilter from './filters/label';
 
 module.exports = Vue.extend({
   name: 'modal-filters',

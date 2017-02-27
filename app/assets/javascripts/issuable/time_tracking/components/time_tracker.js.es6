@@ -1,11 +1,11 @@
 /* global Vue */
 
-require('./help_state');
-require('./collapsed_state');
-require('./spent_only_pane');
-require('./no_tracking_pane');
-require('./estimate_only_pane');
-require('./comparison_pane');
+import './help_state';
+import './collapsed_state';
+import './spent_only_pane';
+import './no_tracking_pane';
+import './estimate_only_pane';
+import './comparison_pane';
 
 (() => {
   Vue.component('issuable-time-tracker', {

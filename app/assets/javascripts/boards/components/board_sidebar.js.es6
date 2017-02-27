@@ -5,7 +5,7 @@
 /* global LabelsSelect */
 /* global Sidebar */
 
-require('./sidebar/remove_issue');
+import './sidebar/remove_issue';
 
 (() => {
   const Store = gl.issueBoards.BoardsStore;

@@ -4,14 +4,17 @@
 /* global ResolveService */
 /* global mrRefreshWidgetUrl */
 
-require('./autosave');
-window.autosize = require('vendor/autosize');
-window.Dropzone = require('dropzone');
-require('./dropzone_input');
-require('./gfm_auto_complete');
-require('vendor/jquery.caret'); // required by jquery.atwho
-require('vendor/jquery.atwho');
-require('./task_list');
+import './autosave';
+import autosize from 'vendor/autosize';
+import Dropzone from 'dropzone';
+import './dropzone_input';
+import './gfm_auto_complete';
+import 'vendor/jquery.caret'; // required by jquery.atwho
+import 'vendor/jquery.atwho';
+import './task_list';
+
+window.autosize = autosize;
+window.Dropzone = Dropzone;
 
 (function() {
   var bind = function(fn, me) { return function() { return fn.apply(me, arguments); }; };

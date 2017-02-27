@@ -1,3 +1,3 @@
-/* eslint-disable func-names, space-before-function-paren */
+import d3 from 'd3';
 
-window.d3 = require('d3');
+window.d3 = d3;

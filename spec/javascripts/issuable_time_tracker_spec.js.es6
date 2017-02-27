@@ -1,8 +1,8 @@
 /* eslint-disable */
 
-require('jquery');
-require('vue');
-require('~/issuable/time_tracking/components/time_tracker');
+import 'jquery';
+import 'vue';
+import '~/issuable/time_tracking/components/time_tracker';
 
 function initTimeTrackingComponent(opts) {
   setFixtures(`

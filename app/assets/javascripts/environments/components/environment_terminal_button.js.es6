@@ -2,7 +2,7 @@
  * Renders a terminal button to open a web terminal.
  * Used in environments table.
  */
-const Vue = require('vue');
+import Vue from 'vue';
 
 module.exports = Vue.component('terminal-button-component', {
   props: {

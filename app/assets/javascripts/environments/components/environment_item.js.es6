@@ -1,13 +1,13 @@
-const Vue = require('vue');
-const Timeago = require('timeago.js');
+import Vue from 'vue';
+import Timeago from 'timeago.js';
 
-require('../../lib/utils/text_utility');
-require('../../vue_shared/components/commit');
-const ActionsComponent = require('./environment_actions');
-const ExternalUrlComponent = require('./environment_external_url');
-const StopComponent = require('./environment_stop');
-const RollbackComponent = require('./environment_rollback');
-const TerminalButtonComponent = require('./environment_terminal_button');
+import '../../lib/utils/text_utility';
+import '../../vue_shared/components/commit';
+import ActionsComponent from './environment_actions';
+import ExternalUrlComponent from './environment_external_url';
+import StopComponent from './environment_stop';
+import RollbackComponent from './environment_rollback';
+import TerminalButtonComponent from './environment_terminal_button';
 
 /**
  * Envrionment Item Component

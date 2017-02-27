@@ -1,8 +1,8 @@
 /* global Vue */
 
-require('./components/time_tracker');
-require('../../smart_interval');
-require('../../subbable_resource');
+import './components/time_tracker';
+import '../../smart_interval';
+import '../../subbable_resource';
 
 (() => {
   /* This Vue instance represents what will become the parent instance for the

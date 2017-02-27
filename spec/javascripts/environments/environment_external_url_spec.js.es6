@@ -1,4 +1,4 @@
-const ExternalUrlComponent = require('~/environments/components/environment_external_url');
+import ExternalUrlComponent from '~/environments/components/environment_external_url';
 
 describe('External URL Component', () => {
   preloadFixtures('static/environments/element.html.raw');

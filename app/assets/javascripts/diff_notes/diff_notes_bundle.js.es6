@@ -2,17 +2,17 @@
 /* global Vue */
 /* global ResolveCount */
 
-const Vue = require('vue');
-require('./models/discussion');
-require('./models/note');
-require('./stores/comments');
-require('./services/resolve');
-require('./mixins/discussion');
-require('./components/comment_resolve_btn');
-require('./components/jump_to_discussion');
-require('./components/resolve_btn');
-require('./components/resolve_count');
-require('./components/resolve_discussion_btn');
+import Vue from 'vue';
+import './models/discussion';
+import './models/note';
+import './stores/comments';
+import './services/resolve';
+import './mixins/discussion';
+import './components/comment_resolve_btn';
+import './components/jump_to_discussion';
+import './components/resolve_btn';
+import './components/resolve_count';
+import './components/resolve_discussion_btn';
 
 $(() => {
   const projectPath = document.querySelector('.merge-request').dataset.projectPath;

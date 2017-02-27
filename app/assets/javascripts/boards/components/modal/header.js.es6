@@ -1,6 +1,6 @@
 /* global Vue */
-require('./tabs');
-const modalFilters = require('./filters');
+import './tabs';
+import modalFilters from './filters';
 
 (() => {
   const ModalStore = gl.issueBoards.ModalStore;

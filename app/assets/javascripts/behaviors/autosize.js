@@ -1,7 +1,6 @@
 /* eslint-disable func-names, space-before-function-paren, prefer-arrow-callback, no-var, consistent-return, max-len */
-/* global autosize */
 
-var autosize = require('vendor/autosize');
+import autosize from 'vendor/autosize';
 
 (function() {
   $(function() {

@@ -1,7 +1,8 @@
 /* eslint-disable func-names, space-before-function-paren, one-var, no-var, one-var-declaration-per-line, prefer-template, quotes, no-unused-vars, prefer-arrow-callback, max-len */
-/* global Clipboard */
 
-window.Clipboard = require('vendor/clipboard');
+import Clipboard from 'vendor/clipboard';
+
+window.Clipboard = Clipboard;
 
 (function() {
   var genericError, genericSuccess, showTooltip;

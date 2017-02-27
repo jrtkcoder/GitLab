@@ -1,7 +1,7 @@
 /* eslint-disable func-names, space-before-function-paren, wrap-iife, max-len, no-var, prefer-arrow-callback, consistent-return, one-var, one-var-declaration-per-line, no-unused-vars, no-else-return, prefer-template, quotes, comma-dangle, no-param-reassign, no-void, brace-style, no-underscore-dangle, no-return-assign, camelcase */
 /* global Cookies */
 
-var emojiAliases = require('emoji-aliases');
+import emojiAliases from 'emoji-aliases';
 
 (function() {
   this.AwardsHandler = (function() {

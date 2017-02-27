@@ -1,7 +1,7 @@
 /**
  * Renders the external url link in environments table.
  */
-const Vue = require('vue');
+import Vue from 'vue';
 
 module.exports = Vue.component('external-url-component', {
   props: {

@@ -1,11 +1,12 @@
 /* eslint-disable no-new, class-methods-use-this */
 /* global Breakpoints */
-/* global Cookies */
 /* global Flash */
 
-require('./breakpoints');
-window.Cookies = require('js-cookie');
-require('./flash');
+import './breakpoints';
+import Cookies from 'js-cookie';
+import './flash';
+
+window.Cookies = Cookies;
 
 /* eslint-disable max-len */
 // MergeRequestTabs

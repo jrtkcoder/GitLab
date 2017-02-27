@@ -1,5 +1,6 @@
-/* global Vue */
-window.Vue = require('vue');
+import Vue from 'vue';
+
+window.Vue = Vue;
 
 (() => {
   window.gl = window.gl || {};

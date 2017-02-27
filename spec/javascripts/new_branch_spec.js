@@ -1,8 +1,8 @@
 /* eslint-disable space-before-function-paren, one-var, no-var, one-var-declaration-per-line, no-return-assign, quotes, max-len */
 /* global NewBranchForm */
 
-require('jquery-ui/ui/autocomplete');
-require('~/new_branch_form');
+import 'jquery-ui/ui/autocomplete';
+import '~/new_branch_form';
 
 (function() {
   describe('Branch', function() {

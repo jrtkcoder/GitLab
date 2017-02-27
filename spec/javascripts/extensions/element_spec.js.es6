@@ -1,4 +1,4 @@
-require('~/extensions/element');
+import '~/extensions/element';
 
 (() => {
   describe('Element extensions', function () {

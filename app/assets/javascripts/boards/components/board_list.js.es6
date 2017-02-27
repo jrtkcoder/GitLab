@@ -2,8 +2,8 @@
 /* global Vue */
 /* global Sortable */
 
-const boardCard = require('./board_card');
-require('./board_new_issue');
+import boardCard from './board_card';
+import './board_new_issue';
 
 (() => {
   const Store = gl.issueBoards.BoardsStore;

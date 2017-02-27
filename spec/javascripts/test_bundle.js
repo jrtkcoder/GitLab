@@ -1,27 +1,33 @@
 // enable test fixtures
-require('jasmine-jquery');
+import 'jasmine-jquery';
 
 jasmine.getFixtures().fixturesPath = 'base/spec/javascripts/fixtures';
 jasmine.getJSONFixtures().fixturesPath = 'base/spec/javascripts/fixtures';
 
 // include common libraries
-window.$ = window.jQuery = require('jquery');
-window._ = require('underscore');
-window.Cookies = require('js-cookie');
-window.Vue = require('vue');
-window.Vue.use(require('vue-resource'));
-require('jquery-ujs');
-require('bootstrap/js/affix');
-require('bootstrap/js/alert');
-require('bootstrap/js/button');
-require('bootstrap/js/collapse');
-require('bootstrap/js/dropdown');
-require('bootstrap/js/modal');
-require('bootstrap/js/scrollspy');
-require('bootstrap/js/tab');
-require('bootstrap/js/transition');
-require('bootstrap/js/tooltip');
-require('bootstrap/js/popover');
+import jQuery from 'jquery';
+import _ from 'underscore';
+import Cookies from 'js-cookie';
+import Vue from 'vue';
+import VueResource from 'vue-resource';
+import 'jquery-ujs';
+import 'bootstrap/js/affix';
+import 'bootstrap/js/alert';
+import 'bootstrap/js/button';
+import 'bootstrap/js/collapse';
+import 'bootstrap/js/dropdown';
+import 'bootstrap/js/modal';
+import 'bootstrap/js/scrollspy';
+import 'bootstrap/js/tab';
+import 'bootstrap/js/transition';
+import 'bootstrap/js/tooltip';
+import 'bootstrap/js/popover';
+
+window.$ = window.jQuery = jQuery;
+window._ = _;
+window.Cookies = Cookies;
+window.Vue = Vue;
+window.Vue.use(VueResource);
 
 // stub expected globals
 window.gl = window.gl || {};

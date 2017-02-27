@@ -2,7 +2,7 @@
  * Renders Rollback or Re deploy button in environments table depending
  * of the provided property `isLastDeployment`
  */
-const Vue = require('vue');
+import Vue from 'vue';
 
 module.exports = Vue.component('rollback-component', {
   props: {

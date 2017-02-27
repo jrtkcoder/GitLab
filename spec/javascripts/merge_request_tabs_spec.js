@@ -1,9 +1,9 @@
 /* eslint-disable no-var, comma-dangle, object-shorthand */
 
-require('~/merge_request_tabs');
-require('~/breakpoints');
-require('~/lib/utils/common_utils');
-require('vendor/jquery.scrollTo');
+import '~/merge_request_tabs';
+import '~/breakpoints';
+import '~/lib/utils/common_utils';
+import 'vendor/jquery.scrollTo';
 
 (function () {
   // TODO: remove this hack!

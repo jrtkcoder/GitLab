@@ -1,8 +1,11 @@
 /* eslint-disable no-new, no-param-reassign */
 /* global Vue, CommitsPipelineStore, PipelinesService, Flash */
 
-window.Vue = require('vue');
-require('./pipelines_table');
+import Vue from 'vue';
+import './pipelines_table';
+
+window.Vue = Vue;
+
 /**
  * Commits View > Pipelines Tab > Pipelines Table.
  * Merge Request View > Pipelines Tab > Pipelines Table.

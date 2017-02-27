@@ -1,11 +1,11 @@
 /* global Vue */
 /* global ListIssue */
 
-require('~/boards/models/issue');
-require('~/boards/models/label');
-require('~/boards/models/list');
-require('~/boards/models/user');
-require('~/boards/stores/modal_store');
+import '~/boards/models/issue';
+import '~/boards/models/label';
+import '~/boards/models/list';
+import '~/boards/models/user';
+import '~/boards/stores/modal_store';
 
 describe('Modal store', () => {
   let issue;

@@ -7,10 +7,12 @@
 /*= provides zen_mode:enter */
 /*= provides zen_mode:leave */
 
-require('vendor/jquery.scrollTo');
-window.Dropzone = require('dropzone');
-require('mousetrap');
-require('mousetrap/plugins/pause/mousetrap-pause');
+import 'vendor/jquery.scrollTo';
+import Dropzone from 'dropzone';
+import 'mousetrap';
+import 'mousetrap/plugins/pause/mousetrap-pause';
+
+window.Dropzone = Dropzone;
 
 //
 // ### Events

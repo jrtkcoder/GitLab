@@ -1,10 +1,13 @@
 /* eslint-disable no-param-reassign */
-/* global Vue, VueResource, gl */
-window.Vue = require('vue');
-window.Vue.use(require('vue-resource'));
-require('../lib/utils/common_utils');
-require('../vue_shared/vue_resource_interceptor');
-require('./pipelines');
+
+import Vue from 'vue';
+import VueResource from 'vue-resource';
+import '../lib/utils/common_utils';
+import '../vue_shared/vue_resource_interceptor';
+import './pipelines';
+
+window.Vue = Vue;
+Vue.use(VueResource);
 
 $(() => new Vue({
   el: document.querySelector('.vue-pipelines-index'),

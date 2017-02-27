@@ -1,6 +1,6 @@
 /* global Api */
 
-require('./template_selector');
+import './template_selector';
 
 (() => {
   const global = window.gl || (window.gl = {});

@@ -1,4 +1,4 @@
-require('./filtered_search_dropdown');
+import './filtered_search_dropdown';
 
 /* global droplabFilter */
 

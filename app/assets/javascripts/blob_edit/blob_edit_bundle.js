@@ -2,7 +2,7 @@
 /* global EditBlob */
 /* global NewCommitForm */
 
-require('./edit_blob');
+import './edit_blob';
 
 (function() {
   $(function() {

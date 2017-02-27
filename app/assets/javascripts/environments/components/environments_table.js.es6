@@ -1,8 +1,8 @@
 /**
  * Render environments table.
  */
-const Vue = require('vue');
-const EnvironmentItem = require('./environment_item');
+import Vue from 'vue';
+import EnvironmentItem from './environment_item';
 
 module.exports = Vue.component('environment-table-component', {
 

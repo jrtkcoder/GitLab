@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 
-require('../lib/utils/text_utility');
-const DEFAULT_EVENT_OBJECTS = require('./default_event_objects');
+import '../lib/utils/text_utility';
+import DEFAULT_EVENT_OBJECTS from './default_event_objects';
 
 ((global) => {
   global.cycleAnalytics = global.cycleAnalytics || {};

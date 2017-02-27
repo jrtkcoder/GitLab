@@ -35,8 +35,8 @@
 /* global Labels */
 /* global Shortcuts */
 
-const ShortcutsBlob = require('./shortcuts_blob');
-const UserCallout = require('./user_callout');
+import ShortcutsBlob from './shortcuts_blob';
+import UserCallout from './user_callout';
 
 (function() {
   var Dispatcher;

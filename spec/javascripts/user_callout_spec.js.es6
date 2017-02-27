@@ -1,4 +1,4 @@
-const UserCallout = require('~/user_callout');
+import UserCallout from '~/user_callout';
 
 const USER_CALLOUT_COOKIE = 'user_callout_dismissed';
 const Cookie = window.Cookies;

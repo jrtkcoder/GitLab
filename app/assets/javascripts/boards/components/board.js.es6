@@ -2,9 +2,9 @@
 /* global Vue */
 /* global Sortable */
 
-require('./board_blank_state');
-require('./board_delete');
-require('./board_list');
+import './board_blank_state';
+import './board_delete';
+import './board_list';
 
 (() => {
   const Store = gl.issueBoards.BoardsStore;

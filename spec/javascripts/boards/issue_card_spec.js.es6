@@ -4,13 +4,13 @@
 /* global listObj */
 /* global ListIssue */
 
-require('~/boards/models/issue');
-require('~/boards/models/label');
-require('~/boards/models/list');
-require('~/boards/models/user');
-require('~/boards/stores/boards_store');
-require('~/boards/components/issue_card_inner');
-require('./mock_data');
+import '~/boards/models/issue';
+import '~/boards/models/label';
+import '~/boards/models/list';
+import '~/boards/models/user';
+import '~/boards/stores/boards_store';
+import '~/boards/components/issue_card_inner';
+import './mock_data';
 
 describe('Issue card component', () => {
   const user = new ListUser({

@@ -1,4 +1,4 @@
-require('~/pipelines');
+import '~/pipelines';
 
 // Fix for phantomJS
 if (!Element.prototype.matches && Element.prototype.webkitMatchesSelector) {

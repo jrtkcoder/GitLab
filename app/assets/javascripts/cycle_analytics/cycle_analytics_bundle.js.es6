@@ -1,23 +1,24 @@
-/* global Vue */
-/* global Cookies */
 /* global Flash */
 
-window.Vue = require('vue');
-window.Cookies = require('js-cookie');
-require('./svg/icon_branch');
-require('./svg/icon_build_status');
-require('./svg/icon_commit');
-require('./components/stage_code_component');
-require('./components/stage_issue_component');
-require('./components/stage_plan_component');
-require('./components/stage_production_component');
-require('./components/stage_review_component');
-require('./components/stage_staging_component');
-require('./components/stage_test_component');
-require('./components/total_time_component');
-require('./cycle_analytics_service');
-require('./cycle_analytics_store');
-require('./default_event_objects');
+import Vue from 'vue';
+import Cookies from 'js-cookie';
+import './svg/icon_branch';
+import './svg/icon_build_status';
+import './svg/icon_commit';
+import './components/stage_code_component';
+import './components/stage_issue_component';
+import './components/stage_plan_component';
+import './components/stage_production_component';
+import './components/stage_review_component';
+import './components/stage_staging_component';
+import './components/stage_test_component';
+import './components/total_time_component';
+import './cycle_analytics_service';
+import './cycle_analytics_store';
+import './default_event_objects';
+
+window.Vue = Vue;
+window.Cookies = Cookies;
 
 $(() => {
   const OVERVIEW_DIALOG_COOKIE = 'cycle_analytics_help_dismissed';

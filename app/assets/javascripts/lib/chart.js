@@ -1,3 +1,3 @@
-/* eslint-disable func-names, space-before-function-paren */
+import Chart from 'vendor/Chart';
 
-window.Chart = require('vendor/Chart');
+window.Chart = Chart;

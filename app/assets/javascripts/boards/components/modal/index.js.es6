@@ -1,10 +1,10 @@
 /* global Vue */
 /* global ListIssue */
 
-require('./header');
-require('./list');
-require('./footer');
-require('./empty_state');
+import './header';
+import './list';
+import './footer';
+import './empty_state';
 
 (() => {
   const ModalStore = gl.issueBoards.ModalStore;

@@ -1,2 +1,5 @@
-window.Vue = require('vue');
-window.Vue.use(require('vue-resource'));
+import Vue from 'vue';
+import VueResource from 'vue-resource';
+
+window.Vue = Vue;
+window.Vue.use(VueResource);

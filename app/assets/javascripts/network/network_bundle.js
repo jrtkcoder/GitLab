@@ -2,8 +2,8 @@
 /* global Network */
 /* global ShortcutsNetwork */
 
-require('./branch_graph');
-require('./network');
+import './branch_graph';
+import './network';
 
 (function() {
   $(function() {
