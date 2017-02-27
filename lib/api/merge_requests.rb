@@ -169,7 +169,7 @@ module API
         optional :should_remove_source_branch, type: Boolean,
                                                desc: 'When true, the source branch will be deleted if possible'
         optional :merge_when_pipeline_succeeds, type: Boolean,
-                                             desc: 'When true, this merge request will be merged when the pipeline succeeds'
+                                               desc: 'When true, this merge request will be merged when the pipeline succeeds'
         optional :sha, type: String, desc: 'When present, must have the HEAD SHA of the source branch'
       end
       put ':id/merge_requests/:merge_request_id/merge' do
@@ -211,7 +211,7 @@ module API
       post ':id/merge_requests/:merge_request_id/cancel_merge_when_pipeline_succeeds' do
         merge_request = find_project_merge_request(params[:merge_request_id])
 
-        unauthorized! unless merge_request.can_cancel_merge_when_build_succeeds?(current_user)
+        unauthorized! unless merge_request.can_cancel_merge_when_pipeline_succeeds?(current_user)
 
         ::MergeRequest::MergeWhenPipelineSucceedsService
           .new(merge_request.target_project, current_user)

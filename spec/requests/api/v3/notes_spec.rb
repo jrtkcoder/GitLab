@@ -3,7 +3,7 @@ require 'spec_helper'
 describe API::V3::Notes, api: true  do
   include ApiHelpers
   let(:user) { create(:user) }
-  let!(:project) { create(:project, :public, namespace: user.namespace) }
+  let!(:project) { create(:empty_project, :public, namespace: user.namespace) }
   let!(:issue) { create(:issue, project: project, author: user) }
   let!(:merge_request) { create(:merge_request, source_project: project, target_project: project, author: user) }
   let!(:snippet) { create(:project_snippet, project: project, author: user) }
@@ -14,12 +14,12 @@ describe API::V3::Notes, api: true  do
   # For testing the cross-reference of a private issue in a public issue
   let(:private_user)    { create(:user) }
   let(:private_project) do
-    create(:project, namespace: private_user.namespace).
+    create(:empty_project, namespace: private_user.namespace).
     tap { |p| p.team << [private_user, :master] }
   end
   let(:private_issue)    { create(:issue, project: private_project) }
 
-  let(:ext_proj)  { create(:project, :public) }
+  let(:ext_proj)  { create(:empty_project, :public) }
   let(:ext_issue) { create(:issue, project: ext_proj) }
 
   let!(:cross_reference_note) do
@@ -34,24 +34,28 @@ describe API::V3::Notes, api: true  do
   describe "GET /projects/:id/noteable/:noteable_id/notes" do
     context "when noteable is an Issue" do
       it "returns an array of issue notes" do
-        get api("/projects/#{project.id}/issues/#{issue.id}/notes", user)
+        get v3_api("/projects/#{project.id}/issues/#{issue.id}/notes", user)
 
         expect(response).to have_http_status(200)
+        expect(response).to include_pagination_headers
         expect(json_response).to be_an Array
         expect(json_response.first['body']).to eq(issue_note.note)
+        expect(json_response.first['upvote']).to be_falsey
+        expect(json_response.first['downvote']).to be_falsey
       end
 
       it "returns a 404 error when issue id not found" do
-        get api("/projects/#{project.id}/issues/12345/notes", user)
+        get v3_api("/projects/#{project.id}/issues/12345/notes", user)
 
         expect(response).to have_http_status(404)
       end
 
       context "and current user cannot view the notes" do
         it "returns an empty array" do
-          get api("/projects/#{ext_proj.id}/issues/#{ext_issue.id}/notes", user)
+          get v3_api("/projects/#{ext_proj.id}/issues/#{ext_issue.id}/notes", user)
 
           expect(response).to have_http_status(200)
+          expect(response).to include_pagination_headers
           expect(json_response).to be_an Array
           expect(json_response).to be_empty
         end
@@ -60,7 +64,7 @@ describe API::V3::Notes, api: true  do
           before { ext_issue.update_attributes(confidential: true) }
 
           it "returns 404" do
-            get api("/projects/#{ext_proj.id}/issues/#{ext_issue.id}/notes", user)
+            get v3_api("/projects/#{ext_proj.id}/issues/#{ext_issue.id}/notes", user)
 
             expect(response).to have_http_status(404)
           end
@@ -68,9 +72,10 @@ describe API::V3::Notes, api: true  do
 
         context "and current user can view the note" do
           it "returns an empty array" do
-            get api("/projects/#{ext_proj.id}/issues/#{ext_issue.id}/notes", private_user)
+            get v3_api("/projects/#{ext_proj.id}/issues/#{ext_issue.id}/notes", private_user)
 
             expect(response).to have_http_status(200)
+            expect(response).to include_pagination_headers
             expect(json_response).to be_an Array
             expect(json_response.first['body']).to eq(cross_reference_note.note)
           end
@@ -80,21 +85,22 @@ describe API::V3::Notes, api: true  do
 
     context "when noteable is a Snippet" do
       it "returns an array of snippet notes" do
-        get api("/projects/#{project.id}/snippets/#{snippet.id}/notes", user)
+        get v3_api("/projects/#{project.id}/snippets/#{snippet.id}/notes", user)
 
         expect(response).to have_http_status(200)
+        expect(response).to include_pagination_headers
         expect(json_response).to be_an Array
         expect(json_response.first['body']).to eq(snippet_note.note)
       end
 
       it "returns a 404 error when snippet id not found" do
-        get api("/projects/#{project.id}/snippets/42/notes", user)
+        get v3_api("/projects/#{project.id}/snippets/42/notes", user)
 
         expect(response).to have_http_status(404)
       end
 
       it "returns 404 when not authorized" do
-        get api("/projects/#{project.id}/snippets/#{snippet.id}/notes", private_user)
+        get v3_api("/projects/#{project.id}/snippets/#{snippet.id}/notes", private_user)
 
         expect(response).to have_http_status(404)
       end
@@ -102,21 +108,22 @@ describe API::V3::Notes, api: true  do
 
     context "when noteable is a Merge Request" do
       it "returns an array of merge_requests notes" do
-        get api("/projects/#{project.id}/merge_requests/#{merge_request.id}/notes", user)
+        get v3_api("/projects/#{project.id}/merge_requests/#{merge_request.id}/notes", user)
 
         expect(response).to have_http_status(200)
+        expect(response).to include_pagination_headers
         expect(json_response).to be_an Array
         expect(json_response.first['body']).to eq(merge_request_note.note)
       end
 
       it "returns a 404 error if merge request id not found" do
-        get api("/projects/#{project.id}/merge_requests/4444/notes", user)
+        get v3_api("/projects/#{project.id}/merge_requests/4444/notes", user)
 
         expect(response).to have_http_status(404)
       end
 
       it "returns 404 when not authorized" do
-        get api("/projects/#{project.id}/merge_requests/4444/notes", private_user)
+        get v3_api("/projects/#{project.id}/merge_requests/4444/notes", private_user)
 
         expect(response).to have_http_status(404)
       end
@@ -126,21 +133,21 @@ describe API::V3::Notes, api: true  do
   describe "GET /projects/:id/noteable/:noteable_id/notes/:note_id" do
     context "when noteable is an Issue" do
       it "returns an issue note by id" do
-        get api("/projects/#{project.id}/issues/#{issue.id}/notes/#{issue_note.id}", user)
+        get v3_api("/projects/#{project.id}/issues/#{issue.id}/notes/#{issue_note.id}", user)
 
         expect(response).to have_http_status(200)
         expect(json_response['body']).to eq(issue_note.note)
       end
 
       it "returns a 404 error if issue note not found" do
-        get api("/projects/#{project.id}/issues/#{issue.id}/notes/12345", user)
+        get v3_api("/projects/#{project.id}/issues/#{issue.id}/notes/12345", user)
 
         expect(response).to have_http_status(404)
       end
 
       context "and current user cannot view the note" do
         it "returns a 404 error" do
-          get api("/projects/#{ext_proj.id}/issues/#{ext_issue.id}/notes/#{cross_reference_note.id}", user)
+          get v3_api("/projects/#{ext_proj.id}/issues/#{ext_issue.id}/notes/#{cross_reference_note.id}", user)
 
           expect(response).to have_http_status(404)
         end
@@ -149,7 +156,7 @@ describe API::V3::Notes, api: true  do
           before { issue.update_attributes(confidential: true) }
 
           it "returns 404" do
-            get api("/projects/#{project.id}/issues/#{issue.id}/notes/#{issue_note.id}", private_user)
+            get v3_api("/projects/#{project.id}/issues/#{issue.id}/notes/#{issue_note.id}", private_user)
 
             expect(response).to have_http_status(404)
           end
@@ -157,7 +164,7 @@ describe API::V3::Notes, api: true  do
 
         context "and current user can view the note" do
           it "returns an issue note by id" do
-            get api("/projects/#{ext_proj.id}/issues/#{ext_issue.id}/notes/#{cross_reference_note.id}", private_user)
+            get v3_api("/projects/#{ext_proj.id}/issues/#{ext_issue.id}/notes/#{cross_reference_note.id}", private_user)
 
             expect(response).to have_http_status(200)
             expect(json_response['body']).to eq(cross_reference_note.note)
@@ -168,14 +175,14 @@ describe API::V3::Notes, api: true  do
 
     context "when noteable is a Snippet" do
       it "returns a snippet note by id" do
-        get api("/projects/#{project.id}/snippets/#{snippet.id}/notes/#{snippet_note.id}", user)
+        get v3_api("/projects/#{project.id}/snippets/#{snippet.id}/notes/#{snippet_note.id}", user)
 
         expect(response).to have_http_status(200)
         expect(json_response['body']).to eq(snippet_note.note)
       end
 
       it "returns a 404 error if snippet note not found" do
-        get api("/projects/#{project.id}/snippets/#{snippet.id}/notes/12345", user)
+        get v3_api("/projects/#{project.id}/snippets/#{snippet.id}/notes/12345", user)
 
         expect(response).to have_http_status(404)
       end
@@ -185,7 +192,7 @@ describe API::V3::Notes, api: true  do
   describe "POST /projects/:id/noteable/:noteable_id/notes" do
     context "when noteable is an Issue" do
       it "creates a new issue note" do
-        post api("/projects/#{project.id}/issues/#{issue.id}/notes", user), body: 'hi!'
+        post v3_api("/projects/#{project.id}/issues/#{issue.id}/notes", user), body: 'hi!'
 
         expect(response).to have_http_status(201)
         expect(json_response['body']).to eq('hi!')
@@ -193,13 +200,13 @@ describe API::V3::Notes, api: true  do
       end
 
       it "returns a 400 bad request error if body not given" do
-        post api("/projects/#{project.id}/issues/#{issue.id}/notes", user)
+        post v3_api("/projects/#{project.id}/issues/#{issue.id}/notes", user)
 
         expect(response).to have_http_status(400)
       end
 
       it "returns a 401 unauthorized error if user not authenticated" do
-        post api("/projects/#{project.id}/issues/#{issue.id}/notes"), body: 'hi!'
+        post v3_api("/projects/#{project.id}/issues/#{issue.id}/notes"), body: 'hi!'
 
         expect(response).to have_http_status(401)
       end
@@ -207,7 +214,7 @@ describe API::V3::Notes, api: true  do
       context 'when an admin or owner makes the request' do
         it 'accepts the creation date to be set' do
           creation_time = 2.weeks.ago
-          post api("/projects/#{project.id}/issues/#{issue.id}/notes", user),
+          post v3_api("/projects/#{project.id}/issues/#{issue.id}/notes", user),
             body: 'hi!', created_at: creation_time
 
           expect(response).to have_http_status(201)
@@ -221,7 +228,7 @@ describe API::V3::Notes, api: true  do
         let(:issue2) { create(:issue, project: project) }
 
         it 'returns an award emoji' do
-          post api("/projects/#{project.id}/issues/#{issue2.id}/notes", user), body: ':+1:'
+          post v3_api("/projects/#{project.id}/issues/#{issue2.id}/notes", user), body: ':+1:'
 
           expect(response).to have_http_status(201)
           expect(json_response['awardable_id']).to eq issue2.id
@@ -230,7 +237,7 @@ describe API::V3::Notes, api: true  do
 
       context 'when the user is posting an award emoji on his/her own issue' do
         it 'creates a new issue note' do
-          post api("/projects/#{project.id}/issues/#{issue.id}/notes", user), body: ':+1:'
+          post v3_api("/projects/#{project.id}/issues/#{issue.id}/notes", user), body: ':+1:'
 
           expect(response).to have_http_status(201)
           expect(json_response['body']).to eq(':+1:')
@@ -240,7 +247,7 @@ describe API::V3::Notes, api: true  do
 
     context "when noteable is a Snippet" do
       it "creates a new snippet note" do
-        post api("/projects/#{project.id}/snippets/#{snippet.id}/notes", user), body: 'hi!'
+        post v3_api("/projects/#{project.id}/snippets/#{snippet.id}/notes", user), body: 'hi!'
 
         expect(response).to have_http_status(201)
         expect(json_response['body']).to eq('hi!')
@@ -248,13 +255,13 @@ describe API::V3::Notes, api: true  do
       end
 
       it "returns a 400 bad request error if body not given" do
-        post api("/projects/#{project.id}/snippets/#{snippet.id}/notes", user)
+        post v3_api("/projects/#{project.id}/snippets/#{snippet.id}/notes", user)
 
         expect(response).to have_http_status(400)
       end
 
       it "returns a 401 unauthorized error if user not authenticated" do
-        post api("/projects/#{project.id}/snippets/#{snippet.id}/notes"), body: 'hi!'
+        post v3_api("/projects/#{project.id}/snippets/#{snippet.id}/notes"), body: 'hi!'
 
         expect(response).to have_http_status(401)
       end
@@ -265,7 +272,7 @@ describe API::V3::Notes, api: true  do
         project = create(:empty_project, :private) { |p| p.add_guest(user) }
         issue = create(:issue, :confidential, project: project)
 
-        post api("/projects/#{project.id}/issues/#{issue.id}/notes", user),
+        post v3_api("/projects/#{project.id}/issues/#{issue.id}/notes", user),
           body: 'Foo'
 
         expect(response).to have_http_status(404)
@@ -273,14 +280,14 @@ describe API::V3::Notes, api: true  do
     end
 
     context 'when user does not have access to create noteable' do
-      let(:private_issue) { create(:issue, project: create(:project, :private)) }
+      let(:private_issue) { create(:issue, project: create(:empty_project, :private)) }
 
       ##
       # We are posting to project user has access to, but we use issue id
       # from a different project, see #15577
       #
       before do
-        post api("/projects/#{project.id}/issues/#{private_issue.id}/notes", user),
+        post v3_api("/projects/#{project.id}/issues/#{private_issue.id}/notes", user),
              body: 'Hi!'
       end
 
@@ -298,14 +305,14 @@ describe API::V3::Notes, api: true  do
     it "creates an activity event when an issue note is created" do
       expect(Event).to receive(:create)
 
-      post api("/projects/#{project.id}/issues/#{issue.id}/notes", user), body: 'hi!'
+      post v3_api("/projects/#{project.id}/issues/#{issue.id}/notes", user), body: 'hi!'
     end
   end
 
   describe 'PUT /projects/:id/noteable/:noteable_id/notes/:note_id' do
     context 'when noteable is an Issue' do
       it 'returns modified note' do
-        put api("/projects/#{project.id}/issues/#{issue.id}/"\
+        put v3_api("/projects/#{project.id}/issues/#{issue.id}/"\
                   "notes/#{issue_note.id}", user), body: 'Hello!'
 
         expect(response).to have_http_status(200)
@@ -313,14 +320,14 @@ describe API::V3::Notes, api: true  do
       end
 
       it 'returns a 404 error when note id not found' do
-        put api("/projects/#{project.id}/issues/#{issue.id}/notes/12345", user),
+        put v3_api("/projects/#{project.id}/issues/#{issue.id}/notes/12345", user),
                 body: 'Hello!'
 
         expect(response).to have_http_status(404)
       end
 
       it 'returns a 400 bad request error if body not given' do
-        put api("/projects/#{project.id}/issues/#{issue.id}/"\
+        put v3_api("/projects/#{project.id}/issues/#{issue.id}/"\
                   "notes/#{issue_note.id}", user)
 
         expect(response).to have_http_status(400)
@@ -329,7 +336,7 @@ describe API::V3::Notes, api: true  do
 
     context 'when noteable is a Snippet' do
       it 'returns modified note' do
-        put api("/projects/#{project.id}/snippets/#{snippet.id}/"\
+        put v3_api("/projects/#{project.id}/snippets/#{snippet.id}/"\
                   "notes/#{snippet_note.id}", user), body: 'Hello!'
 
         expect(response).to have_http_status(200)
@@ -337,7 +344,7 @@ describe API::V3::Notes, api: true  do
       end
 
       it 'returns a 404 error when note id not found' do
-        put api("/projects/#{project.id}/snippets/#{snippet.id}/"\
+        put v3_api("/projects/#{project.id}/snippets/#{snippet.id}/"\
                   "notes/12345", user), body: "Hello!"
 
         expect(response).to have_http_status(404)
@@ -346,7 +353,7 @@ describe API::V3::Notes, api: true  do
 
     context 'when noteable is a Merge Request' do
       it 'returns modified note' do
-        put api("/projects/#{project.id}/merge_requests/#{merge_request.id}/"\
+        put v3_api("/projects/#{project.id}/merge_requests/#{merge_request.id}/"\
                   "notes/#{merge_request_note.id}", user), body: 'Hello!'
 
         expect(response).to have_http_status(200)
@@ -354,7 +361,7 @@ describe API::V3::Notes, api: true  do
       end
 
       it 'returns a 404 error when note id not found' do
-        put api("/projects/#{project.id}/merge_requests/#{merge_request.id}/"\
+        put v3_api("/projects/#{project.id}/merge_requests/#{merge_request.id}/"\
                   "notes/12345", user), body: "Hello!"
 
         expect(response).to have_http_status(404)
@@ -365,18 +372,18 @@ describe API::V3::Notes, api: true  do
   describe 'DELETE /projects/:id/noteable/:noteable_id/notes/:note_id' do
     context 'when noteable is an Issue' do
       it 'deletes a note' do
-        delete api("/projects/#{project.id}/issues/#{issue.id}/"\
+        delete v3_api("/projects/#{project.id}/issues/#{issue.id}/"\
                    "notes/#{issue_note.id}", user)
 
         expect(response).to have_http_status(200)
         # Check if note is really deleted
-        delete api("/projects/#{project.id}/issues/#{issue.id}/"\
+        delete v3_api("/projects/#{project.id}/issues/#{issue.id}/"\
                    "notes/#{issue_note.id}", user)
         expect(response).to have_http_status(404)
       end
 
       it 'returns a 404 error when note id not found' do
-        delete api("/projects/#{project.id}/issues/#{issue.id}/notes/12345", user)
+        delete v3_api("/projects/#{project.id}/issues/#{issue.id}/notes/12345", user)
 
         expect(response).to have_http_status(404)
       end
@@ -384,18 +391,18 @@ describe API::V3::Notes, api: true  do
 
     context 'when noteable is a Snippet' do
       it 'deletes a note' do
-        delete api("/projects/#{project.id}/snippets/#{snippet.id}/"\
+        delete v3_api("/projects/#{project.id}/snippets/#{snippet.id}/"\
                    "notes/#{snippet_note.id}", user)
 
         expect(response).to have_http_status(200)
         # Check if note is really deleted
-        delete api("/projects/#{project.id}/snippets/#{snippet.id}/"\
+        delete v3_api("/projects/#{project.id}/snippets/#{snippet.id}/"\
                    "notes/#{snippet_note.id}", user)
         expect(response).to have_http_status(404)
       end
 
       it 'returns a 404 error when note id not found' do
-        delete api("/projects/#{project.id}/snippets/#{snippet.id}/"\
+        delete v3_api("/projects/#{project.id}/snippets/#{snippet.id}/"\
                    "notes/12345", user)
 
         expect(response).to have_http_status(404)
@@ -404,18 +411,18 @@ describe API::V3::Notes, api: true  do
 
     context 'when noteable is a Merge Request' do
       it 'deletes a note' do
-        delete api("/projects/#{project.id}/merge_requests/"\
+        delete v3_api("/projects/#{project.id}/merge_requests/"\
                    "#{merge_request.id}/notes/#{merge_request_note.id}", user)
 
         expect(response).to have_http_status(200)
         # Check if note is really deleted
-        delete api("/projects/#{project.id}/merge_requests/"\
+        delete v3_api("/projects/#{project.id}/merge_requests/"\
                    "#{merge_request.id}/notes/#{merge_request_note.id}", user)
         expect(response).to have_http_status(404)
       end
 
       it 'returns a 404 error when note id not found' do
-        delete api("/projects/#{project.id}/merge_requests/"\
+        delete v3_api("/projects/#{project.id}/merge_requests/"\
                    "#{merge_request.id}/notes/12345", user)
 
         expect(response).to have_http_status(404)

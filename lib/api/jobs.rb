@@ -10,8 +10,8 @@ module API
     resource :projects do
       helpers do
         params :optional_scope do
-          optional :scope, types: [String, Array[String]], desc: 'The scope of jobs to show',
-                           values:  ['pending', 'running', 'failed', 'success', 'canceled'],
+          optional :scope, types: [String, Array[String]], desc: 'The scope of builds to show',
+                           values: ::CommitStatus::AVAILABLE_STATUSES,
                            coerce_with: ->(scope) {
                              case scope
                              when String

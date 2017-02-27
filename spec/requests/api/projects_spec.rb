@@ -343,13 +343,6 @@ describe API::Projects, api: true  do
       expect(json_response['only_allow_merge_if_pipeline_succeeds']).to be_falsey
     end
 
-    it 'sets a project as allowing merge only if build succeeds' do
-      project = attributes_for(:project, { only_allow_merge_if_pipeline_succeeds: true })
-      post api('/projects', user), project
-
-      expect(json_response['only_allow_merge_if_pipeline_succeeds']).to be_truthy
-    end
-
     it 'sets a project as allowing merge even if discussions are unresolved' do
       project = attributes_for(:project, { only_allow_merge_if_all_discussions_are_resolved: false })
 
@@ -464,7 +457,7 @@ describe API::Projects, api: true  do
     it 'sets a project as allowing merge even if build fails' do
       project = attributes_for(:project, { only_allow_merge_if_pipeline_succeeds: false })
       post api("/projects/user/#{user.id}", admin), project
-      expect(json_response['only_allow_merge_if_build_succeeds']).to be_falsey
+      expect(json_response['only_allow_merge_if_pipeline_succeeds']).to be_falsey
     end
 
     it 'sets a project as allowing merge only if build succeeds' do
@@ -565,7 +558,7 @@ describe API::Projects, api: true  do
         expect(json_response['shared_with_groups'][0]['group_id']).to eq(group.id)
         expect(json_response['shared_with_groups'][0]['group_name']).to eq(group.name)
         expect(json_response['shared_with_groups'][0]['group_access_level']).to eq(link.group_access)
-        expect(json_response['only_allow_merge_if_pipeline_succeeds']).to eq(project.only_allow_merge_if_build_succeeds)
+        expect(json_response['only_allow_merge_if_pipeline_succeeds']).to eq(project.only_allow_merge_if_pipeline_succeeds)
         expect(json_response['only_allow_merge_if_all_discussions_are_resolved']).to eq(project.only_allow_merge_if_all_discussions_are_resolved)
       end
 
@@ -1425,6 +1418,55 @@ describe API::Projects, api: true  do
 
         expect(response).to have_http_status(401)
         expect(json_response['message']).to eq('401 Unauthorized')
+      end
+    end
+  end
+
+  describe 'POST /projects/:id/housekeeping' do
+    let(:housekeeping) { Projects::HousekeepingService.new(project) }
+
+    before do
+      allow(Projects::HousekeepingService).to receive(:new).with(project).and_return(housekeeping)
+    end
+
+    context 'when authenticated as owner' do
+      it 'starts the housekeeping process' do
+        expect(housekeeping).to receive(:execute).once
+
+        post api("/projects/#{project.id}/housekeeping", user)
+
+        expect(response).to have_http_status(201)
+      end
+
+      context 'when housekeeping lease is taken' do
+        it 'returns conflict' do
+          expect(housekeeping).to receive(:execute).once.and_raise(Projects::HousekeepingService::LeaseTaken)
+
+          post api("/projects/#{project.id}/housekeeping", user)
+
+          expect(response).to have_http_status(409)
+          expect(json_response['message']).to match(/Somebody already triggered housekeeping for this project/)
+        end
+      end
+    end
+
+    context 'when authenticated as developer' do
+      before do
+        project_member2
+      end
+
+      it 'returns forbidden error' do
+        post api("/projects/#{project.id}/housekeeping", user3)
+
+        expect(response).to have_http_status(403)
+      end
+    end
+
+    context 'when unauthenticated' do
+      it 'returns authentication error' do
+        post api("/projects/#{project.id}/housekeeping")
+
+        expect(response).to have_http_status(401)
       end
     end
   end

@@ -88,7 +88,7 @@ Parameters:
     "runners_token": "b8547b1dc37721d05889db52fa2f02",
     "public_builds": true,
     "shared_with_groups": [],
-    "only_allow_merge_if_build_succeeds": false,
+    "only_allow_merge_if_pipeline_succeeds": false,
     "only_allow_merge_if_all_discussions_are_resolved": false,
     "request_access_enabled": false
   },
@@ -149,7 +149,7 @@ Parameters:
     "runners_token": "b8547b1dc37721d05889db52fa2f02",
     "public_builds": true,
     "shared_with_groups": [],
-    "only_allow_merge_if_build_succeeds": false,
+    "only_allow_merge_if_pipeline_succeeds": false,
     "only_allow_merge_if_all_discussions_are_resolved": false,
     "request_access_enabled": false
   }
@@ -241,7 +241,7 @@ Parameters:
       "group_access_level": 10
     }
   ],
-  "only_allow_merge_if_build_succeeds": false,
+  "only_allow_merge_if_pipeline_succeeds": false,
   "only_allow_merge_if_all_discussions_are_resolved": false,
   "request_access_enabled": false
 }
@@ -407,8 +407,6 @@ Parameters:
       },
       "created_at": "2015-12-04T10:33:56.698Z",
       "system": false,
-      "upvote": false,
-      "downvote": false,
       "noteable_id": 377,
       "noteable_type": "Issue"
     },
@@ -451,7 +449,7 @@ Parameters:
 | `visibility_level` | integer | no | See [project visibility level](#project-visibility-level) |
 | `import_url` | string | no | URL to import repository from |
 | `public_builds` | boolean | no | If `true`, builds can be viewed by non-project-members |
-| `only_allow_merge_if_build_succeeds` | boolean | no | Set whether merge requests can only be merged with successful builds |
+| `only_allow_merge_if_pipeline_succeeds` | boolean | no | Set whether merge requests can only be merged with successful builds |
 | `only_allow_merge_if_all_discussions_are_resolved` | boolean | no | Set whether merge requests can only be merged when all the discussions are resolved |
 | `lfs_enabled` | boolean | no | Enable LFS |
 | `request_access_enabled` | boolean | no | Allow users to request member access |
@@ -484,7 +482,7 @@ Parameters:
 | `visibility_level` | integer | no | See [project visibility level](#project-visibility-level) |
 | `import_url` | string | no | URL to import repository from |
 | `public_builds` | boolean | no | If `true`, builds can be viewed by non-project-members |
-| `only_allow_merge_if_build_succeeds` | boolean | no | Set whether merge requests can only be merged with successful builds |
+| `only_allow_merge_if_pipeline_succeeds` | boolean | no | Set whether merge requests can only be merged with successful builds |
 | `only_allow_merge_if_all_discussions_are_resolved` | boolean | no | Set whether merge requests can only be merged when all the discussions are resolved |
 | `lfs_enabled` | boolean | no | Enable LFS |
 | `request_access_enabled` | boolean | no | Allow users to request member access |
@@ -516,7 +514,7 @@ Parameters:
 | `visibility_level` | integer | no | See [project visibility level](#project-visibility-level) |
 | `import_url` | string | no | URL to import repository from |
 | `public_builds` | boolean | no | If `true`, builds can be viewed by non-project-members |
-| `only_allow_merge_if_build_succeeds` | boolean | no | Set whether merge requests can only be merged with successful builds |
+| `only_allow_merge_if_pipeline_succeeds` | boolean | no | Set whether merge requests can only be merged with successful builds |
 | `only_allow_merge_if_all_discussions_are_resolved` | boolean | no | Set whether merge requests can only be merged when all the discussions are resolved |
 | `lfs_enabled` | boolean | no | Enable LFS |
 | `request_access_enabled` | boolean | no | Allow users to request member access |
@@ -598,7 +596,7 @@ Example response:
   "star_count": 1,
   "public_builds": true,
   "shared_with_groups": [],
-  "only_allow_merge_if_build_succeeds": false,
+  "only_allow_merge_if_pipeline_succeeds": false,
   "only_allow_merge_if_all_discussions_are_resolved": false,
   "request_access_enabled": false
 }
@@ -664,7 +662,7 @@ Example response:
   "star_count": 0,
   "public_builds": true,
   "shared_with_groups": [],
-  "only_allow_merge_if_build_succeeds": false,
+  "only_allow_merge_if_pipeline_succeeds": false,
   "only_allow_merge_if_all_discussions_are_resolved": false,
   "request_access_enabled": false
 }
@@ -747,7 +745,7 @@ Example response:
   "runners_token": "b8bc4a7a29eb76ea83cf79e4908c2b",
   "public_builds": true,
   "shared_with_groups": [],
-  "only_allow_merge_if_build_succeeds": false,
+  "only_allow_merge_if_pipeline_succeeds": false,
   "only_allow_merge_if_all_discussions_are_resolved": false,
   "request_access_enabled": false
 }
@@ -830,7 +828,7 @@ Example response:
   "runners_token": "b8bc4a7a29eb76ea83cf79e4908c2b",
   "public_builds": true,
   "shared_with_groups": [],
-  "only_allow_merge_if_build_succeeds": false,
+  "only_allow_merge_if_pipeline_succeeds": false,
   "only_allow_merge_if_all_discussions_are_resolved": false,
   "request_access_enabled": false
 }
@@ -1195,3 +1193,17 @@ Parameters:
 | `query` | string | yes | A string contained in the project name |
 | `order_by` | string | no | Return requests ordered by `id`, `name`, `created_at` or `last_activity_at` fields |
 | `sort` | string | no | Return requests sorted in `asc` or `desc` order |
+
+## Start the Housekeeping task for a Project
+
+>**Note:** This feature was introduced in GitLab 9.0
+
+```
+POST /projects/:id/housekeeping
+```
+
+Parameters:
+
+| Attribute | Type | Required | Description |
+| --------- | ---- | -------- | ----------- |
+| `id` | integer/string | yes | The ID of the project or NAMESPACE/PROJECT_NAME |

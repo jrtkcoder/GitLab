@@ -208,7 +208,7 @@ module API
                         :wiki_enabled, :builds_enabled, :snippets_enabled,
                         :shared_runners_enabled, :container_registry_enabled,
                         :lfs_enabled, :visibility_level, :public_builds,
-                        :request_access_enabled, :only_allow_merge_if_build_succeeds,
+                        :request_access_enabled, :only_allow_merge_if_pipeline_succeeds,
                         :only_allow_merge_if_all_discussions_are_resolved, :path,
                         :default_branch
       end
@@ -374,6 +374,19 @@ module API
         users = users.search(params[:search]) if params[:search].present?
 
         present paginate(users), with: Entities::UserBasic
+      end
+
+      desc 'Start the housekeeping task for a project' do
+        detail 'This feature was introduced in GitLab 9.0.'
+      end
+      post ':id/housekeeping' do
+        authorize_admin_project
+
+        begin
+          ::Projects::HousekeepingService.new(user_project).execute
+        rescue ::Projects::HousekeepingService::LeaseTaken => error
+          conflict!(error.message)
+        end
       end
     end
   end
