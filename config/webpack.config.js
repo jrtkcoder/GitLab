@@ -90,6 +90,7 @@ var config = {
     alias: {
       '~':              path.join(ROOT_PATH, 'app/assets/javascripts'),
       'bootstrap/js':   'bootstrap-sass/assets/javascripts/bootstrap',
+      'emoji-map$':      path.join(ROOT_PATH, 'fixtures/emojis/digests.json'),
       'emoji-aliases$': path.join(ROOT_PATH, 'fixtures/emojis/aliases.json'),
       'icons':          path.join(ROOT_PATH, 'app/views/shared/icons'),
       'vendor':         path.join(ROOT_PATH, 'vendor/assets/javascripts'),
