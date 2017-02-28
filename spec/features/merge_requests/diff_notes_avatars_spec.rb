@@ -23,7 +23,7 @@ feature 'Diff note avatars', feature: true, js: true do
     login_as user
   end
 
-  ['inline', 'parallel'].each do |view|
+  %w(inline parallel).each do |view|
     context "#{view} view" do
       before do
         visit diffs_namespace_project_merge_request_path(project.namespace, project, merge_request, view: view)
