@@ -956,6 +956,14 @@ class User < ActiveRecord::Base
     self.admin = (new_level == 'admin')
   end
 
+  protected
+
+  # override, from Devise::Validatable
+  def password_required?
+    return false if internal?
+    super
+  end
+
   private
 
   def ci_projects_union
@@ -1056,7 +1064,6 @@ class User < ActiveRecord::Base
 
     scope.create(
       username: username,
-      password: Devise.friendly_token,
       email: email,
       &creation_block
     )
