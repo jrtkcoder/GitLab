@@ -60,6 +60,14 @@
               });
           };
 
+          $('.assign-to-me-link').click((e) => {
+            e.preventDefault();
+            const $input = $(e.currentTarget).closest('.issuable-form-select-holder').find('input[type="hidden"]');
+            $input.val(gon.current_user_id);
+            selectedId = $input.val();
+            $('.js-user-search .dropdown-toggle-text').text(gon.current_user_fullname);
+          });
+
           $block.on('click', '.js-assign-yourself', function(e) {
             e.preventDefault();
 
@@ -234,11 +242,15 @@
             id: function (user) {
               return user.id;
             },
+            opened: function(e) {
+              $(e.currentTarget).find('.is-active').removeClass('is-active');
+              $(e.currentTarget).find(`li[data-user-id="${selectedId}"] .dropdown-menu-user-link`).addClass('is-active');
+            },
             renderRow: function(user) {
               var avatar, img, listClosingTags, listWithName, listWithUserName, selected, username;
               username = user.username ? "@" + user.username : "";
               avatar = user.avatar_url ? user.avatar_url : false;
-              selected = user.id === selectedId ? "is-active" : "";
+              selected = user.id === Number(selectedId) ? "is-active" : "";
               img = "";
               if (user.beforeDivider != null) {
                 "<li> <a href='#' class='" + selected + "'> " + user.name + " </a> </li>";
@@ -248,7 +260,7 @@
                 }
               }
               // split into three parts so we can remove the username section if nessesary
-              listWithName = "<li> <a href='#' class='dropdown-menu-user-link " + selected + "'> " + img + " <strong class='dropdown-menu-user-full-name'> " + user.name + " </strong>";
+              listWithName = "<li data-user-id=" + user.id + "> <a href='#' class='dropdown-menu-user-link " + selected + "'> " + img + " <strong class='dropdown-menu-user-full-name'> " + user.name + " </strong>";
               listWithUserName = "<span class='dropdown-menu-user-username'> " + username + " </span>";
               listClosingTags = "</a> </li>";
               if (username === '') {

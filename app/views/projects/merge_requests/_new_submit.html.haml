@@ -52,13 +52,6 @@
     = spinner
 
 :javascript
-  $('.assign-to-me-link').on('click', function(e) {
-    $('#merge_request_assignee_id').val('#{current_user.id}');
-    $('.js-user-search .dropdown-toggle-text').text('#{current_user.name}');
-    e.preventDefault();
-  });
-
-:javascript
   var merge_request = new MergeRequest({
     action: "#{(@show_changes_tab ? 'new/diffs' : 'new')}"
   });

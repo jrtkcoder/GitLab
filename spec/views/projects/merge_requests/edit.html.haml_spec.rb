@@ -36,6 +36,7 @@ describe 'projects/merge_requests/edit.html.haml' do
 
       expect(rendered).to have_field('merge_request[title]')
       expect(rendered).to have_field('merge_request[description]')
+      expect(rendered).to have_content('Assign to me')
       expect(rendered).to have_selector('#merge_request_assignee_id', visible: false)
       expect(rendered).to have_selector('#merge_request_milestone_id', visible: false)
       expect(rendered).not_to have_selector('#merge_request_target_branch', visible: false)
@@ -48,6 +49,7 @@ describe 'projects/merge_requests/edit.html.haml' do
 
       expect(rendered).to have_field('merge_request[title]')
       expect(rendered).to have_field('merge_request[description]')
+      expect(rendered).to have_content('Assign to me')
       expect(rendered).to have_selector('#merge_request_assignee_id', visible: false)
       expect(rendered).to have_selector('#merge_request_milestone_id', visible: false)
       expect(rendered).to have_selector('#merge_request_target_branch', visible: false)

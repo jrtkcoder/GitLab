@@ -18,28 +18,33 @@ describe Projects::IssuesController, '(JavaScript fixtures)', type: :controller 
   end
 
   it 'issues/open-issue.html.raw' do |example|
-    render_issue(example.description, create(:issue, project: project))
+    render_issue(:show, example.description, create(:issue, project: project))
   end
 
   it 'issues/closed-issue.html.raw' do |example|
-    render_issue(example.description, create(:closed_issue, project: project))
+    render_issue(:show, example.description, create(:closed_issue, project: project))
   end
 
   it 'issues/issue-with-task-list.html.raw' do |example|
     issue = create(:issue, project: project, description: '- [ ] Task List Item')
-    render_issue(example.description, issue)
+    render_issue(:show, example.description, issue)
   end
 
   it 'issues/issue_with_comment.html.raw' do |example|
     issue = create(:issue, project: project)
     create(:note, project: project, noteable: issue, note: '- [ ] Task List Item').save
-    render_issue(example.description, issue)
+    render_issue(:show, example.description, issue)
+  end
+
+  it 'issues/edit.html.raw' do |example|
+    issue = create(:issue, project: project)
+    render_issue(:edit, example.description, issue)
   end
 
   private
 
-  def render_issue(fixture_file_name, issue)
-    get :show,
+  def render_issue(view, fixture_file_name, issue)
+    get view,
       namespace_id: project.namespace.to_param,
       project_id: project,
       id: issue.to_param
