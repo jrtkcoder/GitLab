@@ -13,6 +13,7 @@ require('./components/jump_to_discussion');
 require('./components/resolve_btn');
 require('./components/resolve_count');
 require('./components/resolve_discussion_btn');
+require('./components/diff_note_avatars');
 
 $(() => {
   const projectPath = document.querySelector('.merge-request').dataset.projectPath;
