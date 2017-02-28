@@ -10,10 +10,14 @@
       - if trigger.owner.blank?
         %span.label.label-primary legacy
       - elsif !trigger.valid?
-        %span.label.label-danger invalid
+        - invalid_tooltip = trigger.owner.blank ? "Trigger user is no longer existent" : "Trigger user has insufficient permissions to project"
+        %span.label.label-danger.has-tooltip{ title: invalid_tooltip } invalid
 
   %td
-    = trigger.description
+    - if trigger.description? && trigger.description.length > 15
+      %span.has-tooltip{ title: trigger.description }= truncate(trigger.description, length: 15)
+    - else
+      = trigger.description
 
   %td
     - if trigger.owner
@@ -25,7 +29,9 @@
     - else
       Never
 
-  %td.text-right
-    = link_to 'Take ownership', take_namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: 'Are you sure?'}, method: :post, class: "btn btn-warning btn-sm"
-    = link_to 'Edit', edit_namespace_project_trigger_path(@project.namespace, @project, trigger), method: :get, class: "btn btn-warning btn-sm"
-    = link_to 'Revoke', namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: 'Are you sure?'}, method: :delete, class: "btn btn-warning btn-sm"
+  %td.text-right.trigger-actions
+    = link_to 'Take ownership', take_namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: 'Are you sure?'}, method: :post, class: "btn btn-default btn-sm"
+    = link_to edit_namespace_project_trigger_path(@project.namespace, @project, trigger), method: :get, class: "btn btn-default btn-sm" do
+      %i.fa.fa-pencil
+    = link_to namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: 'Are you sure?'}, method: :delete, class: "btn btn-default btn-warning btn-sm" do
+      %i.fa.fa-trash
