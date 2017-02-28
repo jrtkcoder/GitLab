@@ -17,7 +17,7 @@ var WEBPACK_REPORT = process.env.WEBPACK_REPORT;
 var config = {
   context: path.join(ROOT_PATH, 'app/assets/javascripts'),
   entry: {
-    application:          './application.js',
+    application:          './entry.js',
     blob_edit:            './blob_edit/blob_edit_bundle.js',
     boards:               './boards/boards_bundle.js',
     simulate_drag:        './test_utils/simulate_drag.js',
