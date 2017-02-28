@@ -117,10 +117,34 @@
   }
 }
 
+.commit.commit.commit {
+  display: flex;
+  padding: 0;
+}
+
+.avatar-cell {
+  width: 56px;
+  padding: 10px;
+
+  img {
+    margin-right: 0;
+  }
+}
+
+.commit-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-grow: 1;
+  padding: 10px 0;
+
+  &.commit-detail-wrap {
+    flex-wrap: wrap;
+  }
+}
+
 .commit-actions {
   @media (min-width: $screen-sm-min) {
-    width: 300px;
-    text-align: right;
     font-size: 0;
   }
 

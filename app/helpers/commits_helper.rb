@@ -27,6 +27,7 @@ module CommitsHelper
 
   def commit_to_html(commit, ref, project)
     render 'projects/commits/commit',
+      multiline: true,
       commit: commit,
       ref: ref,
       project: project

@@ -237,6 +237,7 @@
     padding-top: 2px;
     padding-bottom: 2px;
     list-style: none;
+    display: flex;
 
     &:hover {
       background: none;
@@ -350,7 +351,7 @@
   }
 
   .panel-footer {
-    padding: 5px 10px;
+    padding: 0;
 
     .btn {
       min-width: auto;

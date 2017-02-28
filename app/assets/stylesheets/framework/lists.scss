@@ -190,6 +190,7 @@ ul.content-list {
 
 // Content list using flexbox
 .flex-list {
+  // temp specificity hack to override table-list styles
   .flex-row {
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -243,15 +244,6 @@ ul.content-list {
     vertical-align: top;
     padding: 10px 16px;
     border-bottom: 1px solid $gray-darker;
-
-    &.avatar-cell {
-      width: 36px;
-      padding-right: 0;
-
-      img {
-        margin-right: 0;
-      }
-    }
   }
 
   &.table-wide {
