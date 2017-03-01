@@ -110,7 +110,7 @@ require('./smart_interval');
               urlSuffix = deleteSourceBranch ? '?deleted_source_branch=true' : '';
               return window.location.href = window.location.pathname + urlSuffix;
             } else if (data.merge_error) {
-              return $('.mr-widget-body').html("<h4>" + data.merge_error + "</h4>");
+              return $('.mr-widget-body:eq(0)').html("<h4>" + data.merge_error + "</h4>");
             } else {
               callback = function() {
                 return merge_request_widget.mergeInProgress(deleteSourceBranch);
@@ -131,8 +131,8 @@ require('./smart_interval');
     MergeRequestWidget.prototype.getMergeStatus = function() {
       return $.get(this.opts.merge_check_url, function(data) {
         var $html = $(data);
-        $('.mr-widget-body').replaceWith($html.find('.mr-widget-body'));
-        $('.mr-widget-footer').replaceWith($html.find('.mr-widget-footer'));
+        $('.mr-widget-body:eq(0)').replaceWith($html.find('.mr-widget-body'));
+        $('.mr-widget-footer:eq(0)').replaceWith($html.find('.mr-widget-footer'));
       });
     };
 
