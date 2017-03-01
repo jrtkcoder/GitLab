@@ -163,7 +163,7 @@ require('~/filtered_search/filtered_search_dropdown_manager');
         const updatedItem = gl.DropdownUtils.filterHint(input, {
           hint: 'label',
           type: 'array',
-        }, '');
+        });
         expect(updatedItem.droplab_hidden).toBe(false);
       });
 
@@ -171,13 +171,13 @@ require('~/filtered_search/filtered_search_dropdown_manager');
         input.value = 'milestone:~first mile';
         let updatedItem = gl.DropdownUtils.filterHint(input, {
           hint: 'milestone',
-        }, '');
+        });
         expect(updatedItem.droplab_hidden).toBe(true);
 
         updatedItem = gl.DropdownUtils.filterHint(input, {
           hint: 'milestone',
           type: 'string',
-        }, '');
+        });
         expect(updatedItem.droplab_hidden).toBe(true);
       });
     });
