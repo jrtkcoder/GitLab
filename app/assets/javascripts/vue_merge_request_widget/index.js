@@ -31,12 +31,6 @@ const mrWidgetOptions = () => ({
         :sourceBranch="mr.sourceBranch"
       />
 
-      <mr-widget-merged :mr="mr" v-if="mr.isMerged" />
-      <mr-widget-closed :mr="mr" v-if="mr.isClosed" />
-      <mr-widget-locked :mr="mr" v-if="mr.isLocked" />
-      <mr-widget-archived v-if="mr.isArchived" />
-      <mr-widget-wip v-if="mr.isWip" />
-
     </div>
   `,
 });
