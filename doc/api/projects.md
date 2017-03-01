@@ -407,8 +407,6 @@ Parameters:
       },
       "created_at": "2015-12-04T10:33:56.698Z",
       "system": false,
-      "upvote": false,
-      "downvote": false,
       "noteable_id": 377,
       "noteable_type": "Issue"
     },
@@ -437,8 +435,8 @@ Parameters:
 
 | Attribute | Type | Required | Description |
 | --------- | ---- | -------- | ----------- |
-| `name` | string | yes | The name of the new project |
-| `path` | string | no | Custom repository name for new project. By default generated based on name |
+| `name` | string | yes if path is not provided | The name of the new project. Equals path if not provided. |
+| `path` | string | yes if name is not provided | Repository name for new project. Generated based on name if not provided (generated lowercased with dashes). |
 | `namespace_id` | integer | no | Namespace for the new project (defaults to the current user's namespace) |
 | `description` | string | no | Short project description |
 | `issues_enabled` | boolean | no | Enable issues for this project |
@@ -1195,3 +1193,17 @@ Parameters:
 | `query` | string | yes | A string contained in the project name |
 | `order_by` | string | no | Return requests ordered by `id`, `name`, `created_at` or `last_activity_at` fields |
 | `sort` | string | no | Return requests sorted in `asc` or `desc` order |
+
+## Start the Housekeeping task for a Project
+
+>**Note:** This feature was introduced in GitLab 9.0
+
+```
+POST /projects/:id/housekeeping
+```
+
+Parameters:
+
+| Attribute | Type | Required | Description |
+| --------- | ---- | -------- | ----------- |
+| `id` | integer/string | yes | The ID of the project or NAMESPACE/PROJECT_NAME |

@@ -339,9 +339,6 @@ module API
       expose :created_at, :updated_at
       expose :system?, as: :system
       expose :noteable_id, :noteable_type
-      # upvote? and downvote? are deprecated, always return false
-      expose(:upvote?)    { |note| false }
-      expose(:downvote?)  { |note| false }
     end
 
     class AwardEmoji < Grape::Entity
@@ -397,7 +394,8 @@ module API
       expose :target_type
 
       expose :target do |todo, options|
-        Entities.const_get(todo.target_type).represent(todo.target, options)
+        target = todo.target_type == 'Commit' ? 'RepoCommit' : todo.target_type
+        Entities.const_get(target).represent(todo.target, options)
       end
 
       expose :target_url do |todo, options|
@@ -560,6 +558,7 @@ module API
       expose :default_project_visibility
       expose :default_snippet_visibility
       expose :default_group_visibility
+      expose :default_artifacts_expire_in
       expose :domain_whitelist
       expose :domain_blacklist_enabled
       expose :domain_blacklist
@@ -618,6 +617,10 @@ module API
           options[:current_user].authorized_projects.where(id: runner.projects)
         end
       end
+    end
+
+    class RunnerRegistrationDetails < Grape::Entity
+      expose :id, :token
     end
 
     class BuildArtifactFile < Grape::Entity

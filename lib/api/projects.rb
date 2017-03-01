@@ -19,7 +19,8 @@ module API
         optional :visibility_level, type: Integer, values: [
           Gitlab::VisibilityLevel::PRIVATE,
           Gitlab::VisibilityLevel::INTERNAL,
-          Gitlab::VisibilityLevel::PUBLIC ], desc: 'Create a public project. The same as visibility_level = 20.'
+          Gitlab::VisibilityLevel::PUBLIC
+        ], desc: 'Create a public project. The same as visibility_level = 20.'
         optional :public_builds, type: Boolean, desc: 'Perform public builds'
         optional :request_access_enabled, type: Boolean, desc: 'Allow users to request member access'
         optional :only_allow_merge_if_build_succeeds, type: Boolean, desc: 'Only allow to merge if builds succeed'
@@ -93,8 +94,9 @@ module API
         success Entities::Project
       end
       params do
-        requires :name, type: String, desc: 'The name of the project'
+        optional :name, type: String, desc: 'The name of the project'
         optional :path, type: String, desc: 'The path of the repository'
+        at_least_one_of :name, :path
         use :optional_params
         use :create_params
       end
@@ -281,6 +283,8 @@ module API
       delete ":id" do
         authorize! :remove_project, user_project
         ::Projects::DestroyService.new(user_project, current_user, {}).async_execute
+
+        accepted!
       end
 
       desc 'Mark this project as forked from another'
@@ -350,7 +354,6 @@ module API
         not_found!('Group Link') unless link
 
         link.destroy
-        no_content!
       end
 
       desc 'Upload a file'
@@ -373,6 +376,19 @@ module API
         users = users.search(params[:search]) if params[:search].present?
 
         present paginate(users), with: Entities::UserBasic
+      end
+
+      desc 'Start the housekeeping task for a project' do
+        detail 'This feature was introduced in GitLab 9.0.'
+      end
+      post ':id/housekeeping' do
+        authorize_admin_project
+
+        begin
+          ::Projects::HousekeepingService.new(user_project).execute
+        rescue ::Projects::HousekeepingService::LeaseTaken => error
+          conflict!(error.message)
+        end
       end
     end
   end
