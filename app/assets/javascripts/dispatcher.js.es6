@@ -35,6 +35,7 @@
 /* global Labels */
 /* global Shortcuts */
 
+import ProjectName from './project_name';
 import GroupsList from './groups_list';
 
 const ShortcutsBlob = require('./shortcuts_blob');
@@ -332,6 +333,8 @@ const UserCallout = require('./user_callout');
         case 'projects':
           new Project();
           new ProjectAvatar();
+          new ProjectName();
+          if (this.title) this.init();
           switch (path[1]) {
             case 'compare':
               new CompareAutocomplete();
