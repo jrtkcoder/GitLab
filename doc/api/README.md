@@ -8,7 +8,6 @@ under [`/lib/api`](https://gitlab.com/gitlab-org/gitlab-ce/tree/master/lib/api).
 Documentation for various API resources can be found separately in the
 following locations:
 
-- [Personal Access Tokens](personal_access_tokens.md)
 - [Award Emoji](award_emoji.md)
 - [Branches](branches.md)
 - [Broadcast Messages](broadcast_messages.md)
@@ -221,6 +220,14 @@ GET /projects?private_token=9koXpg98eAheJpvBs5tK&sudo=23
 ```shell
 curl --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" --header "SUDO: 23" "https://gitlab.example.com/api/v3/projects"
 ```
+
+## Impersonation Tokens
+
+Impersonation Tokens are a type of Personal Access Tokens that can only be created by an admin for a specific user. The user itself will
+not be able to create, revoke or view them. These can be used by automated tools in order to authenticate with the API ,
+using the [Sudo](#sudo) feature, as a specific user without the tool knowing neither the user's nor the admin's password, which may change over time.
+
+For more information about the usage please refer to the [Users](users.md) page
 
 ## Pagination
 
