@@ -22,7 +22,7 @@ module API
       end
 
       params :simple_file_params do
-        requires :file_path, type: String, desc: 'The path to new file. Ex. lib/class.rb'
+        requires :file_path, type: String, desc: 'The path to the file. Ex. lib/class.rb'
         requires :branch, type: String, desc: 'The name of branch'
         requires :commit_message, type: String, desc: 'Commit Message'
         optional :author_email, type: String, desc: 'The email of the author'
@@ -40,42 +40,50 @@ module API
       requires :id, type: String, desc: 'The project ID'
     end
     resource :projects do
-      desc 'Get a file from repository'
+      desc 'Get a file from repository in raw format or base64 format'
       params do
-        requires :file_path, type: String, desc: 'The path to the file. Ex. lib/class.rb'
         requires :ref, type: String, desc: 'The name of branch, tag, or commit'
       end
-      get ":id/repository/files" do
+      get [":id/repository/files/:file_path", ":id/repository/files/:file_path/treta/:raw"], requirements: { file_path: /.*/  } do
         authorize! :download_code, user_project
-
         commit = user_project.commit(params[:ref])
         not_found!('Commit') unless commit
+        file_format = "/raw"
+
+        if raw = params[:file_path].include?(file_format)
+          params[:file_path].sub!(file_format, "")
+        end
 
         repo = user_project.repository
+
         blob = repo.blob_at(commit.sha, params[:file_path])
         not_found!('File') unless blob
-
         blob.load_all_data!(repo)
+
         status(200)
 
-        {
-          file_name: blob.name,
-          file_path: blob.path,
-          size: blob.size,
-          encoding: "base64",
-          content: Base64.strict_encode64(blob.data),
-          ref: params[:ref],
-          blob_id: blob.id,
-          commit_id: commit.id,
-          last_commit_id: repo.last_commit_id_for_path(commit.sha, params[:file_path])
-        }
+        if raw
+          send_git_blob repo, blob
+        else
+          {
+            file_name: blob.name,
+            file_path: blob.path,
+            size: blob.size,
+            encoding: "base64",
+            content: Base64.strict_encode64(blob.data),
+            ref: params[:ref],
+            blob_id: blob.id,
+            commit_id: commit.id,
+            last_commit_id: repo.last_commit_id_for_path(commit.sha, params[:file_path])
+          }
+        end
       end
 
       desc 'Create new file in repository'
       params do
         use :extended_file_params
       end
-      post ":id/repository/files" do
+      post ":id/repository/files/:file_path", requirements: { file_path: /.+/ } do
         authorize! :push_code, user_project
 
         file_params = declared_params(include_missing: false)
@@ -93,7 +101,7 @@ module API
       params do
         use :extended_file_params
       end
-      put ":id/repository/files" do
+      put ":id/repository/files/:file_path", requirements: { file_path: /.+/ } do
         authorize! :push_code, user_project
 
         file_params = declared_params(include_missing: false)
@@ -112,7 +120,7 @@ module API
       params do
         use :simple_file_params
       end
-      delete ":id/repository/files" do
+      delete ":id/repository/files/:file_path", requirements: { file_path: /.+/ } do
         authorize! :push_code, user_project
 
         file_params = declared_params(include_missing: false)

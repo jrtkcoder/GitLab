@@ -171,58 +171,58 @@ describe API::Repositories, api: true  do
     end
   end
 
-  describe "GET /projects/:id/repository/raw_blobs/:sha" do
-    let(:route) { "/projects/#{project.id}/repository/raw_blobs/#{sample_blob.oid}" }
+  # describe "GET /projects/:id/repository/raw_blobs/:sha" do
+  #   let(:route) { "/projects/#{project.id}/repository/raw_blobs/#{sample_blob.oid}" }
 
-    shared_examples_for 'repository raw blob' do
-      it 'returns the repository raw blob' do
-        get api(route, current_user)
+  #   shared_examples_for 'repository raw blob' do
+  #     it 'returns the repository raw blob' do
+  #       get api(route, current_user)
 
-        expect(response).to have_http_status(200)
-      end
+  #       expect(response).to have_http_status(200)
+  #     end
 
-      context 'when sha does not exist' do
-        it_behaves_like '404 response' do
-          let(:request) { get api(route.sub(sample_blob.oid, '123456'), current_user) }
-          let(:message) { '404 Blob Not Found' }
-        end
-      end
+  #     context 'when sha does not exist' do
+  #       it_behaves_like '404 response' do
+  #         let(:request) { get api(route.sub(sample_blob.oid, '123456'), current_user) }
+  #         let(:message) { '404 Blob Not Found' }
+  #       end
+  #     end
 
-      context 'when repository is disabled' do
-        include_context 'disabled repository'
+  #     context 'when repository is disabled' do
+  #       include_context 'disabled repository'
 
-        it_behaves_like '403 response' do
-          let(:request) { get api(route, current_user) }
-        end
-      end
-    end
+  #       it_behaves_like '403 response' do
+  #         let(:request) { get api(route, current_user) }
+  #       end
+  #     end
+  #   end
 
-    context 'when unauthenticated', 'and project is public' do
-      it_behaves_like 'repository raw blob' do
-        let(:project) { create(:project, :public, :repository) }
-        let(:current_user) { nil }
-      end
-    end
+  #   context 'when unauthenticated', 'and project is public' do
+  #     it_behaves_like 'repository raw blob' do
+  #       let(:project) { create(:project, :public, :repository) }
+  #       let(:current_user) { nil }
+  #     end
+  #   end
 
-    context 'when unauthenticated', 'and project is private' do
-      it_behaves_like '404 response' do
-        let(:request) { get api(route) }
-        let(:message) { '404 Project Not Found' }
-      end
-    end
+  #   context 'when unauthenticated', 'and project is private' do
+  #     it_behaves_like '404 response' do
+  #       let(:request) { get api(route) }
+  #       let(:message) { '404 Project Not Found' }
+  #     end
+  #   end
 
-    context 'when authenticated', 'as a developer' do
-      it_behaves_like 'repository raw blob' do
-        let(:current_user) { user }
-      end
-    end
+  #   context 'when authenticated', 'as a developer' do
+  #     it_behaves_like 'repository raw blob' do
+  #       let(:current_user) { user }
+  #     end
+  #   end
 
-    context 'when authenticated', 'as a guest' do
-      it_behaves_like '403 response' do
-        let(:request) { get api(route, guest) }
-      end
-    end
-  end
+  #   context 'when authenticated', 'as a guest' do
+  #     it_behaves_like '403 response' do
+  #       let(:request) { get api(route, guest) }
+  #     end
+  #   end
+  # end
 
   describe "GET /projects/:id/repository/archive(.:format)?:sha" do
     let(:route) { "/projects/#{project.id}/repository/archive" }
