@@ -51,3 +51,6 @@ changes are in V4:
 - Return HTTP status code `400` for all validation errors when creating or updating a member instead of sometimes `422` error. [!9523](https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/9523)
 - Remove `GET /groups/owned`. Use `GET /groups?owned=true` instead [!9505](https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/9505)
 - Return 202 with JSON body on async removals on V4 API (DELETE `/projects/:id/repository/merged_branches` and DELETE `/projects/:id`) [!9449](https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/9449)
+- API uses merge request `IID`s (internal ID, as in the web UI) rather than `ID`s. This affects the merge requests, award emoji, todos, and time tracking APIs. [!9530](https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/9530)
+- API uses issue `IID`s (internal ID, as in the web UI) rather than `ID`s. This affects the issues, award emoji, todos, and time tracking APIs. [!9530](https://gitlab.com/gitlab-org/gitlab-ce/merge_requests/9530)
+
