@@ -88,7 +88,7 @@ module API
               with: ::API::V3::Entities::Project,
               current_user: current_user,
               simple: params[:simple],
-            }
+            )
 
             projects = filter_projects(projects)
             projects = projects.with_statistics if options[:statistics]
@@ -157,6 +157,7 @@ module API
           use :statistics_params
         end
         get '/all' do
+          byebug
           authenticated_as_admin!
 
           present_projects Project.all, with: ::API::V3::Entities::ProjectWithAccess, statistics: params[:statistics]

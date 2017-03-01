@@ -158,6 +158,7 @@ module API
 
             mr_params = declared_params(include_missing: false)
             mr_params[:force_remove_source_branch] = mr_params.delete(:remove_source_branch) if mr_params[:remove_source_branch].present?
+            mr_params[:merge_when_pipeline_succeeds] = mr_params.delete(:merge_when_build_succeeds) if mr_params[:merge_when_build_succeeds].present?
 
             merge_request = ::MergeRequests::UpdateService.new(user_project, current_user, mr_params).execute(merge_request)
 

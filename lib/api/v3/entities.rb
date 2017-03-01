@@ -169,7 +169,6 @@ module API
         end
       end
 
-
       class ProjectStatistics < Grape::Entity
         expose :commit_count
         expose :storage_size

@@ -135,14 +135,14 @@ module API
         params do
           optional :archived, type: Boolean, default: false, desc: 'Limit by archived status'
           optional :visibility, type: String, values: %w[public internal private],
-            desc: 'Limit by visibility'
+                                desc: 'Limit by visibility'
           optional :search, type: String, desc: 'Return list of authorized projects matching the search criteria'
           optional :order_by, type: String, values: %w[id name path created_at updated_at last_activity_at],
-            default: 'created_at', desc: 'Return projects ordered by field'
+                              default: 'created_at', desc: 'Return projects ordered by field'
           optional :sort, type: String, values: %w[asc desc], default: 'desc',
-            desc: 'Return projects sorted in ascending and descending order'
+                          desc: 'Return projects sorted in ascending and descending order'
           optional :simple, type: Boolean, default: false,
-            desc: 'Return only the ID, URL, name, and path of each project'
+                            desc: 'Return only the ID, URL, name, and path of each project'
           use :pagination
         end
         get ":id/projects" do
