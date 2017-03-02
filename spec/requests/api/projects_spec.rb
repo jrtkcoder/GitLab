@@ -269,10 +269,37 @@ describe API::Projects, api: true  do
       end
     end
 
-    it 'creates new project without path and return 201' do
-      expect { post api('/projects', user), name: 'foo' }.
+    it 'creates new project without path but with name and returns 201' do
+      expect { post api('/projects', user), name: 'Foo Project' }.
         to change { Project.count }.by(1)
       expect(response).to have_http_status(201)
+
+      project = Project.first
+
+      expect(project.name).to eq('Foo Project')
+      expect(project.path).to eq('foo-project')
+    end
+
+    it 'creates new project without name but with path and returns 201' do
+      expect { post api('/projects', user), path: 'foo_project' }.
+        to change { Project.count }.by(1)
+      expect(response).to have_http_status(201)
+
+      project = Project.first
+
+      expect(project.name).to eq('foo_project')
+      expect(project.path).to eq('foo_project')
+    end
+
+    it 'creates new project name and path and returns 201' do
+      expect { post api('/projects', user), path: 'foo-Project', name: 'Foo Project' }.
+        to change { Project.count }.by(1)
+      expect(response).to have_http_status(201)
+
+      project = Project.first
+
+      expect(project.name).to eq('Foo Project')
+      expect(project.path).to eq('foo-Project')
     end
 
     it 'creates last project before reaching project limit' do
@@ -281,7 +308,7 @@ describe API::Projects, api: true  do
       expect(response).to have_http_status(201)
     end
 
-    it 'does not create new project without name and return 400' do
+    it 'does not create new project without name or path and returns 400' do
       expect { post api('/projects', user) }.not_to change { Project.count }
       expect(response).to have_http_status(400)
     end
@@ -293,7 +320,7 @@ describe API::Projects, api: true  do
         issues_enabled: false,
         merge_requests_enabled: false,
         wiki_enabled: false,
-        only_allow_merge_if_build_succeeds: false,
+        only_allow_merge_if_pipeline_succeeds: false,
         request_access_enabled: true,
         only_allow_merge_if_all_discussions_are_resolved: false
       })
@@ -313,36 +340,39 @@ describe API::Projects, api: true  do
     end
 
     it 'sets a project as public' do
-      project = attributes_for(:project, :public)
+      project = attributes_for(:project, visibility: 'public')
+
       post api('/projects', user), project
-      expect(json_response['public']).to be_truthy
-      expect(json_response['visibility_level']).to eq(Gitlab::VisibilityLevel::PUBLIC)
+
+      expect(json_response['visibility']).to eq('public')
     end
 
     it 'sets a project as internal' do
-      project = attributes_for(:project, :internal)
+      project = attributes_for(:project, visibility: 'internal')
+
       post api('/projects', user), project
-      expect(json_response['public']).to be_falsey
-      expect(json_response['visibility_level']).to eq(Gitlab::VisibilityLevel::INTERNAL)
+
+      expect(json_response['visibility']).to eq('internal')
     end
 
     it 'sets a project as private' do
-      project = attributes_for(:project, :private)
+      project = attributes_for(:project, visibility: 'private')
+
       post api('/projects', user), project
-      expect(json_response['public']).to be_falsey
-      expect(json_response['visibility_level']).to eq(Gitlab::VisibilityLevel::PRIVATE)
+
+      expect(json_response['visibility']).to eq('private')
     end
 
     it 'sets a project as allowing merge even if build fails' do
-      project = attributes_for(:project, { only_allow_merge_if_build_succeeds: false })
+      project = attributes_for(:project, { only_allow_merge_if_pipeline_succeeds: false })
       post api('/projects', user), project
-      expect(json_response['only_allow_merge_if_build_succeeds']).to be_falsey
+      expect(json_response['only_allow_merge_if_pipeline_succeeds']).to be_falsey
     end
 
-    it 'sets a project as allowing merge only if build succeeds' do
-      project = attributes_for(:project, { only_allow_merge_if_build_succeeds: true })
+    it 'sets a project as allowing merge only if merge_when_pipeline_succeeds' do
+      project = attributes_for(:project, { only_allow_merge_if_pipeline_succeeds: true })
       post api('/projects', user), project
-      expect(json_response['only_allow_merge_if_build_succeeds']).to be_truthy
+      expect(json_response['only_allow_merge_if_pipeline_succeeds']).to be_truthy
     end
 
     it 'sets a project as allowing merge even if discussions are unresolved' do
@@ -370,7 +400,7 @@ describe API::Projects, api: true  do
     end
 
     context 'when a visibility level is restricted' do
-      let(:project_param) { attributes_for(:project, :public) }
+      let(:project_param) { attributes_for(:project, visibility: 'public') }
 
       before do
         stub_application_setting(restricted_visibility_levels: [Gitlab::VisibilityLevel::PUBLIC])
@@ -388,10 +418,7 @@ describe API::Projects, api: true  do
       it 'allows an admin to override restricted visibility settings' do
         post api('/projects', admin), project_param
 
-        expect(json_response['public']).to be_truthy
-        expect(json_response['visibility_level']).to(
-          eq(Gitlab::VisibilityLevel::PUBLIC)
-        )
+        expect(json_response['visibility']).to eq('public')
       end
     end
   end
@@ -432,40 +459,41 @@ describe API::Projects, api: true  do
     end
 
     it 'sets a project as public' do
-      project = attributes_for(:project, :public)
+      project = attributes_for(:project, visibility: 'public')
+
       post api("/projects/user/#{user.id}", admin), project
 
       expect(response).to have_http_status(201)
-      expect(json_response['public']).to be_truthy
-      expect(json_response['visibility_level']).to eq(Gitlab::VisibilityLevel::PUBLIC)
+      expect(json_response['visibility']).to eq('public')
     end
 
     it 'sets a project as internal' do
-      project = attributes_for(:project, :internal)
+      project = attributes_for(:project, visibility: 'internal')
+
       post api("/projects/user/#{user.id}", admin), project
 
       expect(response).to have_http_status(201)
-      expect(json_response['public']).to be_falsey
-      expect(json_response['visibility_level']).to eq(Gitlab::VisibilityLevel::INTERNAL)
+      expect(json_response['visibility']).to eq('internal')
     end
 
     it 'sets a project as private' do
-      project = attributes_for(:project, :private)
+      project = attributes_for(:project, visibility: 'private')
+
       post api("/projects/user/#{user.id}", admin), project
-      expect(json_response['public']).to be_falsey
-      expect(json_response['visibility_level']).to eq(Gitlab::VisibilityLevel::PRIVATE)
+
+      expect(json_response['visibility']).to eq('private')
     end
 
     it 'sets a project as allowing merge even if build fails' do
-      project = attributes_for(:project, { only_allow_merge_if_build_succeeds: false })
+      project = attributes_for(:project, { only_allow_merge_if_pipeline_succeeds: false })
       post api("/projects/user/#{user.id}", admin), project
-      expect(json_response['only_allow_merge_if_build_succeeds']).to be_falsey
+      expect(json_response['only_allow_merge_if_pipeline_succeeds']).to be_falsey
     end
 
-    it 'sets a project as allowing merge only if build succeeds' do
-      project = attributes_for(:project, { only_allow_merge_if_build_succeeds: true })
+    it 'sets a project as allowing merge only if merge_when_pipeline_succeeds' do
+      project = attributes_for(:project, { only_allow_merge_if_pipeline_succeeds: true })
       post api("/projects/user/#{user.id}", admin), project
-      expect(json_response['only_allow_merge_if_build_succeeds']).to be_truthy
+      expect(json_response['only_allow_merge_if_pipeline_succeeds']).to be_truthy
     end
 
     it 'sets a project as allowing merge even if discussions are unresolved' do
@@ -529,9 +557,8 @@ describe API::Projects, api: true  do
         expect(json_response['description']).to eq(project.description)
         expect(json_response['default_branch']).to eq(project.default_branch)
         expect(json_response['tag_list']).to be_an Array
-        expect(json_response['public']).to be_falsey
         expect(json_response['archived']).to be_falsey
-        expect(json_response['visibility_level']).to be_present
+        expect(json_response['visibility']).to be_present
         expect(json_response['ssh_url_to_repo']).to be_present
         expect(json_response['http_url_to_repo']).to be_present
         expect(json_response['web_url']).to be_present
@@ -559,7 +586,7 @@ describe API::Projects, api: true  do
         expect(json_response['shared_with_groups'][0]['group_id']).to eq(group.id)
         expect(json_response['shared_with_groups'][0]['group_name']).to eq(group.name)
         expect(json_response['shared_with_groups'][0]['group_access_level']).to eq(link.group_access)
-        expect(json_response['only_allow_merge_if_build_succeeds']).to eq(project.only_allow_merge_if_build_succeeds)
+        expect(json_response['only_allow_merge_if_pipeline_succeeds']).to eq(project.only_allow_merge_if_pipeline_succeeds)
         expect(json_response['only_allow_merge_if_all_discussions_are_resolved']).to eq(project.only_allow_merge_if_all_discussions_are_resolved)
       end
 
@@ -785,8 +812,7 @@ describe API::Projects, api: true  do
   describe 'POST /projects/:id/snippets' do
     it 'creates a new project snippet' do
       post api("/projects/#{project.id}/snippets", user),
-        title: 'api test', file_name: 'sample.rb', code: 'test',
-        visibility_level: Gitlab::VisibilityLevel::PRIVATE
+        title: 'api test', file_name: 'sample.rb', code: 'test', visibility: 'private'
       expect(response).to have_http_status(201)
       expect(json_response['title']).to eq('api test')
     end
@@ -820,8 +846,9 @@ describe API::Projects, api: true  do
     it 'deletes existing project snippet' do
       expect do
         delete api("/projects/#{project.id}/snippets/#{snippet.id}", user)
+
+        expect(response).to have_http_status(204)
       end.to change { Snippet.count }.by(-1)
-      expect(response).to have_http_status(200)
     end
 
     it 'returns 404 when deleting unknown snippet id' do
@@ -905,8 +932,10 @@ describe API::Projects, api: true  do
           project_fork_target.reload
           expect(project_fork_target.forked_from_project).not_to be_nil
           expect(project_fork_target.forked?).to be_truthy
+
           delete api("/projects/#{project_fork_target.id}/fork", admin)
-          expect(response).to have_http_status(200)
+
+          expect(response).to have_http_status(204)
           project_fork_target.reload
           expect(project_fork_target.forked_from_project).to be_nil
           expect(project_fork_target.forked?).not_to be_truthy
@@ -1035,7 +1064,7 @@ describe API::Projects, api: true  do
       end
 
       it 'updates visibility_level' do
-        project_param = { visibility_level: Gitlab::VisibilityLevel::PUBLIC }
+        project_param = { visibility: 'public' }
         put api("/projects/#{project3.id}", user), project_param
         expect(response).to have_http_status(200)
         project_param.each_pair do |k, v|
@@ -1045,13 +1074,13 @@ describe API::Projects, api: true  do
 
       it 'updates visibility_level from public to private' do
         project3.update_attributes({ visibility_level: Gitlab::VisibilityLevel::PUBLIC })
-        project_param = { visibility_level: Gitlab::VisibilityLevel::PRIVATE }
+        project_param = { visibility: 'private' }
         put api("/projects/#{project3.id}", user), project_param
         expect(response).to have_http_status(200)
         project_param.each_pair do |k, v|
           expect(json_response[k.to_s]).to eq(v)
         end
-        expect(json_response['visibility_level']).to eq(Gitlab::VisibilityLevel::PRIVATE)
+        expect(json_response['visibility']).to eq('private')
       end
 
       it 'does not update name to existing name' do
@@ -1118,7 +1147,7 @@ describe API::Projects, api: true  do
       end
 
       it 'does not update visibility_level' do
-        project_param = { visibility_level: Gitlab::VisibilityLevel::PUBLIC }
+        project_param = { visibility: 'public' }
         put api("/projects/#{project3.id}", user4), project_param
         expect(response).to have_http_status(403)
       end
