@@ -378,10 +378,6 @@
   width: 46px;
   border-radius: 50px;
 
-  .subscription-label {
-    display: none;
-  }
-
   &::before {
     @include transition(left 0.2s ease-in-out);
     content: '';
