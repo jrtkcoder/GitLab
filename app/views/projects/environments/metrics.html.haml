@@ -13,3 +13,9 @@
       .col-sm-6
         .nav-controls
           = render 'projects/deployments/actions', deployment: @environment.last_deployment
+  .row
+    .col-sm-12
+      %svg.prometheus-graph{ 'graph-type' => 'cpu_values' }
+  .row
+    .col-sm-12
+      %svg.prometheus-graph{ 'graph-type' => 'memory_values' }
