@@ -94,6 +94,7 @@ module API
         put ':id/services/builds-email' do
           service = user_project.find_or_initialize_service('builds-email')
           service_params = declared_params(include_missing: false).merge(active: true)
+          service_params.delete(:add_pusher)
           only_broken = service_params.delete(:notify_only_broken_builds)
           service_params.merge!(notify_only_broken_pipelines: only_broken)
 
