@@ -16,6 +16,7 @@
     toggleSubscription(event) {
       const button = event.currentTarget;
       const toggleButton = $('.toggle-button');
+      const toggleIcon = $('.subscription-collapsed-icon');
       if (button.classList.contains('disabled')) {
         return;
       }
@@ -26,6 +27,7 @@
       $.post(toggleActionUrl, () => {
         button.classList.remove('disabled');
         toggleButton.toggleClass('subscribed unsubscribed');
+        toggleIcon.toggleClass('subscribed unsubscribed');
 
         // hack to allow this to work with the issue boards Vue object
         if (document.querySelector('html').classList.contains('issue-boards-page')) {
