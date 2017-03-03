@@ -198,6 +198,7 @@ project:
 - project_authorizations
 - route
 - statistics
+- uploads
 award_emoji:
 - awardable
 - user
