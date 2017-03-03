@@ -13,6 +13,7 @@ module API
         drone-ci
         emails-on-push
         external-wiki
+        flowdock
         gemnasium
         hipchat
         irker
@@ -82,13 +83,16 @@ module API
 
         desc 'Set pipelines-email service for project'
         params do
-          requires :recipients, type: String,
+          requires :recipients,
+            type: String,
             desc: 'Comma-separated list of recipient email addresses'
 
-          optional :add_pusher, type: Boolean,
+          optional :add_pusher,
+            type: Boolean,
             desc: 'Legacy option. No effect now'
 
-          optional :notify_only_broken_builds, type: Boolean,
+          optional :notify_only_broken_builds,
+            type: Boolean,
             desc: 'Notify only broken pipelines'
         end
         put ':id/services/builds-email' do
@@ -96,7 +100,7 @@ module API
           service_params = declared_params(include_missing: false).merge(active: true)
           service_params.delete(:add_pusher)
           only_broken = service_params.delete(:notify_only_broken_builds)
-          service_params.merge!(notify_only_broken_pipelines: only_broken)
+          service_params[:notify_only_broken_pipelines] = only_broken
 
           if service.update(service_params)
             present service, with: ::API::Entities::ProjectService, include_passwords: current_user.is_admin?
