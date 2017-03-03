@@ -292,6 +292,7 @@ module Gitlab
         }
 
         options = default_options.merge(options)
+        options[:limit] ||= 0
         options[:offset] ||= 0
         actual_ref = options[:ref] || root_ref
         begin
@@ -359,7 +360,7 @@ module Gitlab
         cmd += %W(--before=#{options[:before].iso8601}) if options[:before]
         cmd += %W(--count #{options[:ref]})
         cmd += %W(-- #{options[:path]}) if options[:path].present?
-        raw_output = IO.popen(cmd) {|io| io.read }
+        raw_output = IO.popen(cmd) { |io| io.read }
         raw_output.to_i
       end
 

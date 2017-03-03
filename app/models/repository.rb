@@ -503,11 +503,12 @@ class Repository
   cache_method :commit_count, fallback: 0
 
   def commit_count_for_ref(ref)
-    return 0 if empty?
+    cache.fetch(:"commit_count_#{ref}") { raw_repository.commit_count(ref) }
 
-    cache.fetch(:"commit_count_#{ref}") do
-      raw_repository.commit_count(ref)
-    end
+  rescue Gitlab::Git::Repository::NoRepository, Rugged::ReferenceError
+    # Returns 0 when repository wasn't created, or ref doesn't exist for current
+    # repository.
+    0
   end
 
   def branch_names
