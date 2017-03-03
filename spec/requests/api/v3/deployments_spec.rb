@@ -12,6 +12,23 @@ describe API::Deployments, api: true  do
     project.team << [user, :master]
   end
 
+  shared_examples 'a paginated resources' do
+    before do
+      # Fires the request
+      request
+    end
+
+    it 'has pagination headers' do
+      expect(response.headers).to include('X-Total')
+      expect(response.headers).to include('X-Total-Pages')
+      expect(response.headers).to include('X-Per-Page')
+      expect(response.headers).to include('X-Page')
+      expect(response.headers).to include('X-Next-Page')
+      expect(response.headers).to include('X-Prev-Page')
+      expect(response.headers).to include('Link')
+    end
+  end
+
   describe 'GET /projects/:id/deployments' do
     context 'as member of the project' do
       it_behaves_like 'a paginated resources' do

@@ -537,6 +537,23 @@ module API
         ]
       }
 
+      trigger_services = {
+        'mattermost-slash-commands' => [
+          {
+            name: :token,
+            type: String,
+            desc: 'The Mattermost token'
+          }
+        ],
+        'slack-slash-commands' => [
+          {
+            name: :token,
+            type: String,
+            desc: 'The Slack token'
+          }
+        ]
+      }.freeze
+
       resource :projects do
         before { authenticate! }
         before { authorize_admin_project }
@@ -620,3 +637,4 @@ module API
       end
     end
   end
+end
