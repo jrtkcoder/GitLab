@@ -109,8 +109,9 @@ ActiveRecord::Schema.define(version: 20170217151947) do
     t.boolean "html_emails_enabled", default: true
     t.string "plantuml_url"
     t.boolean "plantuml_enabled"
+    t.integer "terminal_max_session_time", default: 0, null: false
     t.integer "max_pages_size", default: 100, null: false
-    t.string "default_artifacts_expire_in", default: '0', null: false
+    t.string "default_artifacts_expire_in", default: "0", null: false
   end
 
   create_table "audit_events", force: :cascade do |t|
@@ -1282,8 +1283,8 @@ ActiveRecord::Schema.define(version: 20170217151947) do
     t.datetime "otp_grace_period_started_at"
     t.boolean "ldap_email", default: false, null: false
     t.boolean "external", default: false
-    t.string "incoming_email_token"
     t.string "organization"
+    t.string "incoming_email_token"
     t.boolean "authorized_projects_populated"
     t.boolean "notified_of_own_activity", default: false, null: false
     t.boolean "ghost"
