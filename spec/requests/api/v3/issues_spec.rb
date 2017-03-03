@@ -232,6 +232,14 @@ describe API::V3::Issues, api: true  do
         expect(json_response).to be_an Array
         expect(response_dates).to eq(response_dates.sort)
       end
+
+      it 'includes "subscribed" field' do
+        get v3_api('/issues', user)
+
+        expect(response).to have_http_status(200)
+        expect(json_response).to be_an Array
+        expect(json_response.last).to have_key('subscribed')
+      end
     end
   end
 

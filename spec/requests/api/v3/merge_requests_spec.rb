@@ -39,6 +39,7 @@ describe API::MergeRequests, api: true  do
         expect(json_response.first['sha']).to eq(merge_request_merged.diff_head_sha)
         expect(json_response.first['merge_commit_sha']).not_to be_nil
         expect(json_response.first['merge_commit_sha']).to eq(merge_request_merged.merge_commit_sha)
+        expect(json_response.last).to have_key('subscribed')
       end
 
       it "returns an array of all merge_requests" do

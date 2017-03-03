@@ -179,6 +179,7 @@ describe API::V3::Milestones, api: true  do
       expect(response).to have_http_status(200)
       expect(json_response).to be_an Array
       expect(json_response.first['milestone']['title']).to eq(milestone.title)
+      expect(json_response.last).to have_key('subscribed')
     end
 
     it 'returns a 401 error if user not authenticated' do
