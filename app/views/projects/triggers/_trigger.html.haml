@@ -8,7 +8,7 @@
 
     .label-container
       - if trigger.owner.blank?
-        %span.label.label-primary legacy
+        %span.label.label-primary.has-tooltip{ title: "Trigger makes use of deprecated functionality" } legacy
       - elsif !trigger.valid?
         - invalid_tooltip = trigger.owner.blank ? "Trigger user is no longer existent" : "Trigger user has insufficient permissions to project"
         %span.label.label-danger.has-tooltip{ title: invalid_tooltip } invalid
@@ -30,8 +30,10 @@
       Never
 
   %td.text-right.trigger-actions
-    = link_to 'Take ownership', take_namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: 'Are you sure?'}, method: :post, class: "btn btn-default btn-sm"
+    - take_ownership_confirmation = "By taking ownership you will bind this trigger to your user account. With this the trigger will have access to all your projects as if it was you. Are you sure?"
+    - revoke_trigger_confirmation = "By revoking a trigger you will corrupt any processes making use of it. Are you sure?"
+    = link_to 'Take ownership', take_namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: take_ownership_confirmation }, method: :post, class: "btn btn-default btn-sm"
     = link_to edit_namespace_project_trigger_path(@project.namespace, @project, trigger), method: :get, class: "btn btn-default btn-sm" do
       %i.fa.fa-pencil
-    = link_to namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: 'Are you sure?'}, method: :delete, class: "btn btn-default btn-warning btn-sm" do
+    = link_to namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: revoke_trigger_confirmation }, method: :delete, class: "btn btn-default btn-warning btn-sm" do
       %i.fa.fa-trash
