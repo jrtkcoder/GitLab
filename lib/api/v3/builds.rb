@@ -12,7 +12,7 @@ module API
         helpers do
           params :optional_scope do
             optional :scope, types: [String, Array[String]], desc: 'The scope of builds to show',
-              values:  ['pending', 'running', 'failed', 'success', 'canceled'],
+              values:  ['pending', 'running', 'failed', 'success', 'canceled', 'skipped'],
               coerce_with: ->(scope) {
                 if scope.is_a?(String)
                   [scope]

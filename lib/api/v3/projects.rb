@@ -91,6 +91,7 @@ module API
               simple: params[:simple],
             )
 
+            byebug
             projects = filter_projects(projects)
             projects = projects.with_statistics if options[:statistics]
             options[:with] = ::API::Entities::BasicProjectDetails if options[:simple]
