@@ -578,6 +578,7 @@ module API
           end
 
           if service.update_attributes(attrs.merge(active: false))
+            status(200)
             true
           else
             render_api_error!('400 Bad Request', 400)
