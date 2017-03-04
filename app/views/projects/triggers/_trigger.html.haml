@@ -21,6 +21,7 @@
 
   %td
     - if trigger.owner
+      .trigger-owner.sr-only= trigger.owner.name
       = user_avatar(user: trigger.owner, size: 20)
 
   %td
@@ -32,8 +33,9 @@
   %td.text-right.trigger-actions
     - take_ownership_confirmation = "By taking ownership you will bind this trigger to your user account. With this the trigger will have access to all your projects as if it was you. Are you sure?"
     - revoke_trigger_confirmation = "By revoking a trigger you will corrupt any processes making use of it. Are you sure?"
-    = link_to 'Take ownership', take_namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: take_ownership_confirmation }, method: :post, class: "btn btn-default btn-sm"
+    - if trigger.owner != current_user
+      = link_to 'Take ownership', take_namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: take_ownership_confirmation }, method: :post, class: "btn btn-default btn-sm btn-trigger-take-ownership"
     = link_to edit_namespace_project_trigger_path(@project.namespace, @project, trigger), method: :get, title: "Edit", class: "btn btn-default btn-sm" do
       %i.fa.fa-pencil
-    = link_to namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: revoke_trigger_confirmation }, method: :delete, title: "Revoke", class: "btn btn-default btn-warning btn-sm" do
+    = link_to namespace_project_trigger_path(@project.namespace, @project, trigger), data: { confirm: revoke_trigger_confirmation }, method: :delete, title: "Revoke", class: "btn btn-default btn-warning btn-sm btn-trigger-revoke" do
       %i.fa.fa-trash
