@@ -1,5 +1,8 @@
 - supports_slash_commands = note_supports_slash_commands?(@note)
 
+-# Temp boolean to limit discussions to MRs and commits (currently supported "noteables")
+- can_add_discussion = ("#{controller.controller_name}:#{controller.action_name}").match(/^(merge_requests|commits):show$/)
+
 = form_for [@project.namespace.becomes(Namespace), @project, @note], remote: true, html: { :'data-type' => 'json', multipart: true, id: nil, class: "new-note js-new-note-form js-quick-submit common-note-form", "data-noteable-iid" => @note.noteable.try(:iid), }, authenticity_token: true do |f|
   = hidden_field_tag :view, diff_view
   = hidden_field_tag :line_type
@@ -23,7 +26,27 @@
     .error-alert
 
   .note-form-actions.clearfix
-    = f.submit 'Comment', class: "btn btn-nr btn-create append-right-10 comment-btn js-comment-button"
+    .btn-group.append-right-10
+      = f.submit 'Comment', class: "btn btn-nr btn-create comment-btn js-comment-button"
+      - if can_add_discussion
+        = button_tag type: 'button', class: 'btn btn-nr dropdown-toggle comment-btn', data: { toggle: 'dropdown' } do
+          = icon('caret-down')
+        %ul.dropdown-menu.comment-type-dropdown
+          %a{ href: '#' }
+            %li
+              = icon('check')
+              .description
+                %strong Comment
+                %p Add a general comment to this merge request.
+          %a{ href: '#' }
+            %li
+              = icon('check', class: 'invisible')
+              .description
+                %strong Start discussion
+                %p Discuss a specific suggestion or question that needs to be resolved.
+
+          -# = submit_tag 'Start discussion', name: 'note[new_discussion]', class: "", data: { quick_submit_alt: true } if can_add_discussion
+
     = yield(:note_actions)
     %a.btn.btn-cancel.js-note-discard{ role: "button", data: {cancel_text: "Cancel" } }
       Discard draft

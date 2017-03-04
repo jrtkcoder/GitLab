@@ -3,6 +3,10 @@
  */
 .comment-btn {
   @extend .btn-create;
+
+  .dropdown-toggle .fa {
+    color: $white-light;
+  }
 }
 
 .diff-file .diff-content {
@@ -279,5 +283,33 @@
     top: 0;
     left: 0;
     margin-bottom: 10px;
+  }
+}
+
+.comment-type-dropdown {
+  top: initial;
+  bottom: 40px;
+  width: 290px;
+
+  .description {
+    display: inline-block;
+    white-space: normal;
+    padding-right: 8px;
+  }
+
+  li {
+    white-space: nowrap;
+  }
+
+  i {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 2px;
+  }
+
+  a:hover,
+  a:focus {
+    background-color: $dropdown-hover-color;
+    color: $white-light;
   }
 }
