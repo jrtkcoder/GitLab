@@ -81,7 +81,7 @@ module API
         expose :request_access_enabled
         expose :only_allow_merge_if_all_discussions_are_resolved
 
-        expose :statistics, using: ::API::V3::Entities::ProjectStatistics, if: :statistics
+        expose :statistics, using: '::API::V3::Entities::ProjectStatistics', if: :statistics
       end
 
       class ProjectWithAccess < Project
