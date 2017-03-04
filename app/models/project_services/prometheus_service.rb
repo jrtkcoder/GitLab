@@ -31,6 +31,7 @@ class PrometheusService < MonitoringService
   end
 
   def help
+    'Retrives `container_cpu_usage_seconds_total` and `container_memory_usage_bytes` from the configured Prometheus server. An `environment` label is required on each metric to identify the Environment.'
   end
 
   def self.to_param

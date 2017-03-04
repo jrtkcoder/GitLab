@@ -1,7 +1,7 @@
 # Base class for monitoring services
 #
-# These services integrate with a deployment solution like Kubernetes/OpenShift,
-# Mesosphere, etc, to provide additional features to environments.
+# These services integrate with a deployment solution like Prometheus
+# to provide additional features for environments.
 class MonitoringService < Service
   default_value_for :category, 'monitoring'
 
