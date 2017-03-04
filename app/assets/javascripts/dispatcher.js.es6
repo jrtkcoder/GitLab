@@ -35,7 +35,7 @@
 /* global Labels */
 /* global Shortcuts */
 
-import ProjectName from './project_name';
+import GroupName from './group_name';
 import GroupsList from './groups_list';
 
 const ShortcutsBlob = require('./shortcuts_blob');
@@ -326,6 +326,8 @@ const UserCallout = require('./user_callout');
           shortcut_handler = new ShortcutsDashboardNavigation();
           new UserCallout();
           break;
+        case 'groups':
+          new GroupName();
         case 'profiles':
           new NotificationsForm();
           new NotificationsDropdown();
@@ -333,7 +335,7 @@ const UserCallout = require('./user_callout');
         case 'projects':
           new Project();
           new ProjectAvatar();
-          new ProjectName();
+          new GroupName();
           if (this.title) this.init();
           switch (path[1]) {
             case 'compare':

@@ -1,6 +1,6 @@
 const GROUP_LIMIT = 2;
 
-export default class ProjectName {
+export default class GroupName {
   constructor() {
     this.title = document.querySelector('.title');
     this.groups = document.querySelectorAll('.group-path');
