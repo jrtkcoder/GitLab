@@ -1,16 +1,15 @@
+import 'jquery';
+import es6Promise from 'es6-promise';
 import '~/lib/utils/common_utils.js.es6';
 import PrometheusGraph from '~/monitoring/prometheus_graph';
 import { prometheusMockData } from './prometheus_mock_data';
-import 'jquery';
-import es6Promise from 'es6-promise';
 
 es6Promise.polyfill();
 
-fdescribe('PrometheusGraph', () => {
+describe('PrometheusGraph', () => {
   const fixtureName = 'static/environments/metrics.html.raw';
   const prometheusGraphContainer = '.prometheus-graph';
   const prometheusGraphContents = `${prometheusGraphContainer}[graph-type=cpu_values]`;
-  let originalTimeout = {};
 
   preloadFixtures(fixtureName);
 
@@ -18,10 +17,10 @@ fdescribe('PrometheusGraph', () => {
     loadFixtures(fixtureName);
     this.prometheusGraph = new PrometheusGraph();
     const self = this;
-    const fakeInit = function(metricsResponse) {
+    const fakeInit = (metricsResponse) => {
       self.prometheusGraph.transformData(metricsResponse);
       self.prometheusGraph.createGraph();
-    }
+    };
     spyOn(this.prometheusGraph, 'init').and.callFake(fakeInit);
   });
 
@@ -57,7 +56,6 @@ fdescribe('PrometheusGraph', () => {
     });
 
     it('has axis, an area, a line and a overlay', () => {
-      const $prometheusGraphContents = $(prometheusGraphContents);
       const $graphContainer = $(prometheusGraphContents).find('.x-axis').parent();
       expect($graphContainer.find('.x-axis')).toBeDefined();
       expect($graphContainer.find('.y-axis')).toBeDefined();
@@ -73,8 +71,8 @@ fdescribe('PrometheusGraph', () => {
       expect($prometheusGraphContents.find('.label-y-axis-line')).toBeDefined();
       expect($prometheusGraphContents.find('.label-axis-text')).toBeDefined();
       expect($prometheusGraphContents.find('.rect-axis-text')).toBeDefined();
-      expect($axisLabelContainer.find('rect').length).toBe(3);
-      expect($axisLabelContainer.find('text').length).toBe(6);
+      expect($axisLabelContainer.find('rect').length).toBe(2);
+      expect($axisLabelContainer.find('text').length).toBe(4);
     });
   });
 });

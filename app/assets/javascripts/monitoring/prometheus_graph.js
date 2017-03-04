@@ -1,3 +1,4 @@
+/* eslint-disable no-new*/
 import d3 from 'd3';
 import _ from 'underscore';
 import statusCodes from '~/lib/utils/http_status';
@@ -49,9 +50,6 @@ class PrometheusGraph {
   }
 
   plotValues(valuesToPlot, key) {
-    // Mean value of the current graph
-    const mean = d3.mean(valuesToPlot, data => data.value);
-
     const x = d3.time.scale()
         .range([0, this.width]);
 
@@ -88,7 +86,7 @@ class PrometheusGraph {
         .tickSize(-this.width)
         .orient('left');
 
-    this.createAxisLabelContainers(axisLabelContainer, mean, key);
+    this.createAxisLabelContainers(axisLabelContainer, key);
 
     chart.append('g')
         .attr('class', 'x-axis')
@@ -128,11 +126,11 @@ class PrometheusGraph {
       .attr('class', 'prometheus-graph-overlay')
       .attr('width', this.width)
       .attr('height', this.height)
-      .on('mousemove', this.handleMouseOverGraph.bind(this, x, y, valuesToPlot, chart, prometheusGraphContainer, mean, key));
+      .on('mousemove', this.handleMouseOverGraph.bind(this, x, y, valuesToPlot, chart, prometheusGraphContainer, key));
   }
 
   // The legends from the metric
-  createAxisLabelContainers(axisLabelContainer, mean, key) {
+  createAxisLabelContainers(axisLabelContainer, key) {
     const graphSpecifics = this.graphSpecificProperties[key];
 
     axisLabelContainer.append('line')
@@ -197,30 +195,9 @@ class PrometheusGraph {
             .attr('class', 'text-metric-usage')
             .attr('x', this.originalWidth - 140)
             .attr('y', (this.originalHeight / 2) - 50);
-
-    // Mean value of the usage
-
-    axisLabelContainer.append('rect')
-          .attr('x', this.originalWidth - 170)
-          .attr('y', (this.originalHeight / 2) - 25)
-          .style('fill', graphSpecifics.line_color)
-          .attr('width', 20)
-          .attr('height', 35);
-
-    axisLabelContainer.append('text')
-          .attr('class', 'label-axis-text')
-          .attr('x', this.originalWidth - 140)
-          .attr('y', (this.originalHeight / 2) - 15)
-          .text('Median');
-
-    axisLabelContainer.append('text')
-            .attr('class', 'text-median-metric')
-            .attr('x', this.originalWidth - 140)
-            .attr('y', (this.originalHeight / 2) + 5)
-            .text(mean.toString().substring(0, 8));
   }
 
-  handleMouseOverGraph(x, y, valuesToPlot, chart, prometheusGraphContainer, mean, key) {
+  handleMouseOverGraph(x, y, valuesToPlot, chart, prometheusGraphContainer, key) {
     const rectOverlay = document.querySelector(`${prometheusGraphContainer} .prometheus-graph-overlay`);
     const timeValueFromOverlay = x.invert(d3.mouse(rectOverlay)[0]);
     const timeValueIndex = bisectDate(valuesToPlot, timeValueFromOverlay, 1);
@@ -250,13 +227,6 @@ class PrometheusGraph {
     .attr('fill', graphSpecifics.line_color)
     .attr('cx', currentTimeCoordinate)
     .attr('cy', y(currentData.value))
-    .attr('r', this.commonGraphProperties.circle_radius_metric);
-
-    chart.append('circle')
-    .attr('class', 'circle-metric')
-    .attr('fill', graphSpecifics.line_color)
-    .attr('cx', currentTimeCoordinate)
-    .attr('cy', y(mean))
     .attr('r', this.commonGraphProperties.circle_radius_metric);
 
     // The little box with text
