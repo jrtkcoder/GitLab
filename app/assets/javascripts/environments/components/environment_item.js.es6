@@ -46,21 +46,6 @@ module.exports = Vue.component('environment-item', {
       required: false,
       default: false,
     },
-
-    commitIconSvg: {
-      type: String,
-      required: false,
-    },
-
-    playIconSvg: {
-      type: String,
-      required: false,
-    },
-
-    terminalIconSvg: {
-      type: String,
-      required: false,
-    },
   },
 
   computed: {
@@ -487,9 +472,7 @@ module.exports = Vue.component('environment-item', {
             :commit-url="commitUrl"
             :short-sha="commitShortSha"
             :title="commitTitle"
-            :author="commitAuthor"
-            :commit-icon-svg="commitIconSvg">
-          </commit-component>
+            :author="commitAuthor"/>
         </div>
         <p v-if="!model.isFolder && !hasLastDeploymentKey" class="commit-title">
           No deployments yet
@@ -503,45 +486,23 @@ module.exports = Vue.component('environment-item', {
         </span>
       </td>
 
-      <td class="hidden-xs">
-        <div v-if="!model.isFolder">
-          <div v-if="hasManualActions && canCreateDeployment"
-            class="inline js-manual-actions-container">
-            <actions-component
-              :play-icon-svg="playIconSvg"
-              :actions="manualActions">
-            </actions-component>
-          </div>
+      <td class="environments-actions">
+        <div v-if="!model.isFolder" class="btn-group pull-right" role="group">
+          <actions-component v-if="hasManualActions && canCreateDeployment"
+            :actions="manualActions"/>
 
-          <div v-if="externalURL && canReadEnvironment"
-            class="inline js-external-url-container">
-            <external-url-component
-              :external-url="externalURL">
-            </external-url-component>
-          </div>
+          <external-url-component v-if="externalURL && canReadEnvironment"
+            :external-url="externalURL"/>
 
-          <div v-if="hasStopAction && canCreateDeployment"
-            class="inline js-stop-component-container">
-            <stop-component
-              :stop-url="model.stop_path">
-            </stop-component>
-          </div>
+          <stop-component v-if="hasStopAction && canCreateDeployment"
+            :stop-url="model.stop_path"/>
 
-          <div v-if="model && model.terminal_path"
-            class="inline js-terminal-button-container">
-            <terminal-button-component
-              :terminal-icon-svg="terminalIconSvg"
-              :terminal-path="model.terminal_path">
-            </terminal-button-component>
-          </div>
+          <terminal-button-component v-if="model && model.terminal_path"
+            :terminal-path="model.terminal_path"/>
 
-          <div v-if="canRetry && canCreateDeployment"
-            class="inline js-rollback-component-container">
-            <rollback-component
-              :is-last-deployment="isLastDeployment"
-              :retry-url="retryUrl">
-              </rollback-component>
-          </div>
+          <rollback-component v-if="canRetry && canCreateDeployment"
+            :is-last-deployment="isLastDeployment"
+            :retry-url="retryUrl"/>
         </div>
       </td>
     </tr>

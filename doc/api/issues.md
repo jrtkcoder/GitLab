@@ -23,20 +23,24 @@ GET /issues?state=closed
 GET /issues?labels=foo
 GET /issues?labels=foo,bar
 GET /issues?labels=foo,bar&state=opened
+GET /projects/:id/issues?labels_name=No+Label
 GET /issues?milestone=1.0.0
 GET /issues?milestone=1.0.0&state=opened
+GET /issues?iids[]=42&iids[]=43
 ```
 
 | Attribute | Type | Required | Description |
 | --------- | ---- | -------- | ----------- |
 | `state`   | string  | no    | Return all issues or just those that are `opened` or `closed`|
 | `labels`  | string  | no    | Comma-separated list of label names, issues must have all labels to be returned |
+| `labels_name`  | string  | no    | Return all issues with the mentioned label. `No+Label` lists all issues with no labels |
 | `milestone` | string| no    | The milestone title |
+| `iids`    | Array[integer] | no | Return only the issues having the given `iid` |
 | `order_by`| string  | no    | Return requests ordered by `created_at` or `updated_at` fields. Default is `created_at` |
 | `sort`    | string  | no    | Return requests sorted in `asc` or `desc` order. Default is `desc`  |
 
 ```bash
-curl --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/issues
+curl --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/issues
 ```
 
 Example response:
@@ -100,8 +104,10 @@ GET /groups/:id/issues?state=closed
 GET /groups/:id/issues?labels=foo
 GET /groups/:id/issues?labels=foo,bar
 GET /groups/:id/issues?labels=foo,bar&state=opened
+GET /projects/:id/issues?labels_name=No+Label
 GET /groups/:id/issues?milestone=1.0.0
 GET /groups/:id/issues?milestone=1.0.0&state=opened
+GET /groups/:id/issues?iids[]=42&iids[]=43
 ```
 
 | Attribute | Type | Required | Description |
@@ -109,13 +115,15 @@ GET /groups/:id/issues?milestone=1.0.0&state=opened
 | `id`      | integer | yes   | The ID of a group |
 | `state`   | string  | no    | Return all issues or just those that are `opened` or `closed`|
 | `labels`  | string  | no    | Comma-separated list of label names, issues must have all labels to be returned |
+| `labels_name`  | string  | no    | Return all issues with the mentioned label. `No+Label` lists all issues with no labels |
+| `iids`    | Array[integer] | no | Return only the issues having the given `iid` |
 | `milestone` | string| no    | The milestone title |
 | `order_by`| string  | no    | Return requests ordered by `created_at` or `updated_at` fields. Default is `created_at` |
 | `sort`    | string  | no    | Return requests sorted in `asc` or `desc` order. Default is `desc`  |
 
 
 ```bash
-curl --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/groups/4/issues
+curl --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/groups/4/issues
 ```
 
 Example response:
@@ -179,23 +187,26 @@ GET /projects/:id/issues?state=closed
 GET /projects/:id/issues?labels=foo
 GET /projects/:id/issues?labels=foo,bar
 GET /projects/:id/issues?labels=foo,bar&state=opened
+GET /projects/:id/issues?labels_name=No+Label
 GET /projects/:id/issues?milestone=1.0.0
 GET /projects/:id/issues?milestone=1.0.0&state=opened
+GET /projects/:id/issues?iids[]=42&iids[]=43
 ```
 
 | Attribute | Type | Required | Description |
 | --------- | ---- | -------- | ----------- |
 | `id`      | integer | yes   | The ID of a project |
-| `iid`     | integer | no    | Return the issue having the given `iid` |
+| `iids`    | Array[integer] | no | Return only the milestone having the given `iid` |
 | `state`   | string  | no    | Return all issues or just those that are `opened` or `closed`|
 | `labels`  | string  | no    | Comma-separated list of label names, issues must have all labels to be returned |
+| `labels_name`  | string  | no    | Return all issues with the mentioned label. `No+Label` lists all issues with no labels |
 | `milestone` | string| no    | The milestone title |
 | `order_by`| string  | no    | Return requests ordered by `created_at` or `updated_at` fields. Default is `created_at` |
 | `sort`    | string  | no    | Return requests sorted in `asc` or `desc` order. Default is `desc`  |
 
 
 ```bash
-curl --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/projects/4/issues
+curl --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/projects/4/issues
 ```
 
 Example response:
@@ -262,7 +273,7 @@ GET /projects/:id/issues/:issue_id
 | `issue_id`| integer | yes   | The ID of a project's issue |
 
 ```bash
-curl --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/projects/4/issues/41
+curl --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/projects/4/issues/41
 ```
 
 Example response:
@@ -335,7 +346,7 @@ POST /projects/:id/issues
 | `merge_request_for_resolving_discussions` | integer | no       | The IID of a merge request in which to resolve all issues. This will fill the issue with a default description and mark all discussions as resolved. When passing a description or title, these values will take precedence over the default values. |
 
 ```bash
-curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/projects/4/issues?title=Issues%20with%20auth&labels=bug
+curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/projects/4/issues?title=Issues%20with%20auth&labels=bug
 ```
 
 Example response:
@@ -395,7 +406,7 @@ PUT /projects/:id/issues/:issue_id
 | `due_date`      | string  | no  | Date time string in the format YEAR-MONTH-DAY, e.g. `2016-03-11` |
 
 ```bash
-curl --request PUT --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/projects/4/issues/85?state_event=close
+curl --request PUT --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/projects/4/issues/85?state_event=close
 ```
 
 Example response:
@@ -445,7 +456,7 @@ DELETE /projects/:id/issues/:issue_id
 | `issue_id`      | integer | yes | The ID of a project's issue |
 
 ```bash
-curl --request DELETE --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/projects/4/issues/85
+curl --request DELETE --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/projects/4/issues/85
 ```
 
 ## Move an issue
@@ -468,7 +479,7 @@ POST /projects/:id/issues/:issue_id/move
 | `to_project_id` | integer | yes | The ID of the new project |
 
 ```bash
-curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/projects/4/issues/85/move
+curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/projects/4/issues/85/move
 ```
 
 Example response:
@@ -514,7 +525,7 @@ If the user is already subscribed to the issue, the status code `304`
 is returned.
 
 ```
-POST /projects/:id/issues/:issue_id/subscription
+POST /projects/:id/issues/:issue_id/subscribe
 ```
 
 | Attribute | Type | Required | Description |
@@ -523,7 +534,7 @@ POST /projects/:id/issues/:issue_id/subscription
 | `issue_id` | integer | yes | The ID of a project's issue |
 
 ```bash
-curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/projects/5/issues/93/subscription
+curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/projects/5/issues/93/subscribe
 ```
 
 Example response:
@@ -569,7 +580,7 @@ from it. If the user is not subscribed to the issue, the
 status code `304` is returned.
 
 ```
-DELETE /projects/:id/issues/:issue_id/subscription
+POST /projects/:id/issues/:issue_id/unsubscribe
 ```
 
 | Attribute | Type | Required | Description |
@@ -578,44 +589,7 @@ DELETE /projects/:id/issues/:issue_id/subscription
 | `issue_id` | integer | yes | The ID of a project's issue |
 
 ```bash
-curl --request DELETE --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/projects/5/issues/93/subscription
-```
-
-Example response:
-
-```json
-{
-  "id": 93,
-  "iid": 12,
-  "project_id": 5,
-  "title": "Incidunt et rerum ea expedita iure quibusdam.",
-  "description": "Et cumque architecto sed aut ipsam.",
-  "state": "opened",
-  "created_at": "2016-04-05T21:41:45.217Z",
-  "updated_at": "2016-04-07T13:02:37.905Z",
-  "labels": [],
-  "milestone": null,
-  "assignee": {
-    "name": "Edwardo Grady",
-    "username": "keyon",
-    "id": 21,
-    "state": "active",
-    "avatar_url": "http://www.gravatar.com/avatar/3e6f06a86cf27fa8b56f3f74f7615987?s=80&d=identicon",
-    "web_url": "https://gitlab.example.com/keyon"
-  },
-  "author": {
-    "name": "Vivian Hermann",
-    "username": "orville",
-    "id": 11,
-    "state": "active",
-    "avatar_url": "http://www.gravatar.com/avatar/5224fd70153710e92fb8bcf79ac29d67?s=80&d=identicon",
-    "web_url": "https://gitlab.example.com/orville"
-  },
-  "subscribed": false,
-  "due_date": null,
-  "web_url": "http://example.com/example/example/issues/12",
-  "confidential": false
-}
+curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/projects/5/issues/93/unsubscribe
 ```
 
 ## Create a todo
@@ -634,7 +608,7 @@ POST /projects/:id/issues/:issue_id/todo
 | `issue_id` | integer | yes | The ID of a project's issue |
 
 ```bash
-curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/projects/5/issues/93/todo
+curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/projects/5/issues/93/todo
 ```
 
 Example response:
@@ -726,7 +700,7 @@ POST /projects/:id/issues/:issue_id/time_estimate
 | `duration` | string | yes | The duration in human format. e.g: 3h30m |
 
 ```bash
-curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/projects/5/issues/93/time_estimate?duration=3h30m
+curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/projects/5/issues/93/time_estimate?duration=3h30m
 ```
 
 Example response:
@@ -754,7 +728,7 @@ POST /projects/:id/issues/:issue_id/reset_time_estimate
 | `issue_id` | integer | yes | The ID of a project's issue |
 
 ```bash
-curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/projects/5/issues/93/reset_time_estimate
+curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/projects/5/issues/93/reset_time_estimate
 ```
 
 Example response:
@@ -783,7 +757,7 @@ POST /projects/:id/issues/:issue_id/add_spent_time
 | `duration` | string | yes | The duration in human format. e.g: 3h30m |
 
 ```bash
-curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/projects/5/issues/93/add_spent_time?duration=1h
+curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/projects/5/issues/93/add_spent_time?duration=1h
 ```
 
 Example response:
@@ -811,7 +785,7 @@ POST /projects/:id/issues/:issue_id/reset_spent_time
 | `issue_id` | integer | yes | The ID of a project's issue |
 
 ```bash
-curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/projects/5/issues/93/reset_spent_time
+curl --request POST --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/projects/5/issues/93/reset_spent_time
 ```
 
 Example response:
@@ -837,7 +811,7 @@ GET /projects/:id/issues/:issue_id/time_stats
 | `issue_id` | integer | yes | The ID of a project's issue |
 
 ```bash
-curl --request GET --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/projects/5/issues/93/time_stats
+curl --request GET --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/projects/5/issues/93/time_stats
 ```
 
 Example response:

@@ -72,14 +72,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def authenticate_user!(*args)
-    if redirect_to_home_page_url?
-      redirect_to current_application_settings.home_page_url and return
-    end
-
-    super(*args)
-  end
-
   def log_exception(exception)
     application_trace = ActionDispatch::ExceptionWrapper.new(env, exception).application_trace
     application_trace.map!{ |t| "  #{t}\n" }
@@ -130,10 +122,6 @@ class ApplicationController < ActionController::Base
     headers['X-XSS-Protection'] = '1; mode=block'
     headers['X-UA-Compatible'] = 'IE=edge'
     headers['X-Content-Type-Options'] = 'nosniff'
-    # Enabling HSTS for non-standard ports would send clients to the wrong port
-    if Gitlab.config.gitlab.https and Gitlab.config.gitlab.port == 443
-      headers['Strict-Transport-Security'] = 'max-age=31536000'
-    end
   end
 
   def validate_user_service_ticket!
@@ -152,7 +140,7 @@ class ApplicationController < ActionController::Base
 
   def check_password_expiration
     if current_user && current_user.password_expires_at && current_user.password_expires_at < Time.now && !current_user.ldap_user?
-      redirect_to new_profile_password_path and return
+      return redirect_to new_profile_password_path
     end
   end
 
@@ -181,7 +169,7 @@ class ApplicationController < ActionController::Base
   end
 
   def gitlab_ldap_access(&block)
-    Gitlab::LDAP::Access.open { |access| block.call(access) }
+    Gitlab::LDAP::Access.open { |access| yield(access) }
   end
 
   # JSON for infinite scroll via Pager object
@@ -218,7 +206,7 @@ class ApplicationController < ActionController::Base
 
   def require_email
     if current_user && current_user.temp_oauth_email? && session[:impersonator_id].nil?
-      redirect_to profile_path, notice: 'Please complete your profile with email address' and return
+      return redirect_to profile_path, notice: 'Please complete your profile with email address'
     end
   end
 
@@ -285,19 +273,6 @@ class ApplicationController < ActionController::Base
 
   def skip_two_factor?
     session[:skip_tfa] && session[:skip_tfa] > Time.current
-  end
-
-  def redirect_to_home_page_url?
-    # If user is not signed-in and tries to access root_path - redirect him to landing page
-    # Don't redirect to the default URL to prevent endless redirections
-    return false unless current_application_settings.home_page_url.present?
-
-    home_page_url = current_application_settings.home_page_url.chomp('/')
-    root_urls = [Gitlab.config.gitlab['url'].chomp('/'), root_url.chomp('/')]
-
-    return false if root_urls.include?(home_page_url)
-
-    current_user.nil? && root_path == request.path
   end
 
   # U2F (universal 2nd factor) devices need a unique identifier for the application

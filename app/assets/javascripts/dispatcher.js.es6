@@ -35,7 +35,11 @@
 /* global Labels */
 /* global Shortcuts */
 
+import GroupsList from './groups_list';
+import ProjectsList from './projects_list';
+
 const ShortcutsBlob = require('./shortcuts_blob');
+const UserCallout = require('./user_callout');
 
 (function() {
   var Dispatcher;
@@ -74,7 +78,7 @@ const ShortcutsBlob = require('./shortcuts_blob');
         case 'projects:merge_requests:index':
         case 'projects:issues:index':
           if (gl.FilteredSearchManager) {
-            new gl.FilteredSearchManager();
+            new gl.FilteredSearchManager(page === 'projects:issues:index' ? 'issues' : 'merge_requests');
           }
           Issuable.init();
           new gl.IssuableBulkActions({
@@ -95,6 +99,18 @@ const ShortcutsBlob = require('./shortcuts_blob');
         case 'dashboard:todos:index':
           new gl.Todos();
           break;
+        case 'dashboard:projects:index':
+        case 'dashboard:projects:starred':
+        case 'explore:projects:index':
+        case 'explore:projects:trending':
+        case 'explore:projects:starred':
+        case 'admin:projects:index':
+          new ProjectsList();
+          break;
+        case 'dashboard:groups:index':
+        case 'explore:groups:index':
+          new GroupsList();
+          break;
         case 'projects:milestones:new':
         case 'projects:milestones:edit':
         case 'projects:milestones:update':
@@ -107,6 +123,9 @@ const ShortcutsBlob = require('./shortcuts_blob');
           break;
         case 'projects:compare:show':
           new gl.Diff();
+          break;
+        case 'projects:branches:index':
+          gl.AjaxLoadingSpinner.init();
           break;
         case 'projects:issues:new':
         case 'projects:issues:edit':
@@ -153,9 +172,6 @@ const ShortcutsBlob = require('./shortcuts_blob');
         case 'dashboard:activity':
           new gl.Activities();
           break;
-        case 'dashboard:projects:starred':
-          new gl.Activities();
-          break;
         case 'projects:commit:show':
           new Commit();
           new gl.Diff();
@@ -198,6 +214,7 @@ const ShortcutsBlob = require('./shortcuts_blob');
           shortcut_handler = new ShortcutsNavigation();
           new NotificationsForm();
           new NotificationsDropdown();
+          new ProjectsList();
           break;
         case 'groups:group_members:index':
           new gl.MemberExpirationDate();
@@ -274,6 +291,9 @@ const ShortcutsBlob = require('./shortcuts_blob');
         case 'ci:lints:show':
           new gl.CILintEditor();
           break;
+        case 'users:show':
+          new UserCallout();
+          break;
       }
       switch (path.first()) {
         case 'sessions':
@@ -310,6 +330,7 @@ const ShortcutsBlob = require('./shortcuts_blob');
         case 'dashboard':
         case 'root':
           shortcut_handler = new ShortcutsDashboardNavigation();
+          new UserCallout();
           break;
         case 'profiles':
           new NotificationsForm();

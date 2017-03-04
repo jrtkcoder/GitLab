@@ -25,6 +25,7 @@ module API
         optional :sort, type: String, values: %w[asc desc], default: 'desc',
                         desc: 'Return issues sorted in `asc` or `desc` order.'
         optional :milestone, type: String, desc: 'Return issues for a specific milestone'
+        optional :iids, type: Array[Integer], desc: 'The IID array of issues'
         use :pagination
       end
 
@@ -169,9 +170,13 @@ module API
           params.delete(:updated_at)
         end
 
+        update_params = declared_params(include_missing: false).merge(request: request, api: true)
+
         issue = ::Issues::UpdateService.new(user_project,
                                             current_user,
-                                            declared_params(include_missing: false)).execute(issue)
+                                            update_params).execute(issue)
+
+        render_spam_error! if issue.spam?
 
         if issue.valid?
           present issue, with: Entities::Issue, current_user: current_user, project: user_project

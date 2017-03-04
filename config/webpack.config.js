@@ -5,12 +5,14 @@ var path = require('path');
 var webpack = require('webpack');
 var StatsPlugin = require('stats-webpack-plugin');
 var CompressionPlugin = require('compression-webpack-plugin');
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 var ROOT_PATH = path.resolve(__dirname, '..');
 var IS_PRODUCTION = process.env.NODE_ENV === 'production';
 var IS_DEV_SERVER = process.argv[1].indexOf('webpack-dev-server') !== -1;
 var DEV_SERVER_PORT = parseInt(process.env.DEV_SERVER_PORT, 10) || 3808;
 var DEV_SERVER_LIVERELOAD = process.env.DEV_SERVER_LIVERELOAD !== 'false';
+var WEBPACK_REPORT = process.env.WEBPACK_REPORT;
 
 var config = {
   context: path.join(ROOT_PATH, 'app/assets/javascripts'),
@@ -26,6 +28,7 @@ var config = {
     environments_folder:  './environments/folder/environments_folder_bundle.js',
     filtered_search:      './filtered_search/filtered_search_bundle.js',
     graphs:               './graphs/graphs_bundle.js',
+    groups_list:          './groups_list.js',
     issuable:             './issuable/issuable_bundle.js',
     merge_conflicts:      './merge_conflicts/merge_conflicts_bundle.js',
     merge_request_widget: './merge_request_widget/ci_bundle.js',
@@ -61,6 +64,10 @@ var config = {
             'stage-2'
           ]
         }
+      },
+      {
+        test: /\.svg$/,
+        use: 'raw-loader'
       }
     ]
   },
@@ -84,8 +91,9 @@ var config = {
       '~':              path.join(ROOT_PATH, 'app/assets/javascripts'),
       'bootstrap/js':   'bootstrap-sass/assets/javascripts/bootstrap',
       'emoji-aliases$': path.join(ROOT_PATH, 'fixtures/emojis/aliases.json'),
+      'icons':          path.join(ROOT_PATH, 'app/views/shared/icons'),
       'vendor':         path.join(ROOT_PATH, 'vendor/assets/javascripts'),
-      'vue$':           IS_PRODUCTION ? 'vue/dist/vue.min.js' : 'vue/dist/vue.js',
+      'vue$':           'vue/dist/vue.common.js',
     }
   }
 }
@@ -118,6 +126,18 @@ if (IS_DEV_SERVER) {
     inline: DEV_SERVER_LIVERELOAD
   };
   config.output.publicPath = '//localhost:' + DEV_SERVER_PORT + config.output.publicPath;
+}
+
+if (WEBPACK_REPORT) {
+  config.plugins.push(
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      generateStatsFile: true,
+      openAnalyzer: false,
+      reportFilename: path.join(ROOT_PATH, 'webpack-report/index.html'),
+      statsFilename: path.join(ROOT_PATH, 'webpack-report/stats.json'),
+    })
+  );
 }
 
 module.exports = config;

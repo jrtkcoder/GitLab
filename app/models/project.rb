@@ -19,10 +19,10 @@ class Project < ActiveRecord::Base
 
   extend Gitlab::ConfigHelper
 
-  class BoardLimitExceeded < StandardError; end
+  BoardLimitExceeded = Class.new(StandardError)
 
   NUMBER_OF_PERMITTED_BOARDS = 1
-  UNKNOWN_IMPORT_URL = 'http://unknown.git'
+  UNKNOWN_IMPORT_URL = 'http://unknown.git'.freeze
 
   cache_markdown_field :description, pipeline: :description
 
@@ -70,8 +70,7 @@ class Project < ActiveRecord::Base
 
   after_validation :check_pending_delete
 
-  ActsAsTaggableOn.strict_case_match = true
-  acts_as_taggable_on :tags
+  acts_as_taggable
 
   attr_accessor :new_default_branch
   attr_accessor :old_path_with_namespace
@@ -114,6 +113,7 @@ class Project < ActiveRecord::Base
   has_one :gitlab_issue_tracker_service, dependent: :destroy, inverse_of: :project
   has_one :external_wiki_service, dependent: :destroy
   has_one :kubernetes_service, dependent: :destroy, inverse_of: :project
+  has_one :mock_ci_service, dependent: :destroy
 
   has_one  :forked_project_link,  dependent: :destroy, foreign_key: "forked_to_project_id"
   has_one  :forked_from_project,  through:   :forked_project_link
@@ -172,9 +172,11 @@ class Project < ActiveRecord::Base
   accepts_nested_attributes_for :project_feature
 
   delegate :name, to: :owner, allow_nil: true, prefix: true
+  delegate :count, to: :forks, prefix: true
   delegate :members, to: :team, prefix: true
   delegate :add_user, to: :team
   delegate :add_guest, :add_reporter, :add_developer, :add_master, to: :team
+  delegate :empty_repo?, to: :repository
 
   # Validations
   validates :creator, presence: true, on: :create
@@ -191,8 +193,8 @@ class Project < ActiveRecord::Base
     format: { with: Gitlab::Regex.project_path_regex,
               message: Gitlab::Regex.project_path_regex_message }
   validates :namespace, presence: true
-  validates_uniqueness_of :name, scope: :namespace_id
-  validates_uniqueness_of :path, scope: :namespace_id
+  validates :name, uniqueness: { scope: :namespace_id }
+  validates :path, uniqueness: { scope: :namespace_id }
   validates :import_url, addressable_url: true, if: :external_import?
   validates :star_count, numericality: { greater_than_or_equal_to: 0 }
   validate :check_limit, on: :create
@@ -333,7 +335,7 @@ class Project < ActiveRecord::Base
     end
 
     def search_by_visibility(level)
-      where(visibility_level: Gitlab::VisibilityLevel.const_get(level.upcase))
+      where(visibility_level: Gitlab::VisibilityLevel.string_options[level])
     end
 
     def search_by_title(query)
@@ -358,7 +360,7 @@ class Project < ActiveRecord::Base
     end
 
     def reference_pattern
-      name_pattern = Gitlab::Regex::NAMESPACE_REGEX_STR
+      name_pattern = Gitlab::Regex::FULL_NAMESPACE_REGEX_STR
 
       %r{
         ((?<namespace>#{name_pattern})\/)?
@@ -453,13 +455,14 @@ class Project < ActiveRecord::Base
   end
 
   def add_import_job
-    if forked?
-      job_id = RepositoryForkWorker.perform_async(id, forked_from_project.repository_storage_path,
-                                                  forked_from_project.path_with_namespace,
-                                                  self.namespace.full_path)
-    else
-      job_id = RepositoryImportWorker.perform_async(self.id)
-    end
+    job_id =
+      if forked?
+        RepositoryForkWorker.perform_async(id, forked_from_project.repository_storage_path,
+          forked_from_project.path_with_namespace,
+          self.namespace.full_path)
+      else
+        RepositoryImportWorker.perform_async(self.id)
+      end
 
     if job_id
       Rails.logger.info "Import job started for #{path_with_namespace} with job ID #{job_id}"
@@ -552,7 +555,7 @@ class Project < ActiveRecord::Base
   end
 
   def check_limit
-    unless creator.can_create_project? or namespace.kind == 'group'
+    unless creator.can_create_project? || namespace.kind == 'group'
       projects_limit = creator.projects_limit
 
       if projects_limit == 0
@@ -837,20 +840,12 @@ class Project < ActiveRecord::Base
     false
   end
 
-  def empty_repo?
-    repository.empty_repo?
-  end
-
   def repo
     repository.raw
   end
 
   def url_to_repo
     gitlab_shell.url_to_repo(path_with_namespace)
-  end
-
-  def namespace_dir
-    namespace.try(:path) || ''
   end
 
   def repo_exists?
@@ -875,8 +870,14 @@ class Project < ActiveRecord::Base
     url_to_repo
   end
 
-  def http_url_to_repo
-    "#{web_url}.git"
+  def http_url_to_repo(user = nil)
+    url = web_url
+
+    if user
+      url.sub!(%r{\Ahttps?://}) { |protocol| "#{protocol}#{user.username}@" }
+    end
+
+    "#{url}.git"
   end
 
   # Check if current branch name is marked as protected in the system
@@ -901,8 +902,8 @@ class Project < ActiveRecord::Base
 
   def rename_repo
     path_was = previous_changes['path'].first
-    old_path_with_namespace = File.join(namespace_dir, path_was)
-    new_path_with_namespace = File.join(namespace_dir, path)
+    old_path_with_namespace = File.join(namespace.full_path, path_was)
+    new_path_with_namespace = File.join(namespace.full_path, path)
 
     Rails.logger.error "Attempting to rename #{old_path_with_namespace} -> #{new_path_with_namespace}"
 
@@ -1003,7 +1004,7 @@ class Project < ActiveRecord::Base
   end
 
   def visibility_level_field
-    visibility_level
+    :visibility_level
   end
 
   def archive!
@@ -1026,10 +1027,6 @@ class Project < ActiveRecord::Base
 
   def forked_from?(project)
     forked? && project == forked_from_project
-  end
-
-  def forks_count
-    forks.count
   end
 
   def origin_merge_requests

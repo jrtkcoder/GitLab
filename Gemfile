@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.2.7.1'
+gem 'rails', '4.2.8'
 gem 'rails-deprecated_sanitizer', '~> 1.0.3'
 
 # Responders respond_to and respond_with
@@ -20,7 +20,7 @@ gem 'rugged', '~> 0.24.0'
 # Authentication libraries
 gem 'devise',                 '~> 4.2'
 gem 'doorkeeper',             '~> 4.2.0'
-gem 'omniauth',               '~> 1.3.2'
+gem 'omniauth',               '~> 1.4.2'
 gem 'omniauth-auth0',         '~> 1.4.1'
 gem 'omniauth-azure-oauth2',  '~> 0.0.6'
 gem 'omniauth-cas3',          '~> 1.1.2'
@@ -68,7 +68,7 @@ gem 'gollum-rugged_adapter', '~> 0.4.2', require: false
 gem 'github-linguist', '~> 4.7.0', require: 'linguist'
 
 # API
-gem 'grape',        '~> 0.18.0'
+gem 'grape',        '~> 0.19.0'
 gem 'grape-entity', '~> 0.6.0'
 gem 'rack-cors',    '~> 0.4.0', require: 'rack/cors'
 
@@ -201,7 +201,7 @@ gem 'babosa', '~> 1.0.2'
 gem 'loofah', '~> 2.0.3'
 
 # Working with license
-gem 'licensee', '~> 8.0.0'
+gem 'licensee', '~> 8.7.0'
 
 # Protect against bruteforcing
 gem 'rack-attack', '~> 4.4.1'
@@ -236,7 +236,6 @@ gem 'gemojione',          '~> 3.0'
 gem 'gon',                '~> 6.1.0'
 gem 'jquery-atwho-rails', '~> 1.3.2'
 gem 'jquery-rails',       '~> 4.1.0'
-gem 'jquery-ui-rails',    '~> 5.0.0'
 gem 'request_store',      '~> 1.3'
 gem 'select2-rails',      '~> 3.5.9'
 gem 'virtus',             '~> 1.0.1'
@@ -301,10 +300,10 @@ group :development, :test do
   gem 'spring-commands-rspec',    '~> 1.0.4'
   gem 'spring-commands-spinach',  '~> 1.1.0'
 
-  gem 'rubocop', '~> 0.46.0', require: false
-  gem 'rubocop-rspec', '~> 1.9.1', require: false
+  gem 'rubocop', '~> 0.47.1', require: false
+  gem 'rubocop-rspec', '~> 1.12.0', require: false
   gem 'scss_lint', '~> 0.47.0', require: false
-  gem 'haml_lint', '~> 0.18.2', require: false
+  gem 'haml_lint', '~> 0.21.0', require: false
   gem 'simplecov', '0.12.0', require: false
   gem 'flay', '~> 2.6.1', require: false
   gem 'bundler-audit', '~> 0.5.0', require: false
@@ -329,11 +328,9 @@ group :test do
   gem 'timecop', '~> 0.8.0'
 end
 
-gem 'newrelic_rpm', '~> 3.16'
-
 gem 'octokit', '~> 4.6.2'
 
-gem 'mail_room', '~> 0.9.0'
+gem 'mail_room', '~> 0.9.1'
 
 gem 'email_reply_trimmer', '~> 0.1'
 gem 'html2text'
@@ -347,8 +344,11 @@ gem 'oauth2', '~> 1.2.0'
 gem 'paranoia', '~> 2.2'
 
 # Health check
-gem 'health_check', '~> 2.2.0'
+gem 'health_check', '~> 2.6.0'
 
 # System information
 gem 'vmstat', '~> 2.3.0'
 gem 'sys-filesystem', '~> 1.1.6'
+
+# Gitaly GRPC client
+gem 'gitaly', '~> 0.2.1'

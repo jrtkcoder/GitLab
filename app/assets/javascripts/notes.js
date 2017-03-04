@@ -242,12 +242,21 @@ require('./task_list');
     };
 
     Notes.prototype.handleCreateChanges = function(note) {
+      var votesBlock;
       if (typeof note === 'undefined') {
         return;
       }
 
-      if (note.commands_changes && note.commands_changes.indexOf('merge') !== -1) {
-        $.get(mrRefreshWidgetUrl);
+      if (note.commands_changes) {
+        if ('merge' in note.commands_changes) {
+          $.get(mrRefreshWidgetUrl);
+        }
+
+        if ('emoji_award' in note.commands_changes) {
+          votesBlock = $('.js-awards-block').eq(0);
+          gl.awardsHandler.addAwardToEmojiBar(votesBlock, note.commands_changes.emoji_award);
+          return gl.awardsHandler.scrollToAwards();
+        }
       }
     };
 
@@ -258,30 +267,19 @@ require('./task_list');
      */
 
     Notes.prototype.renderNote = function(note) {
-      var $notesList, votesBlock;
-      if (note.discussion_html != null) {
-        return this.renderDiscussionNote(note);
-      }
+      var $notesList;
+
+      if (note.discussion_html) return this.renderDiscussionNote(note);
 
       if (!note.valid) {
-        if (note.award) {
-          new Flash('You have already awarded this emoji!', 'alert', this.parentTimeline);
-        }
-        else {
-          if (note.errors.commands_only) {
-            new Flash(note.errors.commands_only, 'notice', this.parentTimeline);
-            this.refresh();
-          }
+        if (note.errors.commands_only) {
+          new Flash(note.errors.commands_only, 'notice', this.parentTimeline);
+          this.refresh();
         }
         return;
       }
-      if (note.award) {
-        votesBlock = $('.js-awards-block').eq(0);
-        gl.awardsHandler.addAwardToEmojiBar(votesBlock, note.name);
-        return gl.awardsHandler.scrollToAwards();
-      // render note if it not present in loaded list
-      // or skip if rendered
-      } else if (this.isNewNote(note)) {
+
+      if (this.isNewNote(note)) {
         this.note_ids.push(note.id);
         $notesList = $('ul.main-notes-list');
         $notesList.append(note.html).syntaxHighlight();

@@ -699,7 +699,7 @@ Parameters:
 | `id` | integer | yes | The ID of the user |
 
 ```bash
-curl --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v3/users/:id/events
+curl --header "PRIVATE-TOKEN: 9koXpg98eAheJpvBs5tK" https://gitlab.example.com/api/v4/users/:id/events
 ```
 
 Example response:
@@ -812,8 +812,6 @@ Example response:
       },
       "created_at": "2015-12-04T10:33:56.698Z",
       "system": false,
-      "upvote": false,
-      "downvote": false,
       "noteable_id": 377,
       "noteable_type": "Issue"
     },

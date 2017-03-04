@@ -149,14 +149,14 @@ header {
 
     .header-logo {
       display: inline-block;
-      margin: 0 8px 0 3px;
+      margin: 0 7px 0 2px;
       position: relative;
-      top: 7px;
+      top: 10px;
       transition-duration: .3s;
 
       svg,
       img {
-        height: 36px;
+        height: 28px;
       }
 
       &:hover {
@@ -169,7 +169,6 @@ header {
       padding-right: 20px;
       margin: 0;
       font-size: 18px;
-      max-width: 450px;
       display: inline-block;
       line-height: $header-height;
       font-weight: normal;
@@ -181,6 +180,14 @@ header {
 
       @media (max-width: $screen-xs-max) {
         max-width: 190px;
+      }
+
+      @media (min-width: $screen-sm-min) and (max-width: $screen-md-max) {
+        max-width: 428px;
+      }
+
+      @media (min-width: $screen-lg-min) {
+        max-width: 685px;
       }
 
       a {
