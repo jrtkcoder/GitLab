@@ -3,4 +3,4 @@
 - return unless environment.has_metrics? && can?(current_user, :read_environment, environment)
 
 = link_to environment_metrics_path(environment), class: 'btn metrics-button' do
-  = icon('tachometer')
+  = icon('area-chart')

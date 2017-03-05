@@ -263,12 +263,12 @@ class PrometheusGraph {
       cpu_values: {
         area_fill_color: '#edf3fc',
         line_color: '#5b99f7',
-        graph_legend_title: 'CPU Usage',
+        graph_legend_title: 'CPU Usage (Cores)',
       },
       memory_values: {
         area_fill_color: '#fca326',
         line_color: '#fc6d26',
-        graph_legend_title: 'Memory Usage',
+        graph_legend_title: 'Memory Usage (MB)',
       },
     };
 
