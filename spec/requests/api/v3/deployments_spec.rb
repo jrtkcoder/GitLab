@@ -19,13 +19,7 @@ describe API::Deployments, api: true  do
     end
 
     it 'has pagination headers' do
-      expect(response.headers).to include('X-Total')
-      expect(response.headers).to include('X-Total-Pages')
-      expect(response.headers).to include('X-Per-Page')
-      expect(response.headers).to include('X-Page')
-      expect(response.headers).to include('X-Next-Page')
-      expect(response.headers).to include('X-Prev-Page')
-      expect(response.headers).to include('Link')
+      expect(response).to include_pagination_headers
     end
   end
 
